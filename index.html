@@ -1,0 +1,1798 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SKU Manager — EIGHTY PLUS</title>
+<script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600&family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  /* Eightyplus Brand Colors */
+  --heritage-blue: #083584;
+  --legacy-blue: #1E52C6;
+  --soft-cerulean: #CCDBEA;
+  --natural-beige: #BCA585;
+  --wheat-cream: #F4F2E9;
+  --porcelain-white: #FFFFFF;
+  --sunlit-gold: #E6A451;
+  --tangerine-notes: #ED7A4C;
+  --umber-brown: #4B2C22;
+  --midnight-brew: #000000;
+  /* UI Mapping */
+  --bg-primary: #F4F2E9;
+  --bg-card: #FFFFFF;
+  --bg-card-hover: #f0efe8;
+  --bg-input: #FFFFFF;
+  --bg-header: #083584;
+  --accent: #1E52C6;
+  --accent-light: #3a6ad8;
+  --accent-dark: #083584;
+  --gold: #E6A451;
+  --text-primary: #1a1a1a;
+  --text-secondary: #5a6070;
+  --text-muted: #8b9099;
+  --text-on-dark: #F4F2E9;
+  --border: #e0ded6;
+  --border-light: #d0cec6;
+  --success: #2d8659;
+  --warning: #E6A451;
+  --error: #c0392b;
+  --radius: 10px;
+  --radius-sm: 6px;
+  --shadow: 0 2px 12px rgba(8,53,132,0.08);
+  --shadow-lg: 0 8px 32px rgba(8,53,132,0.12);
+  --transition: all 0.2s ease;
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:'Montserrat','Noto Sans KR',system-ui,sans-serif; background:var(--bg-primary); color:var(--text-primary); min-height:100vh; overflow-x:hidden; }
+::-webkit-scrollbar { width:6px; }
+::-webkit-scrollbar-track { background:var(--bg-primary); }
+::-webkit-scrollbar-thumb { background:var(--soft-cerulean); border-radius:3px; }
+
+/* HEADER */
+.header { position:sticky; top:0; z-index:100; background:var(--heritage-blue); padding:12px 24px; display:flex; align-items:center; justify-content:space-between; box-shadow:0 2px 12px rgba(8,53,132,0.2); }
+.header-left { display:flex; align-items:center; gap:12px; }
+.logo { font-family:'Montserrat',sans-serif; font-size:20px; font-weight:800; color:var(--porcelain-white); letter-spacing:2px; text-transform:uppercase; }
+.logo-sub { font-size:12px; color:var(--soft-cerulean); font-weight:400; letter-spacing:1px; }
+.header-right { display:flex; align-items:center; gap:12px; }
+.admin-toggle { display:flex; align-items:center; gap:8px; cursor:pointer; padding:6px 14px; border-radius:20px; border:1px solid rgba(255,255,255,0.25); background:transparent; color:rgba(255,255,255,0.8); font-size:12px; font-family:inherit; transition:var(--transition); }
+.admin-toggle:hover { border-color:var(--sunlit-gold); color:var(--sunlit-gold); }
+.admin-toggle.active { background:var(--sunlit-gold); color:var(--heritage-blue); border-color:var(--sunlit-gold); font-weight:600; }
+
+/* TABS */
+.tab-bar { display:flex; gap:2px; padding:0 24px; background:var(--porcelain-white); border-bottom:2px solid var(--border); }
+.tab-btn { padding:12px 20px; border:none; background:transparent; color:var(--text-secondary); font-family:inherit; font-size:13px; font-weight:600; cursor:pointer; border-radius:0; transition:var(--transition); position:relative; }
+.tab-btn:hover { color:var(--heritage-blue); }
+.tab-btn.active { color:var(--heritage-blue); }
+.tab-btn.active::after { content:''; position:absolute; bottom:-2px; left:0; right:0; height:3px; background:var(--legacy-blue); border-radius:2px 2px 0 0; }
+.tab-btn.admin-tab { color:var(--tangerine-notes); }
+
+/* CONTENT */
+.content { max-width:1200px; margin:0 auto; padding:24px; }
+.content-section { display:none; animation:fadeIn 0.3s ease; }
+.content-section.active { display:block; }
+@keyframes fadeIn { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
+
+/* CARDS */
+.card { background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius); padding:20px; box-shadow:var(--shadow); }
+.card-title { font-size:13px; font-weight:700; color:var(--heritage-blue); text-transform:uppercase; letter-spacing:1.5px; margin-bottom:16px; }
+
+/* STAT CARDS */
+.stats-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:16px; margin-bottom:24px; }
+.stat-card { background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius); padding:20px; text-align:center; box-shadow:var(--shadow); }
+.stat-card:nth-child(1) { border-top:3px solid var(--legacy-blue); }
+.stat-card:nth-child(2) { border-top:3px solid var(--sunlit-gold); }
+.stat-card:nth-child(3) { border-top:3px solid var(--tangerine-notes); }
+.stat-card:nth-child(4) { border-top:3px solid var(--natural-beige); }
+.stat-value { font-family:'JetBrains Mono',monospace; font-size:32px; font-weight:700; color:var(--heritage-blue); }
+.stat-label { font-size:11px; color:var(--text-secondary); margin-top:4px; text-transform:uppercase; letter-spacing:1px; font-weight:600; }
+
+/* FORM ELEMENTS */
+.form-group { margin-bottom:16px; }
+.form-label { display:block; font-size:12px; font-weight:600; color:var(--text-secondary); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:6px; }
+select, input[type="text"], input[type="search"], input[type="date"], input[type="password"], textarea {
+  width:100%; padding:10px 14px; background:var(--bg-input); border:1px solid var(--border); border-radius:var(--radius-sm);
+  color:var(--text-primary); font-family:inherit; font-size:14px; transition:var(--transition); outline:none;
+}
+select:focus, input:focus, textarea:focus { border-color:var(--legacy-blue); box-shadow:0 0 0 3px rgba(30,82,198,0.12); }
+select { cursor:pointer; appearance:none; background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%231E52C6' d='M6 8L1 3h10z'/%3E%3C/svg%3E"); background-repeat:no-repeat; background-position:right 12px center; padding-right:32px; }
+select option { background:var(--bg-card); color:var(--text-primary); }
+textarea { resize:vertical; min-height:60px; }
+
+/* BUTTONS */
+.btn { display:inline-flex; align-items:center; gap:6px; padding:10px 20px; border:none; border-radius:var(--radius-sm); font-family:inherit; font-size:13px; font-weight:600; cursor:pointer; transition:var(--transition); }
+.btn-primary { background:var(--legacy-blue); color:var(--porcelain-white); }
+.btn-primary:hover { background:var(--heritage-blue); transform:translateY(-1px); box-shadow:0 4px 12px rgba(30,82,198,0.3); }
+.btn-secondary { background:transparent; border:1px solid var(--border); color:var(--text-secondary); }
+.btn-secondary:hover { border-color:var(--legacy-blue); color:var(--legacy-blue); }
+.btn-danger { background:var(--error); color:white; }
+.btn-danger:hover { opacity:0.85; }
+.btn-success { background:var(--success); color:white; }
+.btn-sm { padding:6px 12px; font-size:12px; }
+.btn:disabled { opacity:0.4; cursor:not-allowed; }
+
+/* GENERATOR LAYOUT */
+.generator-grid { display:grid; grid-template-columns:1fr 1fr; gap:24px; }
+.gen-form { }
+.gen-preview { position:sticky; top:100px; }
+
+/* SKU PREVIEW */
+.sku-preview-card { background:linear-gradient(135deg, var(--heritage-blue) 0%, #0a2a6a 100%); border:none; border-radius:var(--radius); padding:28px; text-align:center; box-shadow:var(--shadow-lg); color:var(--porcelain-white); }
+.sku-code-display { font-family:'JetBrains Mono',monospace; font-size:36px; font-weight:700; letter-spacing:4px; margin:16px 0; display:flex; justify-content:center; gap:2px; }
+.sku-seg { padding:4px 6px; border-radius:4px; position:relative; }
+.seg-country { color:#CCDBEA; background:rgba(204,219,234,0.15); }
+.seg-grade { color:#E6A451; background:rgba(230,164,81,0.15); }
+.seg-pack { color:#81c784; background:rgba(129,199,132,0.15); }
+.seg-supplier { color:#ED7A4C; background:rgba(237,122,76,0.15); }
+.seg-running { color:#BCA585; background:rgba(188,165,133,0.15); }
+.sku-seg-label { font-size:9px; display:block; margin-top:2px; font-weight:400; opacity:0.7; letter-spacing:0; }
+.lot-display { font-family:'JetBrains Mono',monospace; font-size:18px; color:var(--sunlit-gold); margin:12px 0; }
+.desc-display { font-size:14px; color:rgba(255,255,255,0.7); line-height:1.6; margin:16px 0; padding:12px; background:rgba(0,0,0,0.2); border-radius:var(--radius-sm); text-align:left; }
+.sku-legend { display:flex; flex-wrap:wrap; gap:12px; justify-content:center; margin-top:16px; font-size:11px; }
+.legend-item { display:flex; align-items:center; gap:4px; }
+.legend-dot { width:8px; height:8px; border-radius:50%; }
+
+/* REGISTRY TABLE */
+.registry-filters { display:flex; flex-wrap:wrap; gap:12px; margin-bottom:16px; align-items:flex-end; }
+.registry-filters .form-group { margin-bottom:0; flex:1; min-width:140px; }
+.registry-filters .form-group.search-group { flex:2; }
+.table-wrapper { overflow-x:auto; }
+table { width:100%; border-collapse:collapse; font-size:13px; }
+th { text-align:left; padding:10px 12px; background:var(--wheat-cream); color:var(--heritage-blue); font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.5px; cursor:pointer; user-select:none; border-bottom:2px solid var(--legacy-blue); white-space:nowrap; }
+th:hover { color:var(--tangerine-notes); }
+th .sort-arrow { margin-left:4px; opacity:0.4; }
+th .sort-arrow.active { opacity:1; color:var(--legacy-blue); }
+td { padding:10px 12px; border-bottom:1px solid var(--border); vertical-align:middle; }
+tr:hover td { background:rgba(30,82,198,0.04); }
+.sku-code-cell { font-family:'JetBrains Mono',monospace; font-weight:600; color:var(--heritage-blue); font-size:13px; }
+.lot-cell { font-family:'JetBrains Mono',monospace; color:var(--umber-brown); font-size:12px; }
+.pagination { display:flex; justify-content:space-between; align-items:center; margin-top:16px; font-size:13px; color:var(--text-secondary); }
+.page-btns { display:flex; gap:4px; }
+.page-btn { padding:6px 12px; border:1px solid var(--border); background:transparent; color:var(--text-secondary); border-radius:4px; cursor:pointer; font-family:inherit; font-size:12px; }
+.page-btn.active { background:var(--legacy-blue); color:var(--porcelain-white); border-color:var(--legacy-blue); }
+.page-btn:hover:not(.active) { border-color:var(--legacy-blue); color:var(--legacy-blue); }
+
+/* ADMIN PANELS */
+.admin-section { margin-bottom:16px; }
+.admin-section-header { display:flex; justify-content:space-between; align-items:center; padding:14px 20px; background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius); cursor:pointer; transition:var(--transition); }
+.admin-section-header:hover { border-color:var(--border-light); }
+.admin-section-header h3 { font-size:14px; font-weight:600; display:flex; align-items:center; gap:8px; }
+.admin-section-header .count-badge { background:var(--legacy-blue); color:var(--porcelain-white); font-size:11px; padding:2px 8px; border-radius:10px; font-weight:700; }
+.admin-section-header .chevron { transition:transform 0.2s; color:var(--text-muted); }
+.admin-section.open .chevron { transform:rotate(180deg); }
+.admin-section-body { display:none; padding:16px 20px; background:var(--bg-card); border:1px solid var(--border); border-top:none; border-radius:0 0 var(--radius) var(--radius); }
+.admin-section.open .admin-section-body { display:block; }
+.admin-section.open .admin-section-header { border-radius:var(--radius) var(--radius) 0 0; }
+.admin-table { width:100%; font-size:13px; }
+.admin-table th { background:transparent; border-bottom:1px solid var(--border); }
+.admin-table td { padding:8px 12px; }
+.inline-input { padding:6px 10px; font-size:13px; width:100%; }
+.admin-add-row { display:flex; gap:8px; margin-bottom:12px; align-items:flex-end; flex-wrap:wrap; }
+.admin-add-row .form-group { margin-bottom:0; }
+.admin-actions { display:flex; gap:4px; }
+
+/* TOAST */
+.toast-container { position:fixed; top:80px; right:24px; z-index:200; display:flex; flex-direction:column; gap:8px; }
+.toast { padding:12px 20px; border-radius:var(--radius-sm); font-size:13px; font-weight:500; animation:slideIn 0.3s ease; box-shadow:var(--shadow); max-width:360px; }
+.toast-success { background:var(--success); color:white; }
+.toast-error { background:var(--error); color:white; }
+.toast-warning { background:var(--sunlit-gold); color:var(--umber-brown); }
+@keyframes slideIn { from{transform:translateX(100px);opacity:0} to{transform:translateX(0);opacity:1} }
+
+/* MODAL */
+.modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.7); z-index:150; display:flex; align-items:center; justify-content:center; animation:fadeIn 0.2s; }
+.modal { background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius); padding:28px; max-width:500px; width:90%; max-height:80vh; overflow-y:auto; box-shadow:var(--shadow-lg); }
+.modal h3 { font-size:16px; margin-bottom:16px; }
+.modal-actions { display:flex; gap:8px; justify-content:flex-end; margin-top:20px; }
+
+/* CHARTS */
+.chart-bar-container { margin-bottom:8px; }
+.chart-bar-label { font-size:12px; color:var(--text-secondary); margin-bottom:2px; display:flex; justify-content:space-between; }
+.chart-bar { height:20px; background:var(--bg-input); border-radius:3px; overflow:hidden; }
+.chart-bar-fill { height:100%; background:linear-gradient(90deg, var(--heritage-blue), var(--legacy-blue)); border-radius:3px; transition:width 0.5s ease; }
+
+/* DATA BACKUP */
+.backup-section { display:flex; gap:12px; flex-wrap:wrap; margin-top:24px; padding-top:20px; border-top:1px solid var(--border); }
+
+/* RESPONSIVE */
+@media(max-width:768px) {
+  .header { padding:10px 16px; }
+  .tab-bar { padding:6px 16px; overflow-x:auto; }
+  .tab-btn { padding:8px 14px; font-size:12px; white-space:nowrap; }
+  .content { padding:16px; }
+  .stats-grid { grid-template-columns:repeat(2,1fr); gap:10px; }
+  .generator-grid { grid-template-columns:1fr; }
+  .gen-preview { position:static; }
+  .sku-code-display { font-size:24px; }
+  .registry-filters { flex-direction:column; }
+  .registry-filters .form-group { flex:unset; min-width:unset; }
+}
+@media(max-width:480px) {
+  .stats-grid { grid-template-columns:1fr 1fr; }
+  .stat-value { font-size:24px; }
+  .sku-code-display { font-size:20px; }
+}
+
+/* SEARCHABLE SELECT */
+.search-select { position:relative; }
+.search-select input { cursor:pointer; }
+.search-select-dropdown { position:absolute; top:100%; left:0; right:0; background:var(--bg-card); border:1px solid var(--border); border-radius:0 0 var(--radius-sm) var(--radius-sm); max-height:200px; overflow-y:auto; z-index:50; display:none; }
+.search-select-dropdown.open { display:block; }
+.search-select-option { padding:8px 14px; cursor:pointer; font-size:13px; transition:background 0.1s; }
+.search-select-option:hover { background:var(--bg-card-hover); color:var(--accent); }
+.search-select-option.selected { color:var(--accent); font-weight:600; }
+
+/* MISC */
+.empty-state { text-align:center; padding:40px; color:var(--text-muted); }
+.empty-state-icon { font-size:48px; margin-bottom:12px; }
+.badge { display:inline-block; padding:2px 8px; border-radius:10px; font-size:11px; font-weight:600; }
+.badge-commercial { background:rgba(30,82,198,0.1); color:var(--legacy-blue); }
+.badge-specialty { background:rgba(230,164,81,0.12); color:#c08530; }
+.badge-exotic { background:rgba(237,122,76,0.12); color:var(--tangerine-notes); }
+.badge-geisha { background:rgba(192,57,43,0.1); color:#c0392b; }
+.badge-competition { background:rgba(45,134,89,0.1); color:var(--success); }
+.badge-merchandise { background:rgba(75,44,34,0.1); color:var(--umber-brown); }
+.badge-discovery { background:rgba(8,53,132,0.08); color:var(--heritage-blue); }
+.flex-between { display:flex; justify-content:space-between; align-items:center; }
+.mb-16 { margin-bottom:16px; }
+.mt-8 { margin-top:8px; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-left">
+    <div><span class="logo">EIGHTY PLUS</span> <span class="logo-sub">SKU Manager</span></div>
+  </div>
+  <div class="header-right">
+    <span id="syncStatus" style="display:flex;align-items:center;gap:6px;font-size:11px;color:rgba(255,255,255,0.6);padding:4px 10px;border-radius:12px;background:rgba(255,255,255,0.08)">
+      <span id="syncDot" style="width:8px;height:8px;border-radius:50%;background:#888;flex-shrink:0"></span>
+      <span id="syncLabel">Local</span>
+    </span>
+    <button class="btn btn-secondary btn-sm" id="syncBtn" onclick="manualSync()" style="display:none;font-size:11px;padding:4px 10px;color:rgba(255,255,255,0.7);border-color:rgba(255,255,255,0.2)">↻ Sync</button>
+    <button class="admin-toggle" id="adminToggle" onclick="toggleAdmin()">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+      Admin
+    </button>
+  </div>
+</div>
+
+<div class="tab-bar" id="tabBar">
+  <button class="tab-btn active" data-tab="dashboard" onclick="switchTab('dashboard')">Dashboard</button>
+  <button class="tab-btn" data-tab="generator" onclick="switchTab('generator')">Generator</button>
+  <button class="tab-btn" data-tab="registry" onclick="switchTab('registry')">Registry</button>
+  <button class="tab-btn" data-tab="settings" onclick="switchTab('settings')">Settings</button>
+  <button class="tab-btn admin-tab" data-tab="admin" onclick="switchTab('admin')" style="display:none">Admin</button>
+</div>
+
+<div class="content">
+  <div id="dashboardTab" class="content-section active"></div>
+  <div id="generatorTab" class="content-section"></div>
+  <div id="registryTab" class="content-section"></div>
+  <div id="settingsTab" class="content-section"></div>
+  <div id="adminTab" class="content-section"></div>
+</div>
+
+<div class="toast-container" id="toastContainer"></div>
+<div id="modalRoot"></div>
+
+<script>
+// ============================================================
+// DATA LAYER
+// ============================================================
+const STORAGE_PREFIX = 'changco_sku_';
+const KEYS = { countries:'countries', grades:'grades', packSizes:'packSizes', suppliers:'suppliers', regions:'regions', processes:'processes', skus:'skus', settings:'settings' };
+
+const DB = {
+  get(key) { try { return JSON.parse(localStorage.getItem(STORAGE_PREFIX+key)) || null; } catch { return null; } },
+  set(key, val) { localStorage.setItem(STORAGE_PREFIX+key, JSON.stringify(val)); },
+  genId() { return crypto.randomUUID ? crypto.randomUUID() : 'id-'+Date.now()+'-'+Math.random().toString(36).slice(2,8); }
+};
+
+// ============================================================
+// NOTION CLOUD SYNC LAYER
+// ============================================================
+const SYNC = {
+  enabled: false,
+  syncing: false,
+  base: '/.netlify/functions/skus',
+
+  updateUI(status, label) {
+    const dot = document.getElementById('syncDot');
+    const lbl = document.getElementById('syncLabel');
+    const btn = document.getElementById('syncBtn');
+    if (!dot) return;
+    const colors = { ok:'#2d8659', syncing:'#E6A451', error:'#c0392b', local:'#888' };
+    dot.style.background = colors[status] || '#888';
+    if (status === 'syncing') dot.style.animation = 'pulse 1s infinite';
+    else dot.style.animation = 'none';
+    lbl.textContent = label || status;
+    if (btn) btn.style.display = this.enabled ? '' : 'none';
+  },
+
+  async init() {
+    this.updateUI('syncing', 'Connecting...');
+    try {
+      const resp = await fetch(this.base);
+      if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+      const notionSkus = await resp.json();
+      this.enabled = true;
+
+      // Convert Notion SKUs to local format
+      const countries = getAll(KEYS.countries);
+      const grades = getAll(KEYS.grades);
+      const packs = getAll(KEYS.packSizes);
+      const suppliers = getAll(KEYS.suppliers);
+      const regions = getAll(KEYS.regions);
+      const processes = getAll(KEYS.processes);
+
+      const localSkus = notionSkus.map(ns => ({
+        id: ns.notionId,
+        notionId: ns.notionId,
+        skuCode: ns.skuCode,
+        lotNumber: ns.lotNumber,
+        countryId: (countries.find(c => c.code === ns.countryCode) || {}).id || '',
+        gradeId: (grades.find(g => g.code === ns.gradeCode) || {}).id || '',
+        packSizeId: (packs.find(p => p.code === ns.packCode) || {}).id || '',
+        supplierId: (suppliers.find(s => s.code === ns.supplierCode) || {}).id || '',
+        regionId: (regions.find(r => r.name === ns.region) || {}).id || '',
+        processId: (processes.find(p => p.name === ns.process) || {}).id || '',
+        description: ns.description,
+        saleName: ns.saleName,
+        notes: ns.notes,
+        createdAt: ns.createdAt,
+      }));
+
+      DB.set(KEYS.skus, localSkus);
+
+      // Derive nextLotNumber from actual data
+      const maxLot = localSkus.reduce((max, s) => {
+        const m = (s.lotNumber || '').match(/80-(\d+)/);
+        return m ? Math.max(max, parseInt(m[1])) : max;
+      }, 0);
+      const settings = DB.get(KEYS.settings);
+      settings.nextLotNumber = maxLot + 1;
+      DB.set(KEYS.settings, settings);
+
+      this.updateUI('ok', `Cloud (${localSkus.length} SKUs)`);
+      renderTab(state.activeTab);
+    } catch (err) {
+      console.warn('Notion sync unavailable:', err.message);
+      this.enabled = false;
+      this.updateUI('local', 'Local only');
+    }
+  },
+
+  async createSku(notionData) {
+    if (!this.enabled) return null;
+    try {
+      const resp = await fetch(this.base, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(notionData),
+      });
+      if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+      return await resp.json();
+    } catch (err) {
+      console.error('Notion create failed:', err);
+      showToast('Cloud sync failed - saved locally', 'warning');
+      return null;
+    }
+  },
+
+  async bulkCreate(notionDataArray) {
+    if (!this.enabled) return [];
+    try {
+      const resp = await fetch(this.base, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(notionDataArray),
+      });
+      if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+      return await resp.json();
+    } catch (err) {
+      console.error('Notion bulk create failed:', err);
+      showToast('Cloud sync failed for bulk import', 'warning');
+      return [];
+    }
+  },
+
+  async deleteSku(notionId) {
+    if (!this.enabled || !notionId) return false;
+    try {
+      const resp = await fetch(this.base, {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ notionId }),
+      });
+      return resp.ok;
+    } catch (err) {
+      console.error('Notion delete failed:', err);
+      return false;
+    }
+  },
+
+  // Build Notion-format payload from local entity references
+  buildPayload(skuCode, lotNumber, f, description, saleName, notes, createdAt) {
+    const country = findById(KEYS.countries, f.countryId);
+    const grade = findById(KEYS.grades, f.gradeId);
+    const pack = findById(KEYS.packSizes, f.packSizeId);
+    const supplier = findById(KEYS.suppliers, f.supplierId);
+    const region = findById(KEYS.regions, f.regionId);
+    const process = findById(KEYS.processes, f.processId);
+    return {
+      skuCode, lotNumber,
+      country: country?.name || '', countryCode: country?.code || '',
+      grade: grade?.name || '', gradeCode: grade?.code || '',
+      packSize: pack?.name || '', packCode: pack?.code || '',
+      supplier: supplier?.name || '', supplierCode: supplier?.code || '',
+      region: region?.name || '', process: process?.name || '',
+      description: description || '', saleName: saleName || '', notes: notes || '',
+      createdAt: createdAt || new Date().toISOString(),
+    };
+  }
+};
+
+// Pulse animation for sync indicator
+const pulseStyle = document.createElement('style');
+pulseStyle.textContent = '@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.4}}';
+document.head.appendChild(pulseStyle);
+
+// ============================================================
+// DEFAULT DATA
+// ============================================================
+const DEFAULT_COUNTRIES = [
+  {name:"Argentina",code:"AR"},{name:"Bolivia",code:"BO"},{name:"Brazil",code:"BR"},{name:"Burundi",code:"BI"},
+  {name:"Cameroon",code:"CM"},{name:"Chile",code:"CL"},{name:"China",code:"CN"},{name:"Colombia",code:"CO"},
+  {name:"Congo",code:"CG"},{name:"Costa Rica",code:"CR"},{name:"Cuba",code:"CU"},{name:"Dominican Republic",code:"DO"},
+  {name:"Ecuador",code:"EC"},{name:"El Salvador",code:"SV"},{name:"Ethiopia",code:"ET"},{name:"Ghana",code:"GH"},
+  {name:"Guatemala",code:"GT"},{name:"Honduras",code:"HN"},{name:"India",code:"IN"},{name:"Indonesia",code:"ID"},
+  {name:"Jamaica",code:"JM"},{name:"Kenya",code:"KE"},{name:"Laos",code:"LA"},{name:"Malawi",code:"MW"},
+  {name:"Mexico",code:"MX"},{name:"Myanmar",code:"MM"},{name:"Nicaragua",code:"NI"},{name:"Panama",code:"PA"},
+  {name:"Papua New Guinea",code:"PG"},{name:"Peru",code:"PE"},{name:"Puerto Rico",code:"PR"},{name:"Rwanda",code:"RW"},
+  {name:"Taiwan",code:"TW"},{name:"Tanzania",code:"TZ"},{name:"Thailand",code:"TH"},{name:"Timor-Leste",code:"TL"},
+  {name:"Uganda",code:"UG"},{name:"Vietnam",code:"VN"},{name:"Yemen",code:"YE"},{name:"Zambia",code:"ZM"},
+  {name:"Hawaii",code:"HW"},{name:"El Dorado",code:"ED"},{name:"Equipment",code:"EQ"}
+].map((c,i)=>({...c, id:DB.genId(), active:true, sortOrder:i}));
+
+const DEFAULT_GRADES = [
+  {name:"COMMERCIAL",code:"C"},{name:"SPECIALTY",code:"R"},{name:"EXOTIC",code:"X"},
+  {name:"GEISHA",code:"Y"},{name:"COMPETITION",code:"Z"},{name:"Merchandise",code:"M"},{name:"DISCOVERY",code:"D"}
+].map((g,i)=>({...g, id:DB.genId(), active:true, sortOrder:i}));
+
+const DEFAULT_PACK_SIZES = [
+  {name:"Bag 30",code:"A"},{name:"Bag 35",code:"B"},{name:"Bag 50",code:"C"},{name:"Bag 60",code:"D"},
+  {name:"Bag 70",code:"E"},{name:"Bag (Other)",code:"F"},{name:"Box 20",code:"G"},{name:"Box 24",code:"H"},
+  {name:"Box 30",code:"I"},{name:"Box (Other)",code:"J"},{name:"Pack 1",code:"K"},{name:"Pack 5",code:"L"},
+  {name:"Pack 10",code:"M"},{name:"Pack (Other)",code:"N"},{name:"ITEM/PCS",code:"O"}
+].map((p,i)=>({...p, id:DB.genId(), active:true, sortOrder:i}));
+
+const DEFAULT_SUPPLIERS = [
+  {name:"Oklao",code:"01"},{name:"LDC",code:"02"},{name:"Tong Tarn",code:"03"},{name:"Young-in",code:"04"},
+  {name:"Fullerton",code:"05"},{name:"Pebble",code:"06"},{name:"Linking",code:"07"},{name:"Cofinet",code:"08"},
+  {name:"Granja Paraiso 92",code:"09"},{name:"Café Granja La Esperanza",code:"10"},{name:"100 Anos",code:"11"},
+  {name:"Mikava",code:"12"},{name:"El Diviso",code:"13"},{name:"Finca Lerida",code:"14"},{name:"Finca La Julia",code:"15"},
+  {name:"Mac&Grow Rwanda",code:"16"},{name:"Hieng Kee",code:"17"},{name:"Thai Farmer",code:"18"},
+  {name:"Coffee Beyond Borders",code:"19"},{name:"Pranakorn Coffee Roaster",code:"20"},{name:"Las Flores",code:"21"},
+  {name:"Finca Sabor De Luna",code:"22"},{name:"Paksong Capital",code:"23"},{name:"Finca Deborah",code:"24"},
+  {name:"วัลลภ ปัสสานนท์",code:"25"},{name:"เอก สุวรรณโณ",code:"26"},{name:"แสนชัย จูเปาะ",code:"27"},
+  {name:"เปา Le Tor Gold",code:"28"},{name:"แดง ดูลาเปอร์",code:"29"},{name:"ชาติชาย คะปู่",code:"30"},
+  {name:"อาเจอะ สวนพอใจ",code:"31"},{name:"วิชัย กำเนิดมงคล",code:"32"},{name:"Kaleb Jordan",code:"33"},
+  {name:"Sirinya Coffee",code:"34"},{name:"QCCT Export-Import Sole",code:"35"},{name:"สหกรณ์ผู้ปลูกกาแฟชุมพร",code:"36"},
+  {name:"ALLY",code:"37"},{name:"ALO",code:"38"},{name:"กาแฟไทย",code:"39"},{name:"กาแฟไทยลาฮู",code:"40"},
+  {name:"DILY SUNSHINE",code:"41"},{name:"บอนกาแฟ",code:"42"},{name:"DOI TUNG",code:"43"},
+  {name:"Fair trade Commodities",code:"44"},{name:"ทัพเทวาทัพไทย",code:"45"},{name:"บัณฑิต",code:"46"},
+  {name:"Phuc Sinh",code:"47"},{name:"Daye Bensa",code:"48"},{name:"SOO HUP SENG TRADING",code:"49"},
+  {name:"ฮิวจ์ คอฟ",code:"50"},{name:"CGLE",code:"51"},{name:"DOORA COFFEE",code:"52"},
+  {name:"ABU",code:"53"},{name:"LAMASTUS",code:"54"},{name:"MIL CUMBRES",code:"55"},
+  {name:"SANTAMARIA",code:"56"},{name:"ESMERALDA",code:"57"},{name:"TOSTADORA(NUGAO)",code:"58"},
+  {name:"LERIDA COFFEE ESTATE",code:"59"},{name:"JANSON",code:"60"},{name:"SANTOS CAFÉ",code:"61"},
+  {name:"CARMO",code:"62"},{name:"อินโนเวทีฟ เบฟเวอเรจ",code:"63"},{name:"ALL GOODS",code:"64"},
+  {name:"ARDENT",code:"65"},{name:"FAZENDA-UM",code:"66"},{name:"El BAJAREQUE",code:"67"},
+  {name:"BLACKMOON",code:"68"},{name:"Fullerton (69)",code:"69"},{name:"Kebir",code:"70"},
+  {name:"Testi",code:"71"},{name:"Hexiyouwu",code:"72"},{name:"Akirakoki",code:"73"},
+  {name:"บริษัท สโม้คกี้ด๊อก",code:"74"},{name:"KONFFE",code:"75"},{name:"FINCA MILAN",code:"76"}
+].map((s,i)=>({...s, id:DB.genId(), active:true, sortOrder:i}));
+
+const DEFAULT_REGIONS = [
+  "Guji","Guji Hambella","Yirgacheffe","Sidama","West Arsi","Hambella","Uraga",
+  "Santos","Cerrado","Chiangmai","San Ramon","Mozart","Vietnam",
+  "Niu Culturing","Maypop Culturing","April Culturing","NG Culturing","AGI Culturing",
+  "Caturra Nitro","Sakura Competition","April Competition","Maypop Competition","Risaralda State"
+].map(r=>({id:DB.genId(), name:r, active:true}));
+
+const DEFAULT_PROCESSES = [
+  "Natural","Washed","Honey","Black Honey","Yellow Honey","Red Honey","White Honey",
+  "Anaerobic Natural","Anaerobic Washed","Carbonic Maceration","Wet Hulled","Lactic",
+  "Semi-Washed","Yeast Washed","SHB","G1","G2","G3","A","AA","Natural G1"
+].map(p=>({id:DB.genId(), name:p, active:true}));
+
+// ============================================================
+// INIT
+// ============================================================
+function initData() {
+  if (!DB.get(KEYS.countries)) DB.set(KEYS.countries, DEFAULT_COUNTRIES);
+  if (!DB.get(KEYS.grades)) DB.set(KEYS.grades, DEFAULT_GRADES);
+  if (!DB.get(KEYS.packSizes)) DB.set(KEYS.packSizes, DEFAULT_PACK_SIZES);
+  if (!DB.get(KEYS.suppliers)) DB.set(KEYS.suppliers, DEFAULT_SUPPLIERS);
+  if (!DB.get(KEYS.regions)) DB.set(KEYS.regions, DEFAULT_REGIONS);
+  if (!DB.get(KEYS.processes)) DB.set(KEYS.processes, DEFAULT_PROCESSES);
+  if (!DB.get(KEYS.skus)) DB.set(KEYS.skus, []);
+  if (!DB.get(KEYS.settings)) DB.set(KEYS.settings, { nextLotNumber:1, adminPassword:"changco2026" });
+}
+
+// ============================================================
+// STATE
+// ============================================================
+let state = {
+  activeTab: 'dashboard',
+  adminMode: false,
+  genForm: { countryId:'', gradeId:'', packSizeId:'', supplierId:'', regionId:'', processId:'', saleName:'', notes:'' },
+  regFilters: { search:'', countryId:'', gradeId:'', supplierId:'' },
+  regSort: { col:'createdAt', dir:'desc' },
+  regPage: 1,
+  regPerPage: 50
+};
+
+// ============================================================
+// HELPERS
+// ============================================================
+function getAll(key) { return DB.get(key) || []; }
+function findById(key, id) { return getAll(key).find(x=>x.id===id); }
+function getNextRunning(supplierCode) {
+  const skus = getAll(KEYS.skus);
+  const nums = skus.filter(s => s.skuCode && s.skuCode.substring(4,6) === supplierCode).map(s => parseInt(s.skuCode.substring(6,8)) || 0);
+  return nums.length ? Math.max(...nums) + 1 : 1;
+}
+function getNextLot() {
+  const settings = DB.get(KEYS.settings);
+  return settings.nextLotNumber || 1;
+}
+function pad2(n) { return String(n).padStart(2,'0'); }
+function pad4(n) { return String(n).padStart(4,'0'); }
+function buildSku(countryCode, gradeCode, packCode, supplierCode, running) {
+  return countryCode + gradeCode + packCode + supplierCode + pad2(running);
+}
+function buildLot(n) { return '80-' + pad4(n); }
+function buildDescription(country, region, process, supplier, grade, pack) {
+  return [country, region, process, supplier, grade, pack].filter(Boolean).join(' ');
+}
+function gradeBadgeClass(name) {
+  const n = (name||'').toLowerCase();
+  if(n.includes('commercial')) return 'badge-commercial';
+  if(n.includes('specialty')) return 'badge-specialty';
+  if(n.includes('exotic')) return 'badge-exotic';
+  if(n.includes('geisha')) return 'badge-geisha';
+  if(n.includes('competition')) return 'badge-competition';
+  if(n.includes('merchandise')) return 'badge-merchandise';
+  if(n.includes('discovery')) return 'badge-discovery';
+  return '';
+}
+function escHtml(s) { const d=document.createElement('div'); d.textContent=s; return d.innerHTML; }
+function showToast(msg, type='success') {
+  const c = document.getElementById('toastContainer');
+  const t = document.createElement('div');
+  t.className = 'toast toast-'+type;
+  t.textContent = msg;
+  c.appendChild(t);
+  setTimeout(()=>t.remove(), 3500);
+}
+function debounce(fn, ms) { let t; return (...a) => { clearTimeout(t); t=setTimeout(()=>fn(...a), ms); }; }
+
+// ============================================================
+// TAB SWITCHING
+// ============================================================
+function switchTab(tab) {
+  state.activeTab = tab;
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', b.dataset.tab===tab));
+  document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active'));
+  document.getElementById(tab+'Tab').classList.add('active');
+  renderTab(tab);
+}
+
+function toggleAdmin() {
+  if (!state.adminMode) {
+    const settings = DB.get(KEYS.settings);
+    const pw = prompt('Enter admin password:');
+    if (pw !== settings.adminPassword) { showToast('Invalid password','error'); return; }
+  }
+  state.adminMode = !state.adminMode;
+  document.getElementById('adminToggle').classList.toggle('active', state.adminMode);
+  document.querySelector('[data-tab="admin"]').style.display = state.adminMode ? '' : 'none';
+  if (!state.adminMode && state.activeTab==='admin') switchTab('dashboard');
+  if (state.adminMode) showToast('Admin mode enabled','warning');
+}
+
+function renderTab(tab) {
+  if (tab==='dashboard') renderDashboard();
+  else if (tab==='generator') renderGenerator();
+  else if (tab==='registry') renderRegistry();
+  else if (tab==='settings') renderSettings();
+  else if (tab==='admin') renderAdmin();
+}
+
+// ============================================================
+// DASHBOARD
+// ============================================================
+function renderDashboard() {
+  const skus = getAll(KEYS.skus);
+  const suppliers = getAll(KEYS.suppliers);
+  const countries = getAll(KEYS.countries);
+  const now = new Date();
+  const thisMonth = skus.filter(s => { const d = new Date(s.createdAt); return d.getMonth()===now.getMonth() && d.getFullYear()===now.getFullYear(); });
+  const lastSku = skus.length ? skus[skus.length-1] : null;
+
+  // Country distribution
+  const countryCount = {};
+  skus.forEach(s => { const c = findById(KEYS.countries, s.countryId); if(c) countryCount[c.name] = (countryCount[c.name]||0)+1; });
+  const sortedCountries = Object.entries(countryCount).sort((a,b)=>b[1]-a[1]).slice(0,10);
+  const maxCount = sortedCountries.length ? sortedCountries[0][1] : 1;
+
+  // Grade distribution
+  const gradeCount = {};
+  skus.forEach(s => { const g = findById(KEYS.grades, s.gradeId); if(g) gradeCount[g.name] = (gradeCount[g.name]||0)+1; });
+
+  document.getElementById('dashboardTab').innerHTML = `
+    <div class="stats-grid">
+      <div class="stat-card"><div class="stat-value">${skus.length}</div><div class="stat-label">Total SKUs</div></div>
+      <div class="stat-card"><div class="stat-value">${suppliers.filter(s=>s.active).length}</div><div class="stat-label">Active Suppliers</div></div>
+      <div class="stat-card"><div class="stat-value">${thisMonth.length}</div><div class="stat-label">This Month</div></div>
+      <div class="stat-card"><div class="stat-value" style="font-size:18px">${lastSku ? lastSku.skuCode : '—'}</div><div class="stat-label">Latest SKU</div></div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+      <div class="card">
+        <div class="card-title">Top Countries</div>
+        ${sortedCountries.length ? sortedCountries.map(([name,cnt])=>`
+          <div class="chart-bar-container">
+            <div class="chart-bar-label"><span>${escHtml(name)}</span><span>${cnt}</span></div>
+            <div class="chart-bar"><div class="chart-bar-fill" style="width:${(cnt/maxCount*100)}%"></div></div>
+          </div>
+        `).join('') : '<div class="empty-state">No data yet</div>'}
+      </div>
+      <div class="card">
+        <div class="card-title">By Grade</div>
+        ${Object.entries(gradeCount).length ? Object.entries(gradeCount).map(([name,cnt])=>`
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid var(--border)">
+            <span class="badge ${gradeBadgeClass(name)}">${escHtml(name)}</span>
+            <span style="font-family:'JetBrains Mono';font-size:14px;color:var(--accent)">${cnt}</span>
+          </div>
+        `).join('') : '<div class="empty-state">No data yet</div>'}
+      </div>
+    </div>
+    <div class="card" style="margin-top:16px">
+      <div class="flex-between mb-16">
+        <div class="card-title" style="margin-bottom:0">Recent Registrations</div>
+        ${skus.length ? `<button class="btn btn-secondary btn-sm" onclick="switchTab('registry')">View All ${skus.length} SKUs →</button>` : ''}
+      </div>
+      ${skus.length ? skus.slice(-8).reverse().map(s=>{
+        const country = findById(KEYS.countries, s.countryId);
+        const grade = findById(KEYS.grades, s.gradeId);
+        return `<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--border)">
+          <div><span class="sku-code-cell">${escHtml(s.skuCode)}</span> <span class="lot-cell">${escHtml(s.lotNumber||'')}</span></div>
+          <div style="flex:1;margin:0 16px;font-size:13px;color:var(--text-secondary);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${escHtml(s.description||'')}</div>
+          <div style="font-size:11px;color:var(--text-muted);white-space:nowrap">${new Date(s.createdAt).toLocaleDateString()}</div>
+        </div>`;
+      }).join('') : '<div class="empty-state">No SKUs registered yet. Go to Generator to create your first SKU.</div>'}
+    </div>
+  `;
+}
+
+// ============================================================
+// GENERATOR
+// ============================================================
+function renderGenerator() {
+  const countries = getAll(KEYS.countries).filter(c=>c.active).sort((a,b)=>a.name.localeCompare(b.name));
+  const grades = getAll(KEYS.grades).filter(g=>g.active);
+  const packs = getAll(KEYS.packSizes).filter(p=>p.active);
+  const suppliers = getAll(KEYS.suppliers).filter(s=>s.active).sort((a,b)=>a.name.localeCompare(b.name));
+  const regions = getAll(KEYS.regions).filter(r=>r.active).sort((a,b)=>a.name.localeCompare(b.name));
+  const processes = getAll(KEYS.processes).filter(p=>p.active).sort((a,b)=>a.name.localeCompare(b.name));
+
+  const f = state.genForm;
+  const country = findById(KEYS.countries, f.countryId);
+  const grade = findById(KEYS.grades, f.gradeId);
+  const pack = findById(KEYS.packSizes, f.packSizeId);
+  const supplier = findById(KEYS.suppliers, f.supplierId);
+  const region = findById(KEYS.regions, f.regionId);
+  const process = findById(KEYS.processes, f.processId);
+
+  const cc = country ? country.code : '??';
+  const gc = grade ? grade.code : '?';
+  const pc = pack ? pack.code : '?';
+  const sc = supplier ? supplier.code : '??';
+  const running = supplier ? getNextRunning(sc) : 0;
+  const rn = running ? pad2(running) : '??';
+  const lotNum = getNextLot();
+  const lotStr = buildLot(lotNum);
+  const desc = buildDescription(country?.name, region?.name, process?.name, supplier?.name, grade?.name, pack?.name);
+  const isComplete = f.countryId && f.gradeId && f.packSizeId && f.supplierId;
+
+  document.getElementById('generatorTab').innerHTML = `
+    <div class="generator-grid">
+      <div class="gen-form">
+        <div class="card">
+          <div class="card-title">SKU Configuration</div>
+          <div class="form-group">
+            <label class="form-label">Country *</label>
+            <select id="genCountry" onchange="updateGenForm('countryId',this.value)">
+              <option value="">— Select Country —</option>
+              ${countries.map(c=>`<option value="${c.id}" ${f.countryId===c.id?'selected':''}>${escHtml(c.name)} (${c.code})</option>`).join('')}
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Grade / Category *</label>
+            <select id="genGrade" onchange="updateGenForm('gradeId',this.value)">
+              <option value="">— Select Grade —</option>
+              ${grades.map(g=>`<option value="${g.id}" ${f.gradeId===g.id?'selected':''}>${escHtml(g.name)} (${g.code})</option>`).join('')}
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Pack Size *</label>
+            <select id="genPack" onchange="updateGenForm('packSizeId',this.value)">
+              <option value="">— Select Pack Size —</option>
+              ${packs.map(p=>`<option value="${p.id}" ${f.packSizeId===p.id?'selected':''}>${escHtml(p.name)} (${p.code})</option>`).join('')}
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Supplier *</label>
+            <select id="genSupplier" onchange="updateGenForm('supplierId',this.value)">
+              <option value="">— Select Supplier —</option>
+              ${suppliers.map(s=>`<option value="${s.id}" ${f.supplierId===s.id?'selected':''}>${escHtml(s.name)} (${s.code})</option>`).join('')}
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Region / Brand</label>
+            <select id="genRegion" onchange="updateGenForm('regionId',this.value)">
+              <option value="">— Select Region (Optional) —</option>
+              ${regions.map(r=>`<option value="${r.id}" ${f.regionId===r.id?'selected':''}>${escHtml(r.name)}</option>`).join('')}
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Process / Spec</label>
+            <select id="genProcess" onchange="updateGenForm('processId',this.value)">
+              <option value="">— Select Process (Optional) —</option>
+              ${processes.map(p=>`<option value="${p.id}" ${f.processId===p.id?'selected':''}>${escHtml(p.name)}</option>`).join('')}
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Sale Name</label>
+            <input type="text" placeholder="e.g. Ethiopia Ardent Sidama Natural G1, Rori" value="${escHtml(f.saleName||'')}" oninput="updateGenForm('saleName',this.value)">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Notes</label>
+            <textarea placeholder="Optional notes..." oninput="updateGenForm('notes',this.value)">${escHtml(f.notes||'')}</textarea>
+          </div>
+        </div>
+      </div>
+      <div class="gen-preview">
+        <div class="sku-preview-card">
+          <div style="font-size:12px;color:var(--soft-cerulean);text-transform:uppercase;letter-spacing:2px;font-weight:600">Generated SKU</div>
+          <div class="sku-code-display">
+            <span class="sku-seg seg-country">${cc}<span class="sku-seg-label">Country</span></span>
+            <span class="sku-seg seg-grade">${gc}<span class="sku-seg-label">Grade</span></span>
+            <span class="sku-seg seg-pack">${pc}<span class="sku-seg-label">Pack</span></span>
+            <span class="sku-seg seg-supplier">${sc}<span class="sku-seg-label">Supplier</span></span>
+            <span class="sku-seg seg-running">${rn}<span class="sku-seg-label">No.</span></span>
+          </div>
+          <div class="lot-display">LOT: ${lotStr}</div>
+          <div class="desc-display">${desc || '<span style="color:rgba(255,255,255,0.35)">Description will appear here...</span>'}</div>
+          <div class="sku-legend">
+            <span class="legend-item"><span class="legend-dot" style="background:#CCDBEA"></span>Country</span>
+            <span class="legend-item"><span class="legend-dot" style="background:#E6A451"></span>Grade</span>
+            <span class="legend-item"><span class="legend-dot" style="background:#81c784"></span>Pack</span>
+            <span class="legend-item"><span class="legend-dot" style="background:#ED7A4C"></span>Supplier</span>
+            <span class="legend-item"><span class="legend-dot" style="background:#BCA585"></span>Running#</span>
+          </div>
+          <div style="margin-top:20px">
+            <button class="btn" style="width:100%;justify-content:center;padding:14px;font-size:15px;background:var(--sunlit-gold);color:var(--heritage-blue);font-weight:700" onclick="registerSku()" ${isComplete?'':'disabled'}>
+              Register SKU
+            </button>
+          </div>
+          ${!isComplete ? '<div style="margin-top:8px;font-size:11px;color:rgba(255,255,255,0.4)">Fill all required fields (*) to register</div>' : ''}
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function updateGenForm(key, val) {
+  state.genForm[key] = val;
+  renderGenerator();
+}
+
+async function registerSku() {
+  const f = state.genForm;
+  if (!f.countryId || !f.gradeId || !f.packSizeId || !f.supplierId) { showToast('Please fill all required fields','error'); return; }
+
+  const country = findById(KEYS.countries, f.countryId);
+  const grade = findById(KEYS.grades, f.gradeId);
+  const pack = findById(KEYS.packSizes, f.packSizeId);
+  const supplier = findById(KEYS.suppliers, f.supplierId);
+  const region = findById(KEYS.regions, f.regionId);
+  const process = findById(KEYS.processes, f.processId);
+
+  const running = getNextRunning(supplier.code);
+  if (running > 99) { showToast('Supplier has reached max 99 SKUs!','error'); return; }
+
+  const skuCode = buildSku(country.code, grade.code, pack.code, supplier.code, running);
+  const settings = DB.get(KEYS.settings);
+  const lotNumber = buildLot(settings.nextLotNumber);
+  const description = buildDescription(country.name, region?.name, process?.name, supplier.name, grade.name, pack.name);
+  const createdAt = new Date().toISOString();
+
+  // Save to Notion first (if enabled)
+  const notionPayload = SYNC.buildPayload(skuCode, lotNumber, f, description, f.saleName, f.notes, createdAt);
+  const notionResult = await SYNC.createSku(notionPayload);
+
+  const newSku = {
+    id: notionResult?.notionId || DB.genId(),
+    notionId: notionResult?.notionId || '',
+    skuCode, lotNumber,
+    countryId:f.countryId, gradeId:f.gradeId, packSizeId:f.packSizeId,
+    supplierId:f.supplierId, regionId:f.regionId||'', processId:f.processId||'',
+    description, saleName:f.saleName||'', notes:f.notes||'',
+    createdAt
+  };
+
+  const skus = getAll(KEYS.skus);
+  skus.push(newSku);
+  DB.set(KEYS.skus, skus);
+  settings.nextLotNumber++;
+  DB.set(KEYS.settings, settings);
+
+  showToast(`Registered: ${skuCode} | LOT: ${lotNumber}`);
+  state.genForm = { countryId:'', gradeId:'', packSizeId:'', supplierId:'', regionId:'', processId:'', saleName:'', notes:'' };
+  renderGenerator();
+  if (SYNC.enabled) SYNC.updateUI('ok', `Cloud (${skus.length} SKUs)`);
+}
+
+// ============================================================
+// REGISTRY
+// ============================================================
+function renderRegistry() {
+  let skus = getAll(KEYS.skus);
+  const f = state.regFilters;
+
+  // Filter
+  if (f.search) {
+    const q = f.search.toLowerCase();
+    skus = skus.filter(s => (s.skuCode||'').toLowerCase().includes(q) || (s.description||'').toLowerCase().includes(q) || (s.lotNumber||'').toLowerCase().includes(q) || (s.saleName||'').toLowerCase().includes(q));
+  }
+  if (f.countryId) skus = skus.filter(s => s.countryId === f.countryId);
+  if (f.gradeId) skus = skus.filter(s => s.gradeId === f.gradeId);
+  if (f.supplierId) skus = skus.filter(s => s.supplierId === f.supplierId);
+
+  // Sort
+  const { col, dir } = state.regSort;
+  skus.sort((a,b) => {
+    let va = a[col] || '', vb = b[col] || '';
+    if (typeof va === 'string') va = va.toLowerCase();
+    if (typeof vb === 'string') vb = vb.toLowerCase();
+    return dir==='asc' ? (va>vb?1:-1) : (va<vb?1:-1);
+  });
+
+  // Paginate
+  const total = skus.length;
+  const showAll = state.regPerPage === 0;
+  const perPage = showAll ? total : state.regPerPage;
+  const pages = showAll ? 1 : (Math.ceil(total / perPage) || 1);
+  if (state.regPage > pages) state.regPage = pages;
+  const start = showAll ? 0 : (state.regPage-1) * perPage;
+  const pageSkus = showAll ? skus : skus.slice(start, start + perPage);
+
+  const countries = getAll(KEYS.countries).filter(c=>c.active).sort((a,b)=>a.name.localeCompare(b.name));
+  const grades = getAll(KEYS.grades).filter(g=>g.active);
+  const suppliers = getAll(KEYS.suppliers).filter(s=>s.active).sort((a,b)=>a.name.localeCompare(b.name));
+
+  function sortArrow(c) { return state.regSort.col===c ? (state.regSort.dir==='asc'?'▲':'▼') : '↕'; }
+
+  document.getElementById('registryTab').innerHTML = `
+    <div class="card mb-16">
+      <div class="registry-filters">
+        <div class="form-group search-group">
+          <label class="form-label">Search</label>
+          <input type="search" placeholder="Search SKU, description, lot, sale name..." value="${escHtml(f.search)}" oninput="updateRegFilter('search',this.value)">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Country</label>
+          <select onchange="updateRegFilter('countryId',this.value)">
+            <option value="">All</option>
+            ${countries.map(c=>`<option value="${c.id}" ${f.countryId===c.id?'selected':''}>${escHtml(c.name)}</option>`).join('')}
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Grade</label>
+          <select onchange="updateRegFilter('gradeId',this.value)">
+            <option value="">All</option>
+            ${grades.map(g=>`<option value="${g.id}" ${f.gradeId===g.id?'selected':''}>${escHtml(g.name)}</option>`).join('')}
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Supplier</label>
+          <select onchange="updateRegFilter('supplierId',this.value)">
+            <option value="">All</option>
+            ${suppliers.map(s=>`<option value="${s.id}" ${f.supplierId===s.id?'selected':''}>${escHtml(s.name)}</option>`).join('')}
+          </select>
+        </div>
+        <div class="form-group" style="flex:0">
+          <label class="form-label">&nbsp;</label>
+          <button class="btn btn-secondary btn-sm" onclick="clearRegFilters()">Clear</button>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="flex-between mb-16">
+        <div class="card-title" style="margin-bottom:0">${total} SKU${total!==1?'s':''} found</div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <button class="btn btn-primary btn-sm" onclick="showImportModal()">📥 Bulk Import CSV</button>
+          <button class="btn btn-secondary btn-sm" onclick="downloadCsvTemplate()">📋 Template</button>
+          <button class="btn btn-secondary btn-sm" onclick="exportExcel()">Export Excel</button>
+          <button class="btn btn-secondary btn-sm" onclick="exportCSV()">Export CSV</button>
+        </div>
+      </div>
+      <div class="table-wrapper">
+        <table>
+          <thead><tr>
+            <th onclick="toggleRegSort('skuCode')">SKU Code <span class="sort-arrow ${state.regSort.col==='skuCode'?'active':''}">${sortArrow('skuCode')}</span></th>
+            <th onclick="toggleRegSort('lotNumber')">LOT <span class="sort-arrow ${state.regSort.col==='lotNumber'?'active':''}">${sortArrow('lotNumber')}</span></th>
+            <th>Country</th>
+            <th>Grade</th>
+            <th>Pack</th>
+            <th>Supplier</th>
+            <th>Description</th>
+            <th>Sale Name</th>
+            <th onclick="toggleRegSort('createdAt')">Date <span class="sort-arrow ${state.regSort.col==='createdAt'?'active':''}">${sortArrow('createdAt')}</span></th>
+            ${state.adminMode ? '<th>Actions</th>' : ''}
+          </tr></thead>
+          <tbody>
+            ${pageSkus.length ? pageSkus.map(s => {
+              const country = findById(KEYS.countries, s.countryId);
+              const grade = findById(KEYS.grades, s.gradeId);
+              const pack = findById(KEYS.packSizes, s.packSizeId);
+              const supplier = findById(KEYS.suppliers, s.supplierId);
+              return `<tr>
+                <td class="sku-code-cell">${escHtml(s.skuCode)}</td>
+                <td class="lot-cell">${escHtml(s.lotNumber||'—')}</td>
+                <td>${escHtml(country?.name||'')}</td>
+                <td><span class="badge ${gradeBadgeClass(grade?.name)}">${escHtml(grade?.name||'')}</span></td>
+                <td>${escHtml(pack?.name||'')}</td>
+                <td>${escHtml(supplier?.name||'')}</td>
+                <td style="max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${escHtml(s.description||'')}">${escHtml(s.description||'')}</td>
+                <td style="max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${escHtml(s.saleName||'')}">${escHtml(s.saleName||'')}</td>
+                <td style="white-space:nowrap;font-size:12px;color:var(--text-muted)">${new Date(s.createdAt).toLocaleDateString()}</td>
+                ${state.adminMode ? `<td><button class="btn btn-danger btn-sm" onclick="deleteSku('${s.id}')">Del</button></td>` : ''}
+              </tr>`;
+            }).join('') : `<tr><td colspan="${state.adminMode?10:9}" class="empty-state">No SKUs found</td></tr>`}
+          </tbody>
+        </table>
+      </div>
+      <div class="pagination">
+        <div style="display:flex;align-items:center;gap:8px">
+          <span style="font-size:12px;color:var(--text-muted)">Show:</span>
+          ${[20,50,100].map(n=>`<button class="page-btn ${state.regPerPage===n?'active':''}" onclick="changePerPage(${n})">${n}</button>`).join('')}
+          <button class="page-btn ${state.regPerPage===0?'active':''}" onclick="changePerPage(0)">All</button>
+        </div>
+        ${pages > 1 ? `
+        <div style="display:flex;align-items:center;gap:12px">
+          <span>Page ${state.regPage} of ${pages}</span>
+          <div class="page-btns">
+            <button class="page-btn" onclick="goPage(${state.regPage-1})" ${state.regPage<=1?'disabled':''}>Prev</button>
+            ${Array.from({length:Math.min(pages,7)},(_,i)=>{
+              let p = i+1;
+              if(pages>7) { if(state.regPage<=4) p=i+1; else if(state.regPage>=pages-3) p=pages-6+i; else p=state.regPage-3+i; }
+              return `<button class="page-btn ${state.regPage===p?'active':''}" onclick="goPage(${p})">${p}</button>`;
+            }).join('')}
+            <button class="page-btn" onclick="goPage(${state.regPage+1})" ${state.regPage>=pages?'disabled':''}>Next</button>
+          </div>
+        </div>` : `<span style="font-size:13px;color:var(--text-muted)">Showing all ${total} items</span>`}
+      </div>
+    </div>
+  `;
+}
+
+const debouncedRenderRegistry = debounce(()=>renderRegistry(), 300);
+function updateRegFilter(key, val) { state.regFilters[key]=val; state.regPage=1; if(key==='search') debouncedRenderRegistry(); else renderRegistry(); }
+function clearRegFilters() { state.regFilters={search:'',countryId:'',gradeId:'',supplierId:''}; state.regPage=1; renderRegistry(); }
+function toggleRegSort(col) { state.regSort = state.regSort.col===col ? {col, dir:state.regSort.dir==='asc'?'desc':'asc'} : {col, dir:'asc'}; renderRegistry(); }
+function goPage(p) { const total=getAll(KEYS.skus).length; const pp=state.regPerPage||total; const pages=Math.ceil(total/pp)||1; if(p>=1&&p<=pages){state.regPage=p; renderRegistry();} }
+function changePerPage(n) { state.regPerPage=n; state.regPage=1; renderRegistry(); }
+
+async function deleteSku(id) {
+  if (!confirm('Delete this SKU? This cannot be undone.')) return;
+  const sku = getAll(KEYS.skus).find(s => s.id === id);
+  if (sku?.notionId || sku?.id) await SYNC.deleteSku(sku.notionId || sku.id);
+  const skus = getAll(KEYS.skus).filter(s=>s.id!==id);
+  DB.set(KEYS.skus, skus);
+  showToast('SKU deleted','warning');
+  renderRegistry();
+  if (SYNC.enabled) SYNC.updateUI('ok', `Cloud (${skus.length} SKUs)`);
+}
+
+function exportCSV() {
+  const skus = getAll(KEYS.skus);
+  const header = ['SKU Code','LOT No.','Country','Grade','Pack Size','Supplier','Description','Sale Name','Date'];
+  const rows = skus.map(s => {
+    const country = findById(KEYS.countries, s.countryId);
+    const grade = findById(KEYS.grades, s.gradeId);
+    const pack = findById(KEYS.packSizes, s.packSizeId);
+    const supplier = findById(KEYS.suppliers, s.supplierId);
+    return [s.skuCode, s.lotNumber||'', country?.name||'', grade?.name||'', pack?.name||'', supplier?.name||'', s.description||'', s.saleName||'', new Date(s.createdAt).toLocaleDateString()];
+  });
+  const csv = '\uFEFF' + [header, ...rows].map(r => r.map(c => '"'+String(c).replace(/"/g,'""')+'"').join(',')).join('\n');
+  const blob = new Blob([csv], {type:'text/csv;charset=utf-8'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = `SKU_Registry_${new Date().toISOString().slice(0,10)}.csv`;
+  a.click(); URL.revokeObjectURL(url);
+  showToast('CSV exported');
+}
+
+// ============================================================
+// CSV BULK IMPORT
+// ============================================================
+function downloadCsvTemplate() {
+  const countries = getAll(KEYS.countries).filter(c=>c.active).sort((a,b)=>a.name.localeCompare(b.name));
+  const grades = getAll(KEYS.grades).filter(g=>g.active);
+  const packs = getAll(KEYS.packSizes).filter(p=>p.active);
+  const suppliers = getAll(KEYS.suppliers).filter(s=>s.active).sort((a,b)=>a.code.localeCompare(b.code));
+
+  const header = ['Country Code','Grade Code','Pack Size Code','Supplier Code','Region/Brand','Process/Spec','Sale Name','Notes'];
+  const example1 = ['ET','C','A','65','Guji','Natural G1','Ethiopia Ardent Guji Natural G1',''];
+  const example2 = ['CO','D','H','76','April Culturing','Washed','Colombia FINCA MILAN April Culturing',''];
+  const example3 = ['CR','R','I','01','San Ramon','Yeast Washed','Costa Rica Hummingbird Yeast Washed',''];
+
+  const refHeader = ['','','CODE REFERENCE'];
+  const refCountries = ['','','Countries: ' + countries.map(c=>c.code+'='+c.name).join(', ')];
+  const refGrades = ['','','Grades: ' + grades.map(g=>g.code+'='+g.name).join(', ')];
+  const refPacks = ['','','Pack Sizes: ' + packs.map(p=>p.code+'='+p.name).join(', ')];
+  const refSuppliers = ['','','Suppliers: ' + suppliers.map(s=>s.code+'='+s.name).join(', ')];
+
+  const rows = [header, example1, example2, example3, [], refHeader, refCountries, refGrades, refPacks, refSuppliers];
+  const csv = '\uFEFF' + rows.map(r => r.map(c => '"'+String(c).replace(/"/g,'""')+'"').join(',')).join('\n');
+  const blob = new Blob([csv], {type:'text/csv;charset=utf-8'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = 'SKU_Import_Template.csv';
+  a.click(); URL.revokeObjectURL(url);
+  showToast('Template downloaded — fill in and import');
+}
+
+function showImportModal() {
+  const html = `
+    <h3>📥 Bulk Import from CSV</h3>
+    <p style="font-size:13px;color:var(--text-secondary);margin-bottom:16px">
+      Upload a CSV file to auto-generate SKUs in bulk.<br>
+      <strong>Required:</strong> Country Code, Grade Code, Pack Size Code, Supplier Code<br>
+      <strong>Optional:</strong> Region/Brand, Process/Spec, Sale Name, Notes<br>
+      <span style="color:var(--accent)">* SKU Code and LOT Number are generated automatically</span>
+    </p>
+    <div style="border:2px dashed var(--border-light);border-radius:var(--radius);padding:32px;text-align:center;cursor:pointer;transition:all 0.2s"
+         id="dropZone"
+         ondragover="event.preventDefault();this.style.borderColor='var(--accent)'"
+         ondragleave="this.style.borderColor='var(--border-light)'"
+         ondrop="event.preventDefault();this.style.borderColor='var(--border-light)';handleImportFile(event.dataTransfer.files[0])"
+         onclick="document.getElementById('csvImportFile').click()">
+      <div style="font-size:32px;margin-bottom:8px">📄</div>
+      <div style="font-size:14px;color:var(--text-primary)">Drop CSV file here or click to browse</div>
+      <div style="font-size:12px;color:var(--text-muted);margin-top:4px">Supports .csv and .tsv files</div>
+      <input type="file" id="csvImportFile" accept=".csv,.tsv,.txt" style="display:none" onchange="handleImportFile(this.files[0])">
+    </div>
+    <div id="importPreview" style="margin-top:16px"></div>
+    <div class="modal-actions">
+      <button class="btn btn-secondary btn-sm" onclick="downloadCsvTemplate()">📋 Download Template</button>
+      <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+    </div>
+  `;
+  showModal(html);
+}
+
+function handleImportFile(file) {
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    const text = e.target.result;
+    const delimiter = file.name.endsWith('.tsv') ? '\t' : ',';
+    const lines = parseCSV(text, delimiter);
+    if (lines.length < 2) { showToast('File is empty or has no data rows','error'); return; }
+
+    const headerRow = lines[0].map(h => h.trim().toLowerCase());
+    const colMap = {
+      country: headerRow.findIndex(h => h.includes('country')),
+      grade: headerRow.findIndex(h => h.includes('grade') && !h.includes('process') && !h.includes('spec')),
+      pack: headerRow.findIndex(h => h.includes('pack')),
+      supplier: headerRow.findIndex(h => h.includes('supplier')),
+      region: headerRow.findIndex(h => h.includes('region') || h.includes('brand')),
+      process: headerRow.findIndex(h => h.includes('process') || h.includes('spec')),
+      saleName: headerRow.findIndex(h => h.includes('sale')),
+      notes: headerRow.findIndex(h => h.includes('note'))
+    };
+
+    if (colMap.country<0||colMap.grade<0||colMap.pack<0||colMap.supplier<0) {
+      showToast('Missing required columns: Country Code, Grade Code, Pack Size Code, Supplier Code','error');
+      return;
+    }
+
+    const countries = getAll(KEYS.countries);
+    const grades = getAll(KEYS.grades);
+    const packs = getAll(KEYS.packSizes);
+    const suppliers = getAll(KEYS.suppliers);
+    const regions = getAll(KEYS.regions);
+    const processes = getAll(KEYS.processes);
+
+    const rows = [];
+    const errors = [];
+    for (let i = 1; i < lines.length; i++) {
+      const r = lines[i];
+      if (!r.length || r.every(c => !c.trim())) continue; // skip empty
+
+      const cc = (r[colMap.country]||'').trim().toUpperCase();
+      const gc = (r[colMap.grade]||'').trim().toUpperCase();
+      const pc = (r[colMap.pack]||'').trim().toUpperCase();
+      const sc = (r[colMap.supplier]||'').trim().padStart(2,'0');
+      const regionName = colMap.region>=0 ? (r[colMap.region]||'').trim() : '';
+      const processName = colMap.process>=0 ? (r[colMap.process]||'').trim() : '';
+      const saleName = colMap.saleName>=0 ? (r[colMap.saleName]||'').trim() : '';
+      const notes = colMap.notes>=0 ? (r[colMap.notes]||'').trim() : '';
+
+      const country = countries.find(x=>x.code===cc);
+      const grade = grades.find(x=>x.code===gc);
+      const pack = packs.find(x=>x.code===pc);
+      const supplier = suppliers.find(x=>x.code===sc);
+      const region = regions.find(x=>x.name.toLowerCase()===regionName.toLowerCase());
+      const process = processes.find(x=>x.name.toLowerCase()===processName.toLowerCase());
+
+      const rowErrors = [];
+      if (!country) rowErrors.push('Country "'+cc+'"');
+      if (!grade) rowErrors.push('Grade "'+gc+'"');
+      if (!pack) rowErrors.push('Pack "'+pc+'"');
+      if (!supplier) rowErrors.push('Supplier "'+sc+'"');
+
+      if (rowErrors.length) {
+        errors.push({row:i+1, issues:rowErrors});
+      } else {
+        rows.push({country,grade,pack,supplier,region,process,regionName,processName,saleName,notes});
+      }
+    }
+
+    // Show preview
+    let previewHtml = '';
+    if (errors.length) {
+      previewHtml += `<div style="background:rgba(200,90,74,0.1);border:1px solid var(--error);border-radius:var(--radius-sm);padding:12px;margin-bottom:12px">
+        <div style="font-weight:600;color:var(--error);margin-bottom:6px">⚠ ${errors.length} row(s) with errors (will be skipped):</div>
+        <div style="font-size:12px;color:var(--text-secondary);max-height:100px;overflow-y:auto">
+          ${errors.slice(0,10).map(e=>`<div>Row ${e.row}: Unknown ${e.issues.join(', ')}</div>`).join('')}
+          ${errors.length>10?`<div>...and ${errors.length-10} more</div>`:''}
+        </div>
+      </div>`;
+    }
+    if (rows.length) {
+      previewHtml += `<div style="background:rgba(74,156,109,0.1);border:1px solid var(--success);border-radius:var(--radius-sm);padding:12px;margin-bottom:12px">
+        <div style="font-weight:600;color:var(--success);margin-bottom:8px">✓ ${rows.length} SKU(s) ready to import</div>
+        <div style="max-height:200px;overflow-y:auto">
+          <table class="admin-table" style="font-size:12px">
+            <thead><tr><th>Country</th><th>Grade</th><th>Pack</th><th>Supplier</th><th>Region</th><th>Process</th></tr></thead>
+            <tbody>
+              ${rows.slice(0,20).map(r=>`<tr>
+                <td>${escHtml(r.country.name)} (${r.country.code})</td>
+                <td><span class="badge ${gradeBadgeClass(r.grade.name)}">${escHtml(r.grade.name)}</span></td>
+                <td>${escHtml(r.pack.name)}</td>
+                <td>${escHtml(r.supplier.name)} (${r.supplier.code})</td>
+                <td>${escHtml(r.regionName)}</td>
+                <td>${escHtml(r.processName)}</td>
+              </tr>`).join('')}
+              ${rows.length>20?`<tr><td colspan="6" style="color:var(--text-muted)">...and ${rows.length-20} more</td></tr>`:''}
+            </tbody>
+          </table>
+        </div>
+      </div>`;
+      previewHtml += `<div class="modal-actions" style="margin-top:12px;border-top:none;padding-top:0">
+        <button class="btn btn-primary" onclick="executeImport()">Import ${rows.length} SKUs</button>
+      </div>`;
+    } else if (!errors.length) {
+      previewHtml = '<div style="color:var(--text-muted);text-align:center;padding:16px">No valid data rows found</div>';
+    }
+
+    document.getElementById('importPreview').innerHTML = previewHtml;
+    window._pendingImport = rows;
+  };
+  reader.readAsText(file, 'UTF-8');
+}
+
+function parseCSV(text, delimiter) {
+  const rows = [];
+  let row = []; let cell = ''; let inQuotes = false;
+  for (let i = 0; i < text.length; i++) {
+    const ch = text[i];
+    if (inQuotes) {
+      if (ch === '"' && text[i+1] === '"') { cell += '"'; i++; }
+      else if (ch === '"') { inQuotes = false; }
+      else { cell += ch; }
+    } else {
+      if (ch === '"') { inQuotes = true; }
+      else if (ch === delimiter) { row.push(cell); cell = ''; }
+      else if (ch === '\n' || (ch === '\r' && text[i+1] === '\n')) {
+        if (ch === '\r') i++;
+        row.push(cell); cell = '';
+        if (row.some(c=>c.trim())) rows.push(row);
+        row = [];
+      } else { cell += ch; }
+    }
+  }
+  if (cell || row.length) { row.push(cell); if (row.some(c=>c.trim())) rows.push(row); }
+  return rows;
+}
+
+async function executeImport() {
+  const rows = window._pendingImport;
+  if (!rows || !rows.length) { showToast('No data to import','error'); return; }
+
+  const skus = getAll(KEYS.skus);
+  const settings = DB.get(KEYS.settings);
+  let lotNum = settings.nextLotNumber;
+  const newSkus = [];
+  const notionPayloads = [];
+
+  for (const r of rows) {
+    const running = getNextRunningFromList([...skus, ...newSkus], r.supplier.code);
+    if (running > 99) { showToast(`Supplier ${r.supplier.name} (${r.supplier.code}) max 99 reached, skipping remaining`,'warning'); continue; }
+
+    const skuCode = buildSku(r.country.code, r.grade.code, r.pack.code, r.supplier.code, running);
+    const lotNumber = buildLot(lotNum);
+    const description = buildDescription(r.country.name, r.regionName, r.processName, r.supplier.name, r.grade.name, r.pack.name);
+    const createdAt = new Date().toISOString();
+
+    newSkus.push({
+      id: DB.genId(), skuCode, lotNumber,
+      countryId:r.country.id, gradeId:r.grade.id, packSizeId:r.pack.id,
+      supplierId:r.supplier.id, regionId:r.region?.id||'', processId:r.process?.id||'',
+      description, saleName:r.saleName||'', notes:r.notes||'',
+      createdAt
+    });
+
+    notionPayloads.push({
+      skuCode, lotNumber,
+      country:r.country.name, countryCode:r.country.code,
+      grade:r.grade.name, gradeCode:r.grade.code,
+      packSize:r.pack.name, packCode:r.pack.code,
+      supplier:r.supplier.name, supplierCode:r.supplier.code,
+      region:r.regionName||'', process:r.processName||'',
+      description, saleName:r.saleName||'', notes:r.notes||'',
+      createdAt
+    });
+    lotNum++;
+  }
+
+  // Save locally first
+  DB.set(KEYS.skus, [...skus, ...newSkus]);
+  settings.nextLotNumber = lotNum;
+  DB.set(KEYS.settings, settings);
+
+  window._pendingImport = null;
+  closeModal();
+  showToast(`${newSkus.length} SKUs imported successfully!`);
+  renderRegistry();
+
+  // Sync to Notion in background
+  if (SYNC.enabled && notionPayloads.length) {
+    SYNC.updateUI('syncing', `Syncing ${notionPayloads.length} SKUs...`);
+    const results = await SYNC.bulkCreate(notionPayloads);
+    if (results.length) {
+      // Update local SKUs with Notion IDs, then re-sync
+      await SYNC.init();
+    }
+    SYNC.updateUI('ok', `Cloud (${getAll(KEYS.skus).length} SKUs)`);
+  }
+}
+
+function getNextRunningFromList(allSkus, supplierCode) {
+  const nums = allSkus.filter(s => s.skuCode && s.skuCode.substring(4,6) === supplierCode).map(s => parseInt(s.skuCode.substring(6,8)) || 0);
+  return nums.length ? Math.max(...nums) + 1 : 1;
+}
+
+function exportExcel() {
+  const skus = getAll(KEYS.skus);
+  if (!skus.length) { showToast('No SKUs to export','warning'); return; }
+
+  const wb = XLSX.utils.book_new();
+
+  // --- Sheet 1: SKU Registry ---
+  const regHeader = ['SKU Code','LOT No.','Country','Country Code','Grade','Grade Code','Pack Size','Pack Code','Supplier','Supplier Code','Region/Brand','Process/Spec','Description','Sale Name','Notes','Date'];
+  const regRows = skus.map(s => {
+    const country = findById(KEYS.countries, s.countryId);
+    const grade = findById(KEYS.grades, s.gradeId);
+    const pack = findById(KEYS.packSizes, s.packSizeId);
+    const supplier = findById(KEYS.suppliers, s.supplierId);
+    const region = findById(KEYS.regions, s.regionId);
+    const process = findById(KEYS.processes, s.processId);
+    return [s.skuCode, s.lotNumber||'', country?.name||'', country?.code||'', grade?.name||'', grade?.code||'', pack?.name||'', pack?.code||'', supplier?.name||'', supplier?.code||'', region?.name||'', process?.name||'', s.description||'', s.saleName||'', s.notes||'', new Date(s.createdAt).toLocaleDateString()];
+  });
+  const ws1 = XLSX.utils.aoa_to_sheet([regHeader, ...regRows]);
+
+  // Column widths
+  ws1['!cols'] = [
+    {wch:12},{wch:10},{wch:16},{wch:6},{wch:14},{wch:6},{wch:12},{wch:6},{wch:24},{wch:8},{wch:18},{wch:18},{wch:50},{wch:40},{wch:20},{wch:12}
+  ];
+
+  // Style header row (bold via cell formatting)
+  regHeader.forEach((_, i) => {
+    const cell = ws1[XLSX.utils.encode_cell({r:0, c:i})];
+    if (cell) cell.s = { font:{bold:true, color:{rgb:"FFFFFF"}}, fill:{fgColor:{rgb:"8B6914"}}, alignment:{horizontal:"center"} };
+  });
+
+  XLSX.utils.book_append_sheet(wb, ws1, 'SKU Registry');
+
+  // --- Sheet 2: DATA INDEX (master data reference) ---
+  const countries = getAll(KEYS.countries).filter(c=>c.active).sort((a,b)=>a.name.localeCompare(b.name));
+  const grades = getAll(KEYS.grades).filter(g=>g.active);
+  const packs = getAll(KEYS.packSizes).filter(p=>p.active);
+  const suppliers = getAll(KEYS.suppliers).filter(s=>s.active).sort((a,b)=>a.code.localeCompare(b.code));
+  const regions = getAll(KEYS.regions).filter(r=>r.active).sort((a,b)=>a.name.localeCompare(b.name));
+  const processes = getAll(KEYS.processes).filter(p=>p.active).sort((a,b)=>a.name.localeCompare(b.name));
+
+  const maxRows = Math.max(countries.length, grades.length, packs.length, suppliers.length, regions.length, processes.length);
+  const indexHeader = ['Country','Code','','Grade','Code','','Pack Size','Code','','Supplier','Code','','Region/Brand','','Process/Spec'];
+  const indexRows = [];
+  for (let i = 0; i < maxRows; i++) {
+    indexRows.push([
+      countries[i]?.name||'', countries[i]?.code||'', '',
+      grades[i]?.name||'', grades[i]?.code||'', '',
+      packs[i]?.name||'', packs[i]?.code||'', '',
+      suppliers[i]?.name||'', suppliers[i]?.code||'', '',
+      regions[i]?.name||'', '',
+      processes[i]?.name||''
+    ]);
+  }
+  const ws2 = XLSX.utils.aoa_to_sheet([indexHeader, ...indexRows]);
+  ws2['!cols'] = [
+    {wch:20},{wch:5},{wch:2},{wch:14},{wch:5},{wch:2},{wch:14},{wch:5},{wch:2},{wch:26},{wch:5},{wch:2},{wch:20},{wch:2},{wch:20}
+  ];
+  indexHeader.forEach((_, i) => {
+    const cell = ws2[XLSX.utils.encode_cell({r:0, c:i})];
+    if (cell) cell.s = { font:{bold:true, color:{rgb:"FFFFFF"}}, fill:{fgColor:{rgb:"8B6914"}} };
+  });
+  XLSX.utils.book_append_sheet(wb, ws2, 'DATA INDEX');
+
+  // --- Sheet 3: Summary Stats ---
+  const countryCount = {};
+  skus.forEach(s => { const c = findById(KEYS.countries, s.countryId); if(c) countryCount[c.name] = (countryCount[c.name]||0)+1; });
+  const gradeCount = {};
+  skus.forEach(s => { const g = findById(KEYS.grades, s.gradeId); if(g) gradeCount[g.name] = (gradeCount[g.name]||0)+1; });
+
+  const statsData = [
+    ['SKU Registry Summary', '', ''],
+    ['Generated', new Date().toLocaleString(), ''],
+    ['Total SKUs', skus.length, ''],
+    [''],
+    ['By Country','Count',''],
+    ...Object.entries(countryCount).sort((a,b)=>b[1]-a[1]).map(([k,v])=>[k,v,'']),
+    [''],
+    ['By Grade','Count',''],
+    ...Object.entries(gradeCount).sort((a,b)=>b[1]-a[1]).map(([k,v])=>[k,v,''])
+  ];
+  const ws3 = XLSX.utils.aoa_to_sheet(statsData);
+  ws3['!cols'] = [{wch:24},{wch:14},{wch:10}];
+  XLSX.utils.book_append_sheet(wb, ws3, 'Summary');
+
+  XLSX.writeFile(wb, `SKU_Registry_CHANGCO_${new Date().toISOString().slice(0,10)}.xlsx`);
+  showToast('Excel file exported (3 sheets)');
+}
+
+// ============================================================
+// SETTINGS (SKU criteria management - no password needed)
+// ============================================================
+function renderSettings() {
+  const sections = [
+    { key:KEYS.countries, title:'Countries (Origin)', icon:'🌍', fields:['name','code'], labels:['Country Name','Code (2 letters)'], desc:'Positions 1-2 of SKU Code' },
+    { key:KEYS.grades, title:'Grades / Categories', icon:'⭐', fields:['name','code'], labels:['Grade Name','Code (1 letter)'], desc:'Position 3 of SKU Code' },
+    { key:KEYS.packSizes, title:'Pack Sizes', icon:'📦', fields:['name','code'], labels:['Pack Size Name','Code (1 letter)'], desc:'Position 4 of SKU Code' },
+    { key:KEYS.suppliers, title:'Suppliers', icon:'🤝', fields:['name','code'], labels:['Supplier Name','Code (2 digits)'], desc:'Positions 5-6 of SKU Code' },
+    { key:KEYS.regions, title:'Regions / Brands', icon:'📍', fields:['name'], labels:['Region/Brand Name'], desc:'Included in Description field' },
+    { key:KEYS.processes, title:'Processes / Specs', icon:'☕', fields:['name'], labels:['Process Name'], desc:'Included in Description field' }
+  ];
+
+  document.getElementById('settingsTab').innerHTML = `
+    <div style="margin-bottom:20px">
+      <h2 style="font-size:20px;font-weight:700;color:var(--heritage-blue)">SKU Settings</h2>
+      <p style="font-size:13px;color:var(--text-secondary);margin-top:4px">Add, edit, or remove the master data used for SKU generation.</p>
+    </div>
+    ${sections.map(sec => {
+      const items = getAll(sec.key).sort((a,b)=>(a.sortOrder||0)-(b.sortOrder||0));
+      const activeCount = items.filter(x=>x.active!==false).length;
+      return `
+      <div class="admin-section" id="settSec_${sec.key}">
+        <div class="admin-section-header" onclick="toggleSettSection('${sec.key}')">
+          <h3>${sec.icon} ${sec.title} <span class="count-badge">${activeCount}/${items.length}</span></h3>
+          <div style="display:flex;align-items:center;gap:12px">
+            <span style="font-size:11px;color:var(--text-muted)">${sec.desc}</span>
+            <span class="chevron">▼</span>
+          </div>
+        </div>
+        <div class="admin-section-body">
+          <div class="admin-add-row">
+            ${sec.fields.map((f,i) => `
+              <div class="form-group">
+                <label class="form-label">${sec.labels[i]}</label>
+                <input type="text" class="inline-input" id="settNew_${sec.key}_${f}" placeholder="${sec.labels[i]}" style="width:${f==='code'?'100px':'200px'}">
+              </div>
+            `).join('')}
+            <div class="form-group">
+              <label class="form-label">&nbsp;</label>
+              <button class="btn btn-primary btn-sm" onclick="settAdd('${sec.key}',${JSON.stringify(sec.fields).replace(/"/g,'&quot;')})">+ Add</button>
+            </div>
+          </div>
+          <table class="admin-table">
+            <thead><tr>${sec.fields.map((f,i)=>`<th>${sec.labels[i]}</th>`).join('')}<th style="width:60px">Active</th><th style="width:100px">Actions</th></tr></thead>
+            <tbody>
+              ${items.map(item => `<tr style="${item.active===false?'opacity:0.45':''}">
+                ${sec.fields.map(f => `<td>${f==='code' ? '<code style="color:var(--heritage-blue);font-weight:700;font-family:JetBrains Mono,monospace">'+escHtml(item[f]||'')+'</code>' : escHtml(item[f]||'')}</td>`).join('')}
+                <td><input type="checkbox" ${item.active!==false?'checked':''} onchange="settToggle('${sec.key}','${item.id}',this.checked)"></td>
+                <td class="admin-actions">
+                  <button class="btn btn-secondary btn-sm" onclick="settEdit('${sec.key}','${item.id}',${JSON.stringify(sec.fields).replace(/"/g,'&quot;')})">Edit</button>
+                  <button class="btn btn-danger btn-sm" onclick="settDelete('${sec.key}','${item.id}')">×</button>
+                </td>
+              </tr>`).join('')}
+            </tbody>
+          </table>
+        </div>
+      </div>`;
+    }).join('')}
+  `;
+}
+
+function toggleSettSection(key) { document.getElementById('settSec_'+key).classList.toggle('open'); }
+
+function settAdd(key, fields) {
+  const vals = {};
+  for (const f of fields) {
+    const el = document.getElementById('settNew_'+key+'_'+f);
+    vals[f] = el.value.trim();
+    if (!vals[f]) { showToast('Please fill all fields','error'); return; }
+  }
+  if (vals.code) {
+    const existing = getAll(key);
+    if (existing.some(x => x.code === vals.code)) { showToast('Code already exists!','error'); return; }
+  }
+  const items = getAll(key);
+  items.push({ id:DB.genId(), ...vals, active:true, sortOrder:items.length });
+  DB.set(key, items);
+  showToast('Added successfully');
+  renderSettings();
+}
+
+function settToggle(key, id, checked) {
+  const items = getAll(key);
+  const item = items.find(x=>x.id===id);
+  if (item) { item.active = checked; DB.set(key, items); renderSettings(); }
+}
+
+function settEdit(key, id, fields) {
+  const items = getAll(key);
+  const item = items.find(x=>x.id===id);
+  if (!item) return;
+  const html = `
+    <h3>Edit ${escHtml(item.name || 'Item')}</h3>
+    ${fields.map(f => `
+      <div class="form-group">
+        <label class="form-label">${f}</label>
+        <input type="text" id="settEditField_${f}" value="${escHtml(item[f]||'')}">
+      </div>
+    `).join('')}
+    <div class="modal-actions">
+      <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="settSaveEdit('${key}','${id}',${JSON.stringify(fields).replace(/"/g,'&quot;')})">Save</button>
+    </div>
+  `;
+  showModal(html);
+}
+
+function settSaveEdit(key, id, fields) {
+  const items = getAll(key);
+  const item = items.find(x=>x.id===id);
+  if (!item) return;
+  for (const f of fields) {
+    const val = document.getElementById('settEditField_'+f).value.trim();
+    if (!val) { showToast('Please fill all fields','error'); return; }
+    if (f === 'code' && val !== item.code && items.some(x => x.code === val && x.id !== id)) {
+      showToast('Code already exists!','error'); return;
+    }
+    item[f] = val;
+  }
+  DB.set(key, items);
+  closeModal();
+  showToast('Updated');
+  renderSettings();
+}
+
+function settDelete(key, id) {
+  const skus = getAll(KEYS.skus);
+  const refFields = { [KEYS.countries]:'countryId', [KEYS.grades]:'gradeId', [KEYS.packSizes]:'packSizeId', [KEYS.suppliers]:'supplierId', [KEYS.regions]:'regionId', [KEYS.processes]:'processId' };
+  const field = refFields[key];
+  if (field) {
+    const used = skus.filter(s => s[field] === id).length;
+    if (used > 0) { showToast(`Cannot delete: used by ${used} SKU(s). Deactivate instead.`,'error'); return; }
+  }
+  if (!confirm('Delete this item?')) return;
+  const items = getAll(key).filter(x=>x.id!==id);
+  DB.set(key, items);
+  showToast('Deleted','warning');
+  renderSettings();
+}
+
+// ============================================================
+// ADMIN
+// ============================================================
+function renderAdmin() {
+  const sections = [
+    { key:KEYS.countries, title:'Countries', fields:['name','code'], labels:['Country Name','Code (2 letters)'] },
+    { key:KEYS.grades, title:'Grades / Categories', fields:['name','code'], labels:['Grade Name','Code (1 letter)'] },
+    { key:KEYS.packSizes, title:'Pack Sizes', fields:['name','code'], labels:['Pack Size Name','Code (1 letter)'] },
+    { key:KEYS.suppliers, title:'Suppliers', fields:['name','code'], labels:['Supplier Name','Code (2 digits)'] },
+    { key:KEYS.regions, title:'Regions / Brands', fields:['name'], labels:['Region/Brand Name'] },
+    { key:KEYS.processes, title:'Processes / Specs', fields:['name'], labels:['Process Name'] }
+  ];
+
+  document.getElementById('adminTab').innerHTML = `
+    ${sections.map(sec => {
+      const items = getAll(sec.key).sort((a,b)=>(a.sortOrder||0)-(b.sortOrder||0));
+      return `
+      <div class="admin-section" id="adminSec_${sec.key}">
+        <div class="admin-section-header" onclick="toggleAdminSection('${sec.key}')">
+          <h3>${sec.title} <span class="count-badge">${items.length}</span></h3>
+          <span class="chevron">▼</span>
+        </div>
+        <div class="admin-section-body">
+          <div class="admin-add-row">
+            ${sec.fields.map((f,i) => `
+              <div class="form-group">
+                <label class="form-label">${sec.labels[i]}</label>
+                <input type="text" class="inline-input" id="adminNew_${sec.key}_${f}" placeholder="${sec.labels[i]}" style="width:${f==='code'?'100px':'200px'}">
+              </div>
+            `).join('')}
+            <div class="form-group">
+              <label class="form-label">&nbsp;</label>
+              <button class="btn btn-success btn-sm" onclick="adminAdd('${sec.key}',${JSON.stringify(sec.fields).replace(/"/g,'&quot;')})">+ Add</button>
+            </div>
+          </div>
+          <table class="admin-table">
+            <thead><tr>${sec.fields.map((f,i)=>`<th>${sec.labels[i]}</th>`).join('')}<th>Active</th><th style="width:80px">Actions</th></tr></thead>
+            <tbody>
+              ${items.map(item => `<tr>
+                ${sec.fields.map(f => `<td>${f==='code' ? '<code style="color:var(--accent)">'+escHtml(item[f]||'')+'</code>' : escHtml(item[f]||'')}</td>`).join('')}
+                <td><input type="checkbox" ${item.active!==false?'checked':''} onchange="adminToggleActive('${sec.key}','${item.id}',this.checked)"></td>
+                <td class="admin-actions">
+                  <button class="btn btn-secondary btn-sm" onclick="adminEdit('${sec.key}','${item.id}',${JSON.stringify(sec.fields).replace(/"/g,'&quot;')})">Edit</button>
+                  <button class="btn btn-danger btn-sm" onclick="adminDelete('${sec.key}','${item.id}')">×</button>
+                </td>
+              </tr>`).join('')}
+            </tbody>
+          </table>
+        </div>
+      </div>`;
+    }).join('')}
+    <div class="card" style="margin-top:24px">
+      <div class="card-title">Data Management</div>
+      <div class="backup-section">
+        <button class="btn btn-secondary" onclick="exportBackup()">Export Backup (JSON)</button>
+        <button class="btn btn-secondary" onclick="document.getElementById('importFile').click()">Import Backup</button>
+        <input type="file" id="importFile" accept=".json" style="display:none" onchange="importBackup(this)">
+        <button class="btn btn-danger" onclick="resetData()">Reset to Defaults</button>
+      </div>
+      <div style="margin-top:20px;padding-top:16px;border-top:1px solid var(--border)">
+        <div class="card-title">Notion Cloud Sync</div>
+        <p style="font-size:12px;color:var(--text-secondary);margin-bottom:12px">Push existing local SKUs to Notion database (use only once for initial setup).</p>
+        <button class="btn btn-primary btn-sm" onclick="seedToNotion()" id="seedBtn">🔄 Seed Local SKUs to Notion</button>
+        <button class="btn btn-secondary btn-sm" onclick="manualSync()" style="margin-left:8px">↻ Re-sync from Notion</button>
+      </div>
+      <div style="margin-top:16px">
+        <div class="form-group" style="max-width:300px">
+          <label class="form-label">Change Admin Password</label>
+          <div style="display:flex;gap:8px">
+            <input type="password" id="newAdminPw" placeholder="New password">
+            <button class="btn btn-secondary btn-sm" onclick="changePassword()">Save</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function toggleAdminSection(key) {
+  document.getElementById('adminSec_'+key).classList.toggle('open');
+}
+
+function adminAdd(key, fields) {
+  const vals = {};
+  for (const f of fields) {
+    const el = document.getElementById('adminNew_'+key+'_'+f);
+    vals[f] = el.value.trim();
+    if (!vals[f]) { showToast('Please fill all fields','error'); return; }
+  }
+  // Validate code uniqueness
+  if (vals.code) {
+    const existing = getAll(key);
+    if (existing.some(x => x.code === vals.code)) { showToast('Code already exists!','error'); return; }
+  }
+  const items = getAll(key);
+  items.push({ id:DB.genId(), ...vals, active:true, sortOrder:items.length });
+  DB.set(key, items);
+  showToast('Added successfully');
+  renderAdmin();
+}
+
+function adminToggleActive(key, id, checked) {
+  const items = getAll(key);
+  const item = items.find(x=>x.id===id);
+  if (item) { item.active = checked; DB.set(key, items); }
+}
+
+function adminEdit(key, id, fields) {
+  const items = getAll(key);
+  const item = items.find(x=>x.id===id);
+  if (!item) return;
+
+  const html = `
+    <h3>Edit ${item.name || 'Item'}</h3>
+    ${fields.map(f => `
+      <div class="form-group">
+        <label class="form-label">${f}</label>
+        <input type="text" id="editField_${f}" value="${escHtml(item[f]||'')}">
+      </div>
+    `).join('')}
+    <div class="modal-actions">
+      <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="adminSaveEdit('${key}','${id}',${JSON.stringify(fields).replace(/"/g,'&quot;')})">Save</button>
+    </div>
+  `;
+  showModal(html);
+}
+
+function adminSaveEdit(key, id, fields) {
+  const items = getAll(key);
+  const item = items.find(x=>x.id===id);
+  if (!item) return;
+  for (const f of fields) {
+    const val = document.getElementById('editField_'+f).value.trim();
+    if (!val) { showToast('Please fill all fields','error'); return; }
+    if (f === 'code' && val !== item.code && items.some(x => x.code === val && x.id !== id)) {
+      showToast('Code already exists!','error'); return;
+    }
+    item[f] = val;
+  }
+  DB.set(key, items);
+  closeModal();
+  showToast('Updated');
+  renderAdmin();
+}
+
+function adminDelete(key, id) {
+  // Check if used by any SKU
+  const skus = getAll(KEYS.skus);
+  const refFields = { [KEYS.countries]:'countryId', [KEYS.grades]:'gradeId', [KEYS.packSizes]:'packSizeId', [KEYS.suppliers]:'supplierId', [KEYS.regions]:'regionId', [KEYS.processes]:'processId' };
+  const field = refFields[key];
+  if (field) {
+    const used = skus.filter(s => s[field] === id).length;
+    if (used > 0) { showToast(`Cannot delete: used by ${used} SKU(s)`,'error'); return; }
+  }
+  if (!confirm('Delete this item?')) return;
+  const items = getAll(key).filter(x=>x.id!==id);
+  DB.set(key, items);
+  showToast('Deleted','warning');
+  renderAdmin();
+}
+
+function exportBackup() {
+  const data = {};
+  Object.values(KEYS).forEach(k => data[k] = DB.get(k));
+  const blob = new Blob([JSON.stringify(data, null, 2)], {type:'application/json'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = `SKU_Backup_${new Date().toISOString().slice(0,10)}.json`;
+  a.click(); URL.revokeObjectURL(url);
+  showToast('Backup exported');
+}
+
+function importBackup(input) {
+  const file = input.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    try {
+      const data = JSON.parse(e.target.result);
+      if (!confirm(`Import backup? This will replace all current data.\n\nFound: ${Object.keys(data).join(', ')}`)) return;
+      Object.entries(data).forEach(([k,v]) => DB.set(k, v));
+      showToast('Backup imported successfully');
+      renderTab(state.activeTab);
+    } catch { showToast('Invalid backup file','error'); }
+  };
+  reader.readAsText(file);
+  input.value = '';
+}
+
+function resetData() {
+  if (!confirm('Reset ALL data to defaults? This cannot be undone!')) return;
+  if (!confirm('Are you really sure? All registered SKUs will be lost.')) return;
+  Object.values(KEYS).forEach(k => localStorage.removeItem(STORAGE_PREFIX+k));
+  initData();
+  showToast('Data reset to defaults','warning');
+  renderTab(state.activeTab);
+}
+
+function changePassword() {
+  const pw = document.getElementById('newAdminPw').value.trim();
+  if (!pw || pw.length < 4) { showToast('Password must be at least 4 characters','error'); return; }
+  const settings = DB.get(KEYS.settings);
+  settings.adminPassword = pw;
+  DB.set(KEYS.settings, settings);
+  showToast('Password changed');
+  document.getElementById('newAdminPw').value = '';
+}
+
+// ============================================================
+// MODAL
+// ============================================================
+function showModal(html) {
+  document.getElementById('modalRoot').innerHTML = `
+    <div class="modal-overlay" onclick="if(event.target===this)closeModal()">
+      <div class="modal">${html}</div>
+    </div>
+  `;
+}
+function closeModal() { document.getElementById('modalRoot').innerHTML = ''; }
+
+// ============================================================
+// MANUAL SYNC
+// ============================================================
+async function manualSync() {
+  if (SYNC.syncing) return;
+  SYNC.syncing = true;
+  SYNC.updateUI('syncing', 'Syncing...');
+  await SYNC.init();
+  SYNC.syncing = false;
+}
+
+// ============================================================
+// SEED: Push existing local SKUs to Notion (one-time)
+// ============================================================
+async function seedToNotion() {
+  if (!SYNC.enabled) { showToast('Notion not connected','error'); return; }
+  const skus = getAll(KEYS.skus);
+  if (!skus.length) { showToast('No local SKUs to seed','warning'); return; }
+  if (!confirm(`Push ${skus.length} local SKUs to Notion? This is for initial setup only.`)) return;
+
+  SYNC.updateUI('syncing', `Seeding ${skus.length} SKUs...`);
+  const payloads = skus.map(s => {
+    const country = findById(KEYS.countries, s.countryId);
+    const grade = findById(KEYS.grades, s.gradeId);
+    const pack = findById(KEYS.packSizes, s.packSizeId);
+    const supplier = findById(KEYS.suppliers, s.supplierId);
+    const region = findById(KEYS.regions, s.regionId);
+    const process = findById(KEYS.processes, s.processId);
+    return {
+      skuCode:s.skuCode, lotNumber:s.lotNumber,
+      country:country?.name||'', countryCode:country?.code||'',
+      grade:grade?.name||'', gradeCode:grade?.code||'',
+      packSize:pack?.name||'', packCode:pack?.code||'',
+      supplier:supplier?.name||'', supplierCode:supplier?.code||'',
+      region:region?.name||'', process:process?.name||'',
+      description:s.description||'', saleName:s.saleName||'', notes:s.notes||'',
+      createdAt:s.createdAt
+    };
+  });
+  const results = await SYNC.bulkCreate(payloads);
+  showToast(`Seeded ${results.length} SKUs to Notion`);
+  await SYNC.init();
+}
+
+// ============================================================
+// INIT
+// ============================================================
+initData();
+renderDashboard();
+
+// Attempt Notion sync after initial render
+SYNC.init();
+</script>
+</body>
+</html>

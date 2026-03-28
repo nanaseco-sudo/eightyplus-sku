@@ -1,0 +1,8 @@
+{
+  "name": "sku-generator",
+  "version": "1.0.0",
+  "description": "EIGHTY PLUS SKU Manager with Notion backend",
+  "dependencies": {
+    "@notionhq/client": "^2.2.15"
+  }
+}
