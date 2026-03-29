@@ -342,6 +342,9 @@ const SYNC = {
         description: ns.description,
         saleName: ns.saleName,
         notes: ns.notes,
+        costPrice: ns.costPrice != null ? ns.costPrice : null,
+        sellingPrice: ns.sellingPrice != null ? ns.sellingPrice : null,
+        currency: ns.currency || 'THB',
         createdAt: ns.createdAt,
       }));
 
@@ -430,6 +433,9 @@ const SYNC = {
       supplier: supplier?.name || '', supplierCode: supplier?.code || '',
       region: region?.name || '', process: process?.name || '',
       description: description || '', saleName: saleName || '', notes: notes || '',
+      costPrice: f.costPrice ? parseFloat(f.costPrice) : null,
+      sellingPrice: f.sellingPrice ? parseFloat(f.sellingPrice) : null,
+      currency: f.currency || 'THB',
       createdAt: createdAt || new Date().toISOString(),
     };
   }
@@ -529,7 +535,7 @@ function initData() {
 let state = {
   activeTab: 'dashboard',
   adminMode: false,
-  genForm: { countryId:'', gradeId:'', packSizeId:'', supplierId:'', regionId:'', processId:'', saleName:'', notes:'' },
+  genForm: { countryId:'', gradeId:'', packSizeId:'', supplierId:'', regionId:'', processId:'', saleName:'', notes:'', costPrice:'', sellingPrice:'', currency:'THB' },
   regFilters: { search:'', countryId:'', gradeId:'', supplierId:'' },
   regSort: { col:'createdAt', dir:'desc' },
   regPage: 1,
@@ -716,10 +722,7 @@ function renderGenerator() {
           <div class="card-title">SKU Configuration</div>
           <div class="form-group">
             <label class="form-label">Country *</label>
-            <select id="genCountry" onchange="updateGenForm('countryId',this.value)">
-              <option value="">— Select Country —</option>
-              ${countries.map(c=>`<option value="${c.id}" ${f.countryId===c.id?'selected':''}>${escHtml(c.name)} (${c.code})</option>`).join('')}
-            </select>
+            ${renderSS('country', countries.map(c=>({...c,_label:c.name+' ('+c.code+')'})), f.countryId, 'Type to search country...', 'countryId')}
           </div>
           <div class="form-group">
             <label class="form-label">Grade / Category *</label>
@@ -737,32 +740,39 @@ function renderGenerator() {
           </div>
           <div class="form-group">
             <label class="form-label">Supplier *</label>
-            <select id="genSupplier" onchange="updateGenForm('supplierId',this.value)">
-              <option value="">— Select Supplier —</option>
-              ${suppliers.map(s=>`<option value="${s.id}" ${f.supplierId===s.id?'selected':''}>${escHtml(s.name)} (${s.code})</option>`).join('')}
-            </select>
+            ${renderSS('supplier', suppliers.map(s=>({...s,_label:s.name+' ('+s.code+')'})), f.supplierId, 'Type to search supplier...', 'supplierId')}
           </div>
           <div class="form-group">
             <label class="form-label">Region / Brand</label>
-            <select id="genRegion" onchange="updateGenForm('regionId',this.value)">
-              <option value="">— Select Region (Optional) —</option>
-              ${regions.map(r=>`<option value="${r.id}" ${f.regionId===r.id?'selected':''}>${escHtml(r.name)}</option>`).join('')}
-            </select>
+            ${renderSS('region', regions.map(r=>({...r,_label:r.name})), f.regionId, 'Type to search region...', 'regionId')}
           </div>
           <div class="form-group">
             <label class="form-label">Process / Spec</label>
-            <select id="genProcess" onchange="updateGenForm('processId',this.value)">
-              <option value="">— Select Process (Optional) —</option>
-              ${processes.map(p=>`<option value="${p.id}" ${f.processId===p.id?'selected':''}>${escHtml(p.name)}</option>`).join('')}
-            </select>
+            ${renderSS('process', processes.map(p=>({...p,_label:p.name})), f.processId, 'Type to search process...', 'processId')}
           </div>
           <div class="form-group">
             <label class="form-label">Sale Name</label>
-            <input type="text" placeholder="e.g. Ethiopia Ardent Sidama Natural G1, Rori" value="${escHtml(f.saleName||'')}" oninput="updateGenForm('saleName',this.value)">
+            <input type="text" id="genSaleName" placeholder="e.g. Ethiopia Ardent Sidama Natural G1, Rori" value="${escHtml(f.saleName||'')}" oninput="updateGenForm('saleName',this.value)">
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr 100px;gap:12px">
+            <div class="form-group">
+              <label class="form-label">Cost Price</label>
+              <input type="number" id="genCostPrice" placeholder="0.00" step="0.01" min="0" value="${f.costPrice||''}" oninput="updateGenForm('costPrice',this.value)">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Selling Price</label>
+              <input type="number" id="genSellingPrice" placeholder="0.00" step="0.01" min="0" value="${f.sellingPrice||''}" oninput="updateGenForm('sellingPrice',this.value)">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Currency</label>
+              <select onchange="updateGenForm('currency',this.value)">
+                ${['THB','USD','EUR','MYR','IDR','PHP','SGD','JPY','KRW','CNY','GBP'].map(c=>`<option value="${c}" ${f.currency===c?'selected':''}>${c}</option>`).join('')}
+              </select>
+            </div>
           </div>
           <div class="form-group">
             <label class="form-label">Notes</label>
-            <textarea placeholder="Optional notes..." oninput="updateGenForm('notes',this.value)">${escHtml(f.notes||'')}</textarea>
+            <textarea id="genNotes" placeholder="Optional notes..." oninput="updateGenForm('notes',this.value)">${escHtml(f.notes||'')}</textarea>
           </div>
         </div>
       </div>
@@ -799,7 +809,50 @@ function renderGenerator() {
 
 function updateGenForm(key, val) {
   state.genForm[key] = val;
+  // Skip full re-render for text/number inputs to prevent focus loss
+  if (['saleName','notes','costPrice','sellingPrice'].includes(key)) return;
   renderGenerator();
+}
+
+// ============================================================
+// SEARCHABLE SELECT
+// ============================================================
+function ssOpen(id) {
+  const dd = document.getElementById('ssd_' + id);
+  if (dd) { dd.classList.add('open'); ssFilter(id, ''); }
+}
+function ssClose(id) {
+  const dd = document.getElementById('ssd_' + id);
+  if (dd) dd.classList.remove('open');
+}
+function ssFilter(id, query) {
+  const dd = document.getElementById('ssd_' + id);
+  if (!dd) return;
+  const q = query.toLowerCase();
+  dd.querySelectorAll('.search-select-option').forEach(opt => {
+    opt.style.display = opt.textContent.toLowerCase().includes(q) ? '' : 'none';
+  });
+}
+function ssSelect(id, value, formKey) {
+  ssClose(id);
+  updateGenForm(formKey, value);
+}
+function ssClear(id, formKey, e) {
+  if (e) e.preventDefault();
+  updateGenForm(formKey, '');
+}
+function renderSS(ssId, items, selectedId, placeholder, formKey) {
+  const selected = items.find(i => i.id === selectedId);
+  return `
+    <div class="search-select" id="ss_${ssId}">
+      <input type="text" value="${escHtml(selected ? selected._label : '')}" placeholder="${placeholder}"
+        onfocus="ssOpen('${ssId}')" oninput="ssFilter('${ssId}',this.value)"
+        onblur="setTimeout(()=>ssClose('${ssId}'),200)" autocomplete="off">
+      ${selectedId ? `<span style="position:absolute;right:32px;top:50%;transform:translateY(-50%);cursor:pointer;color:var(--text-muted);font-size:16px;z-index:2" onmousedown="ssClear('${ssId}','${formKey}',event)">&times;</span>` : ''}
+      <div class="search-select-dropdown" id="ssd_${ssId}">
+        ${items.map(i => `<div class="search-select-option${i.id===selectedId?' selected':''}" onmousedown="ssSelect('${ssId}','${i.id}','${formKey}')">${escHtml(i._label)}</div>`).join('')}
+      </div>
+    </div>`;
 }
 
 async function registerSku() {
@@ -833,6 +886,7 @@ async function registerSku() {
     countryId:f.countryId, gradeId:f.gradeId, packSizeId:f.packSizeId,
     supplierId:f.supplierId, regionId:f.regionId||'', processId:f.processId||'',
     description, saleName:f.saleName||'', notes:f.notes||'',
+    costPrice:f.costPrice?parseFloat(f.costPrice):null, sellingPrice:f.sellingPrice?parseFloat(f.sellingPrice):null, currency:f.currency||'THB',
     createdAt
   };
 
@@ -843,7 +897,7 @@ async function registerSku() {
   DB.set(KEYS.settings, settings);
 
   showToast(`Registered: ${skuCode} | LOT: ${lotNumber}`);
-  state.genForm = { countryId:'', gradeId:'', packSizeId:'', supplierId:'', regionId:'', processId:'', saleName:'', notes:'' };
+  state.genForm = { countryId:'', gradeId:'', packSizeId:'', supplierId:'', regionId:'', processId:'', saleName:'', notes:'', costPrice:'', sellingPrice:'', currency:'THB' };
   renderGenerator();
   if (SYNC.enabled) SYNC.updateUI('ok', `Cloud (${skus.length} SKUs)`);
 }
@@ -943,6 +997,8 @@ function renderRegistry() {
             <th>Supplier</th>
             <th>Description</th>
             <th>Sale Name</th>
+            <th style="text-align:right">Cost</th>
+            <th style="text-align:right">Sell</th>
             <th onclick="toggleRegSort('createdAt')">Date <span class="sort-arrow ${state.regSort.col==='createdAt'?'active':''}">${sortArrow('createdAt')}</span></th>
             ${state.adminMode ? '<th>Actions</th>' : ''}
           </tr></thead>
@@ -952,6 +1008,7 @@ function renderRegistry() {
               const grade = findById(KEYS.grades, s.gradeId);
               const pack = findById(KEYS.packSizes, s.packSizeId);
               const supplier = findById(KEYS.suppliers, s.supplierId);
+              const cur = s.currency||'';
               return `<tr>
                 <td class="sku-code-cell">${escHtml(s.skuCode)}</td>
                 <td class="lot-cell">${escHtml(s.lotNumber||'—')}</td>
@@ -960,11 +1017,13 @@ function renderRegistry() {
                 <td>${escHtml(pack?.name||'')}</td>
                 <td>${escHtml(supplier?.name||'')}</td>
                 <td style="max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${escHtml(s.description||'')}">${escHtml(s.description||'')}</td>
-                <td style="max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${escHtml(s.saleName||'')}">${escHtml(s.saleName||'')}</td>
+                <td style="max-width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${escHtml(s.saleName||'')}">${escHtml(s.saleName||'')}</td>
+                <td style="text-align:right;font-family:'JetBrains Mono',monospace;font-size:12px;white-space:nowrap">${s.costPrice!=null?s.costPrice.toLocaleString()+' <span style="color:var(--text-muted);font-size:10px">'+cur+'</span>':'—'}</td>
+                <td style="text-align:right;font-family:'JetBrains Mono',monospace;font-size:12px;white-space:nowrap">${s.sellingPrice!=null?s.sellingPrice.toLocaleString()+' <span style="color:var(--text-muted);font-size:10px">'+cur+'</span>':'—'}</td>
                 <td style="white-space:nowrap;font-size:12px;color:var(--text-muted)">${new Date(s.createdAt).toLocaleDateString()}</td>
                 ${state.adminMode ? `<td><button class="btn btn-danger btn-sm" onclick="deleteSku('${s.id}')">Del</button></td>` : ''}
               </tr>`;
-            }).join('') : `<tr><td colspan="${state.adminMode?10:9}" class="empty-state">No SKUs found</td></tr>`}
+            }).join('') : `<tr><td colspan="${state.adminMode?12:11}" class="empty-state">No SKUs found</td></tr>`}
           </tbody>
         </table>
       </div>
@@ -1012,13 +1071,13 @@ async function deleteSku(id) {
 
 function exportCSV() {
   const skus = getAll(KEYS.skus);
-  const header = ['SKU Code','LOT No.','Country','Grade','Pack Size','Supplier','Description','Sale Name','Date'];
+  const header = ['SKU Code','LOT No.','Country','Grade','Pack Size','Supplier','Description','Sale Name','Cost Price','Selling Price','Currency','Date'];
   const rows = skus.map(s => {
     const country = findById(KEYS.countries, s.countryId);
     const grade = findById(KEYS.grades, s.gradeId);
     const pack = findById(KEYS.packSizes, s.packSizeId);
     const supplier = findById(KEYS.suppliers, s.supplierId);
-    return [s.skuCode, s.lotNumber||'', country?.name||'', grade?.name||'', pack?.name||'', supplier?.name||'', s.description||'', s.saleName||'', new Date(s.createdAt).toLocaleDateString()];
+    return [s.skuCode, s.lotNumber||'', country?.name||'', grade?.name||'', pack?.name||'', supplier?.name||'', s.description||'', s.saleName||'', s.costPrice!=null?s.costPrice:'', s.sellingPrice!=null?s.sellingPrice:'', s.currency||'', new Date(s.createdAt).toLocaleDateString()];
   });
   const csv = '\uFEFF' + [header, ...rows].map(r => r.map(c => '"'+String(c).replace(/"/g,'""')+'"').join(',')).join('\n');
   const blob = new Blob([csv], {type:'text/csv;charset=utf-8'});
@@ -1298,7 +1357,7 @@ function exportExcel() {
   const wb = XLSX.utils.book_new();
 
   // --- Sheet 1: SKU Registry ---
-  const regHeader = ['SKU Code','LOT No.','Country','Country Code','Grade','Grade Code','Pack Size','Pack Code','Supplier','Supplier Code','Region/Brand','Process/Spec','Description','Sale Name','Notes','Date'];
+  const regHeader = ['SKU Code','LOT No.','Country','Country Code','Grade','Grade Code','Pack Size','Pack Code','Supplier','Supplier Code','Region/Brand','Process/Spec','Description','Sale Name','Cost Price','Selling Price','Currency','Notes','Date'];
   const regRows = skus.map(s => {
     const country = findById(KEYS.countries, s.countryId);
     const grade = findById(KEYS.grades, s.gradeId);
@@ -1306,7 +1365,7 @@ function exportExcel() {
     const supplier = findById(KEYS.suppliers, s.supplierId);
     const region = findById(KEYS.regions, s.regionId);
     const process = findById(KEYS.processes, s.processId);
-    return [s.skuCode, s.lotNumber||'', country?.name||'', country?.code||'', grade?.name||'', grade?.code||'', pack?.name||'', pack?.code||'', supplier?.name||'', supplier?.code||'', region?.name||'', process?.name||'', s.description||'', s.saleName||'', s.notes||'', new Date(s.createdAt).toLocaleDateString()];
+    return [s.skuCode, s.lotNumber||'', country?.name||'', country?.code||'', grade?.name||'', grade?.code||'', pack?.name||'', pack?.code||'', supplier?.name||'', supplier?.code||'', region?.name||'', process?.name||'', s.description||'', s.saleName||'', s.costPrice!=null?s.costPrice:'', s.sellingPrice!=null?s.sellingPrice:'', s.currency||'', s.notes||'', new Date(s.createdAt).toLocaleDateString()];
   });
   const ws1 = XLSX.utils.aoa_to_sheet([regHeader, ...regRows]);
 

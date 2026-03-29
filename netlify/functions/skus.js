@@ -62,6 +62,9 @@ exports.handler = async (event) => {
           description: getTextContent(p['Description']),
           saleName: getTextContent(p['Sale Name']),
           notes: getTextContent(p['Notes']),
+          costPrice: p['Cost Price']?.number ?? null,
+          sellingPrice: p['Selling Price']?.number ?? null,
+          currency: getTextContent(p['Currency'], 'select') || 'THB',
           createdAt: getTextContent(p['Registered'], 'date') || page.created_time,
         };
       });
@@ -94,6 +97,11 @@ exports.handler = async (event) => {
           'Notes': makeRichText(data.notes),
           'Registered': { date: { start: data.createdAt || new Date().toISOString() } },
         };
+
+        // Add price fields only if they exist (number properties)
+        if (data.costPrice != null) properties['Cost Price'] = { number: data.costPrice };
+        if (data.sellingPrice != null) properties['Selling Price'] = { number: data.sellingPrice };
+        if (data.currency) properties['Currency'] = { select: { name: data.currency } };
 
         const page = await notion.pages.create({
           parent: { database_id: DB_ID },
