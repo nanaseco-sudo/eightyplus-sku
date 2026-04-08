@@ -3242,7 +3242,21 @@ function renderContract() {
   `;
 }
 
-function contractGoStep(n) { state.contractStep = n; renderContract(); }
+function contractGoStep(n) {
+  state.contractStep = n;
+  if (state.contractData) contractAutoSave();
+  renderContract();
+}
+
+function contractAutoSave() {
+  const cd = state.contractData;
+  if (!cd) return;
+  const contracts = getAll(KEYS.contracts);
+  const idx = contracts.findIndex(c => c.id === cd.id);
+  if (idx >= 0) contracts[idx] = cd;
+  else contracts.push(cd);
+  DB.set(KEYS.contracts, contracts);
+}
 
 function contractNewReset() {
   if (state.contractData && state.contractData.items?.some(i=>i.status!=='sku_created')) {
@@ -3417,6 +3431,7 @@ function contractHandleDrop(file) {
       };
 
       state.contractStep = 2;
+      contractAutoSave();
       showToast(`Extracted ${items.length} items from ${exporterList.length} exporter(s): ${exporterList.join(', ')}`);
       renderContract();
     } catch (err) {
@@ -3537,6 +3552,7 @@ async function contractHandleAiParse(file, countryId, priceUnit, shippingCost, e
     };
 
     state.contractStep = 2;
+    contractAutoSave();
     showToast(`AI extracted ${items.length} items from ${exporterList.length} exporter(s): ${exporterList.join(', ')}`);
     renderContract();
 
