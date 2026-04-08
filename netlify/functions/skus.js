@@ -58,7 +58,10 @@ exports.handler = async (event) => {
           supplier: getTextContent(p['Supplier']),
           supplierCode: getTextContent(p['Supplier Code']),
           region: getTextContent(p['Region']),
+          brandFarm: getTextContent(p['Brand Farm']),
           process: getTextContent(p['Process']),
+          process2: getTextContent(p['Process 2']),
+          gradingSpec: getTextContent(p['Grading Spec'], 'select'),
           description: getTextContent(p['Description']),
           saleName: getTextContent(p['Sale Name']),
           notes: getTextContent(p['Notes']),
@@ -91,7 +94,9 @@ exports.handler = async (event) => {
           'Supplier': makeRichText(data.supplier),
           'Supplier Code': makeRichText(data.supplierCode),
           'Region': makeRichText(data.region),
+          'Brand Farm': makeRichText(data.brandFarm),
           'Process': makeRichText(data.process),
+          'Process 2': makeRichText(data.process2),
           'Description': makeRichText(data.description),
           'Sale Name': makeRichText(data.saleName),
           'Notes': makeRichText(data.notes),
@@ -99,6 +104,7 @@ exports.handler = async (event) => {
         };
 
         // Add price fields only if they exist (number properties)
+        if (data.gradingSpec) properties['Grading Spec'] = { select: { name: data.gradingSpec } };
         if (data.costPrice != null) properties['Cost Price'] = { number: data.costPrice };
         if (data.sellingPrice != null) properties['Selling Price'] = { number: data.sellingPrice };
         if (data.currency) properties['Currency'] = { select: { name: data.currency } };
