@@ -238,6 +238,64 @@ tr:hover td { background:rgba(30,82,198,0.04); }
 .flex-between { display:flex; justify-content:space-between; align-items:center; }
 .mb-16 { margin-bottom:16px; }
 .mt-8 { margin-top:8px; }
+
+/* CONTRACT */
+.contract-steps { display:flex; gap:4px; margin-bottom:24px; }
+.contract-step { flex:1; text-align:center; padding:10px 8px; border-radius:var(--radius-sm); background:var(--bg-card); border:1px solid var(--border); font-size:12px; font-weight:600; color:var(--text-muted); position:relative; transition:var(--transition); }
+.contract-step.active { background:var(--legacy-blue); color:#fff; border-color:var(--legacy-blue); }
+.contract-step.done { background:rgba(45,134,89,0.1); color:var(--success); border-color:var(--success); }
+.contract-step-num { font-size:16px; font-weight:800; display:block; }
+.contract-items-table { width:100%; border-collapse:collapse; font-size:13px; }
+.contract-items-table th { background:var(--wheat-cream); padding:8px 10px; text-align:left; font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.5px; color:var(--text-secondary); border-bottom:2px solid var(--border); }
+.contract-items-table td { padding:8px 10px; border-bottom:1px solid var(--border); }
+.contract-items-table tr:hover { background:rgba(30,82,198,0.03); }
+.contract-items-table input[type="text"] { width:100%; padding:4px 8px; font-size:12px; border:1px solid var(--border); border-radius:4px; }
+.contract-items-table input.name-locked { background:var(--wheat-cream); font-weight:600; }
+.price-cell { font-family:'JetBrains Mono',monospace; font-size:12px; text-align:right; white-space:nowrap; }
+.status-dot { display:inline-block; width:8px; height:8px; border-radius:50%; margin-right:4px; }
+.status-dot.pending { background:var(--sunlit-gold); }
+.status-dot.created { background:var(--success); }
+.status-dot.skipped { background:var(--text-muted); }
+.exporter-badge { display:inline-block; padding:2px 10px; border-radius:12px; font-size:11px; font-weight:600; background:rgba(188,165,133,0.2); color:var(--umber-brown); }
+
+/* PRICE INTEL */
+.market-switcher { display:flex; gap:4px; margin-bottom:20px; padding:4px; background:var(--bg-card); border:1px solid var(--border); border-radius:24px; width:fit-content; }
+.market-pill { padding:8px 18px; border:none; border-radius:20px; background:transparent; color:var(--text-secondary); font-family:inherit; font-size:13px; font-weight:600; cursor:pointer; transition:var(--transition); white-space:nowrap; }
+.market-pill:hover { color:var(--heritage-blue); background:var(--wheat-cream); }
+.market-pill.active { background:var(--legacy-blue); color:var(--porcelain-white); box-shadow:0 2px 8px rgba(30,82,198,0.25); }
+.price-intel-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; }
+.competitor-tag { display:inline-block; padding:2px 10px; border-radius:12px; font-size:11px; font-weight:600; margin:2px 4px 2px 0; }
+.competitor-tag.roaster { background:rgba(230,164,81,0.15); color:#c08530; }
+.competitor-tag.importer { background:rgba(30,82,198,0.1); color:var(--legacy-blue); }
+.competitor-tag.trader { background:rgba(45,134,89,0.1); color:var(--success); }
+.comparison-row { transition:background 0.15s; }
+.comparison-row:nth-child(even) { background:rgba(244,242,233,0.5); }
+.comparison-row:hover { background:rgba(30,82,198,0.04); }
+.gap-positive { color:var(--success); font-weight:700; }
+.gap-negative { color:var(--error); font-weight:700; }
+.gap-neutral { color:var(--sunlit-gold); font-weight:700; }
+.price-bar-wrapper { display:flex; align-items:center; gap:6px; min-width:180px; }
+.price-bar-80p, .price-bar-comp { height:14px; border-radius:3px; min-width:2px; transition:width 0.4s ease; }
+.price-bar-80p { background:linear-gradient(90deg, var(--heritage-blue), var(--legacy-blue)); }
+.price-bar-comp { background:linear-gradient(90deg, var(--tangerine-notes), #f4a574); }
+.upload-zone { border:2px dashed var(--border); border-radius:var(--radius); padding:32px; text-align:center; cursor:pointer; transition:var(--transition); background:var(--wheat-cream); }
+.upload-zone:hover, .upload-zone.dragover { border-color:var(--legacy-blue); background:rgba(30,82,198,0.04); }
+.upload-zone-icon { font-size:36px; margin-bottom:8px; }
+.upload-zone-text { font-size:14px; color:var(--text-secondary); }
+.upload-zone-hint { font-size:12px; color:var(--text-muted); margin-top:4px; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.mapping-grid { display:grid; grid-template-columns:1fr auto 1fr; gap:8px; align-items:center; margin:16px 0; }
+.mapping-grid .col-arrow { color:var(--text-muted); font-size:16px; text-align:center; }
+.match-high { border-left:3px solid var(--success); }
+.match-medium { border-left:3px solid var(--sunlit-gold); }
+.match-low { border-left:3px solid var(--error); }
+.market-prices-toggle { display:flex; align-items:center; gap:8px; cursor:pointer; padding:8px 0; font-size:12px; font-weight:600; color:var(--text-secondary); text-transform:uppercase; letter-spacing:0.5px; user-select:none; margin-bottom:8px; }
+.market-prices-toggle:hover { color:var(--heritage-blue); }
+.market-prices-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; padding:12px; background:var(--wheat-cream); border-radius:var(--radius-sm); margin-bottom:16px; }
+@media(max-width:768px) {
+  .market-switcher { flex-wrap:wrap; }
+  .market-prices-grid { grid-template-columns:1fr 1fr; }
+}
 </style>
 </head>
 <body>
@@ -261,17 +319,21 @@ tr:hover td { background:rgba(30,82,198,0.04); }
 
 <div class="tab-bar" id="tabBar">
   <button class="tab-btn active" data-tab="dashboard" onclick="switchTab('dashboard')">Dashboard</button>
+  <button class="tab-btn" data-tab="contract" onclick="switchTab('contract')">Contract</button>
   <button class="tab-btn" data-tab="generator" onclick="switchTab('generator')">Generator</button>
   <button class="tab-btn" data-tab="registry" onclick="switchTab('registry')">Registry</button>
   <button class="tab-btn" data-tab="settings" onclick="switchTab('settings')">Settings</button>
+  <button class="tab-btn" data-tab="priceIntel" onclick="switchTab('priceIntel')">Price Intel</button>
   <button class="tab-btn admin-tab" data-tab="admin" onclick="switchTab('admin')" style="display:none">Admin</button>
 </div>
 
 <div class="content">
   <div id="dashboardTab" class="content-section active"></div>
+  <div id="contractTab" class="content-section"></div>
   <div id="generatorTab" class="content-section"></div>
   <div id="registryTab" class="content-section"></div>
   <div id="settingsTab" class="content-section"></div>
+  <div id="priceIntelTab" class="content-section"></div>
   <div id="adminTab" class="content-section"></div>
 </div>
 
@@ -283,7 +345,7 @@ tr:hover td { background:rgba(30,82,198,0.04); }
 // DATA LAYER
 // ============================================================
 const STORAGE_PREFIX = 'changco_sku_';
-const KEYS = { countries:'countries', grades:'grades', packSizes:'packSizes', suppliers:'suppliers', regions:'regions', processes:'processes', skus:'skus', settings:'settings' };
+const KEYS = { countries:'countries', grades:'grades', packSizes:'packSizes', suppliers:'suppliers', regions:'regions', brandFarms:'brandFarms', processes:'processes', gradingSpecs:'gradingSpecs', skus:'skus', settings:'settings', markets:'markets', competitors:'competitors', competitorPrices:'competitorPrices', priceIntelSettings:'priceIntelSettings', contracts:'contracts', exporterProfiles:'exporterProfiles' };
 
 const DB = {
   get(key) { try { return JSON.parse(localStorage.getItem(STORAGE_PREFIX+key)) || null; } catch { return null; } },
@@ -326,7 +388,9 @@ const SYNC = {
       const packs = getAll(KEYS.packSizes);
       const suppliers = getAll(KEYS.suppliers);
       const regions = getAll(KEYS.regions);
+      const brandFarms = getAll(KEYS.brandFarms);
       const processes = getAll(KEYS.processes);
+      const gradingSpecs = getAll(KEYS.gradingSpecs);
 
       const localSkus = notionSkus.map(ns => ({
         id: ns.notionId,
@@ -338,7 +402,10 @@ const SYNC = {
         packSizeId: (packs.find(p => p.code === ns.packCode) || {}).id || '',
         supplierId: (suppliers.find(s => s.code === ns.supplierCode) || {}).id || '',
         regionId: (regions.find(r => r.name === ns.region) || {}).id || '',
+        brandFarmId: (brandFarms.find(r => r.name === ns.brandFarm) || {}).id || '',
         processId: (processes.find(p => p.name === ns.process) || {}).id || '',
+        process2Id: (processes.find(p => p.name === ns.process2) || {}).id || '',
+        gradingSpecId: (gradingSpecs.find(g => g.name === ns.gradingSpec) || {}).id || '',
         description: ns.description,
         saleName: ns.saleName,
         notes: ns.notes,
@@ -424,14 +491,19 @@ const SYNC = {
     const pack = findById(KEYS.packSizes, f.packSizeId);
     const supplier = findById(KEYS.suppliers, f.supplierId);
     const region = findById(KEYS.regions, f.regionId);
+    const brandFarm = findById(KEYS.brandFarms, f.brandFarmId);
     const process = findById(KEYS.processes, f.processId);
+    const process2 = findById(KEYS.processes, f.process2Id);
+    const gradingSpec = findById(KEYS.gradingSpecs, f.gradingSpecId);
     return {
       skuCode, lotNumber,
       country: country?.name || '', countryCode: country?.code || '',
       grade: grade?.name || '', gradeCode: grade?.code || '',
       packSize: pack?.name || '', packCode: pack?.code || '',
       supplier: supplier?.name || '', supplierCode: supplier?.code || '',
-      region: region?.name || '', process: process?.name || '',
+      region: region?.name || '', brandFarm: brandFarm?.name || '',
+      process: process?.name || '', process2: process2?.name || '',
+      gradingSpec: gradingSpec?.name || '',
       description: description || '', saleName: saleName || '', notes: notes || '',
       costPrice: f.costPrice ? parseFloat(f.costPrice) : null,
       sellingPrice: f.sellingPrice ? parseFloat(f.sellingPrice) : null,
@@ -504,16 +576,51 @@ const DEFAULT_SUPPLIERS = [
 
 const DEFAULT_REGIONS = [
   "Guji","Guji Hambella","Yirgacheffe","Sidama","West Arsi","Hambella","Uraga",
-  "Santos","Cerrado","Chiangmai","San Ramon","Mozart","Vietnam",
+  "Santos","Cerrado","Chiangmai","San Ramon","Mozart","Risaralda","Boquete",
+  "Chiriqui","Huila","Nariño","Cauca","Tolima","Jimma","Limu","Harrar",
+  "Nyeri","Kiambu","Murang'a","Kirinyaga","Aceh","Toraja","Flores","Lintong",
+  "Central Highlands","Lam Dong","Dak Lak","San Marcos","Antigua","Atitlán","Cobán"
+].map(r=>({id:DB.genId(), name:r, active:true}));
+
+const DEFAULT_BRAND_FARMS = [
   "Niu Culturing","Maypop Culturing","April Culturing","NG Culturing","AGI Culturing",
-  "Caturra Nitro","Sakura Competition","April Competition","Maypop Competition","Risaralda State"
+  "Caturra Nitro","Sakura Competition","April Competition","Maypop Competition",
+  "Black Moon Farm","Lerida Coffee Estate","Finca Deborah","Granja Paraiso 92",
+  "Café Granja La Esperanza","El Diviso","Finca La Julia","Hacienda Esmeralda"
 ].map(r=>({id:DB.genId(), name:r, active:true}));
 
 const DEFAULT_PROCESSES = [
-  "Natural","Washed","Honey","Black Honey","Yellow Honey","Red Honey","White Honey",
-  "Anaerobic Natural","Anaerobic Washed","Carbonic Maceration","Wet Hulled","Lactic",
-  "Semi-Washed","Yeast Washed","SHB","G1","G2","G3","A","AA","Natural G1"
+  "Washed","Natural","White Honey","Yellow Honey","Red Honey","Black Honey","Honey",
+  "Anaerobic Washed","Anaerobic Natural","Anaerobic Honey","Co-fermentation","Infused",
+  "Dark Room Dry","Carbonic Maceration","Wet Hulled","Lactic","Semi-Washed",
+  "Yeast Washed","Thermal Shock","Koji Fermentation"
 ].map(p=>({id:DB.genId(), name:p, active:true}));
+
+const DEFAULT_GRADING_SPECS = [
+  "G1","G2","G3","G4","G5","G4a","G4b",
+  "SHB","HB","Semi-HB","Extra Prime","Prime",
+  "Premium","Supremo","Excelso","Extra","UGQ",
+  "NY Type 2","NY 2/3","NY 3/4","Type 4","Type 4/5",
+  "AA","AB","PB","E","C","TT",
+  "Special Grade","Grade 1","Grade 2","Grade 3"
+].map(p=>({id:DB.genId(), name:p, active:true}));
+
+const DEFAULT_MARKETS = [
+  { id:'TH', name:'Thailand', currency:'THB', flag:'\u{1F1F9}\u{1F1ED}', isHQ:true },
+  { id:'MY', name:'Malaysia', currency:'MYR', flag:'\u{1F1F2}\u{1F1FE}', isHQ:false },
+  { id:'ID', name:'Indonesia', currency:'IDR', flag:'\u{1F1EE}\u{1F1E9}', isHQ:false },
+  { id:'PH', name:'Philippines', currency:'PHP', flag:'\u{1F1F5}\u{1F1ED}', isHQ:false },
+];
+
+const DEFAULT_PRICE_INTEL_SETTINGS = {
+  exchangeRates: { baseCurrency:'USD', rates:{ THB:34.5, MYR:4.45, IDR:15800, PHP:56.2 }, updatedAt:new Date().toISOString() },
+  marketStrategies: {
+    TH:{ strategy:'premium', multiplier:1.15 },
+    MY:{ strategy:'competitive', multiplier:0.95 },
+    ID:{ strategy:'penetration', multiplier:0.85 },
+    PH:{ strategy:'parity', multiplier:1.00 },
+  }
+};
 
 // ============================================================
 // INIT
@@ -524,9 +631,17 @@ function initData() {
   if (!DB.get(KEYS.packSizes)) DB.set(KEYS.packSizes, DEFAULT_PACK_SIZES);
   if (!DB.get(KEYS.suppliers)) DB.set(KEYS.suppliers, DEFAULT_SUPPLIERS);
   if (!DB.get(KEYS.regions)) DB.set(KEYS.regions, DEFAULT_REGIONS);
+  if (!DB.get(KEYS.brandFarms)) DB.set(KEYS.brandFarms, DEFAULT_BRAND_FARMS);
   if (!DB.get(KEYS.processes)) DB.set(KEYS.processes, DEFAULT_PROCESSES);
+  if (!DB.get(KEYS.gradingSpecs)) DB.set(KEYS.gradingSpecs, DEFAULT_GRADING_SPECS);
   if (!DB.get(KEYS.skus)) DB.set(KEYS.skus, []);
   if (!DB.get(KEYS.settings)) DB.set(KEYS.settings, { nextLotNumber:1, adminPassword:"changco2026" });
+  if (!DB.get(KEYS.markets)) DB.set(KEYS.markets, DEFAULT_MARKETS);
+  if (!DB.get(KEYS.competitors)) DB.set(KEYS.competitors, []);
+  if (!DB.get(KEYS.competitorPrices)) DB.set(KEYS.competitorPrices, []);
+  if (!DB.get(KEYS.priceIntelSettings)) DB.set(KEYS.priceIntelSettings, DEFAULT_PRICE_INTEL_SETTINGS);
+  if (!DB.get(KEYS.contracts)) DB.set(KEYS.contracts, []);
+  if (!DB.get(KEYS.exporterProfiles)) DB.set(KEYS.exporterProfiles, []);
 }
 
 // ============================================================
@@ -535,11 +650,15 @@ function initData() {
 let state = {
   activeTab: 'dashboard',
   adminMode: false,
-  genForm: { countryId:'', gradeId:'', packSizeId:'', supplierId:'', regionId:'', processId:'', saleName:'', notes:'', costPrice:'', sellingPrice:'', currency:'THB' },
+  genForm: { countryId:'', gradeId:'', packSizeId:'', supplierId:'', regionId:'', brandFarmId:'', processId:'', process2Id:'', gradingSpecId:'', saleName:'', notes:'', costPrice:'', sellingPrice:'', currency:'THB', mp_TH:'', mp_MY:'', mp_ID:'', mp_PH:'' },
   regFilters: { search:'', countryId:'', gradeId:'', supplierId:'' },
   regSort: { col:'createdAt', dir:'desc' },
   regPage: 1,
-  regPerPage: 50
+  regPerPage: 50,
+  contractStep: 1, // 1=upload, 2=review, 3=pricing, 4=sku
+  contractData: null, // current contract being processed
+  piMarket: 'TH',
+  piFilters: { countryId:'', gradeId:'', competitorId:'' }
 };
 
 // ============================================================
@@ -562,8 +681,9 @@ function buildSku(countryCode, gradeCode, packCode, supplierCode, running) {
   return countryCode + gradeCode + packCode + supplierCode + pad2(running);
 }
 function buildLot(n) { return '80-' + pad4(n); }
-function buildDescription(country, region, process, supplier, grade, pack) {
-  return [country, region, process, supplier, grade, pack].filter(Boolean).join(' ');
+function buildDescription(country, region, brandFarm, process, process2, gradingSpec, supplier, grade, pack) {
+  const procParts = [process, process2].filter(Boolean).join(' / ');
+  return [country, region, brandFarm, procParts, gradingSpec, supplier, grade, pack].filter(Boolean).join(' ');
 }
 function gradeBadgeClass(name) {
   const n = (name||'').toLowerCase();
@@ -613,9 +733,11 @@ function toggleAdmin() {
 
 function renderTab(tab) {
   if (tab==='dashboard') renderDashboard();
+  else if (tab==='contract') renderContract();
   else if (tab==='generator') renderGenerator();
   else if (tab==='registry') renderRegistry();
   else if (tab==='settings') renderSettings();
+  else if (tab==='priceIntel') renderPriceIntel();
   else if (tab==='admin') renderAdmin();
 }
 
@@ -694,7 +816,9 @@ function renderGenerator() {
   const packs = getAll(KEYS.packSizes).filter(p=>p.active);
   const suppliers = getAll(KEYS.suppliers).filter(s=>s.active).sort((a,b)=>a.name.localeCompare(b.name));
   const regions = getAll(KEYS.regions).filter(r=>r.active).sort((a,b)=>a.name.localeCompare(b.name));
+  const brandFarms = getAll(KEYS.brandFarms).filter(r=>r.active).sort((a,b)=>a.name.localeCompare(b.name));
   const processes = getAll(KEYS.processes).filter(p=>p.active).sort((a,b)=>a.name.localeCompare(b.name));
+  const gradingSpecs = getAll(KEYS.gradingSpecs).filter(g=>g.active).sort((a,b)=>a.name.localeCompare(b.name));
 
   const f = state.genForm;
   const country = findById(KEYS.countries, f.countryId);
@@ -702,7 +826,10 @@ function renderGenerator() {
   const pack = findById(KEYS.packSizes, f.packSizeId);
   const supplier = findById(KEYS.suppliers, f.supplierId);
   const region = findById(KEYS.regions, f.regionId);
+  const brandFarm = findById(KEYS.brandFarms, f.brandFarmId);
   const process = findById(KEYS.processes, f.processId);
+  const process2 = findById(KEYS.processes, f.process2Id);
+  const gradingSpec = findById(KEYS.gradingSpecs, f.gradingSpecId);
 
   const cc = country ? country.code : '??';
   const gc = grade ? grade.code : '?';
@@ -712,7 +839,7 @@ function renderGenerator() {
   const rn = running ? pad2(running) : '??';
   const lotNum = getNextLot();
   const lotStr = buildLot(lotNum);
-  const desc = buildDescription(country?.name, region?.name, process?.name, supplier?.name, grade?.name, pack?.name);
+  const desc = buildDescription(country?.name, region?.name, brandFarm?.name, process?.name, process2?.name, gradingSpec?.name, supplier?.name, grade?.name, pack?.name);
   const isComplete = f.countryId && f.gradeId && f.packSizeId && f.supplierId;
 
   document.getElementById('generatorTab').innerHTML = `
@@ -740,28 +867,46 @@ function renderGenerator() {
           </div>
           <div class="form-group">
             <label class="form-label">Supplier *</label>
-            ${renderSS('supplier', suppliers.map(s=>({...s,_label:s.name+' ('+s.code+')'})), f.supplierId, 'Type to search supplier...', 'supplierId')}
+            ${renderSS('supplier', suppliers.map(s=>({...s,_label:s.name+' ('+s.code+')'})), f.supplierId, 'Type to search supplier...', 'supplierId', true)}
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+            <div class="form-group">
+              <label class="form-label">Region</label>
+              ${renderSS('region', regions.map(r=>({...r,_label:r.name})), f.regionId, 'Type to search region...', 'regionId')}
+            </div>
+            <div class="form-group">
+              <label class="form-label">Brand / Farm</label>
+              ${renderSS('brandFarm', brandFarms.map(r=>({...r,_label:r.name})), f.brandFarmId, 'Type to search brand/farm...', 'brandFarmId')}
+            </div>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+            <div class="form-group">
+              <label class="form-label">Process 1 (Primary)</label>
+              ${renderSS('process', processes.map(p=>({...p,_label:p.name})), f.processId, 'Type to search process...', 'processId')}
+            </div>
+            <div class="form-group">
+              <label class="form-label">Process 2 (Secondary)</label>
+              ${renderSS('process2', processes.map(p=>({...p,_label:p.name})), f.process2Id, 'Type to search process...', 'process2Id')}
+            </div>
           </div>
           <div class="form-group">
-            <label class="form-label">Region / Brand</label>
-            ${renderSS('region', regions.map(r=>({...r,_label:r.name})), f.regionId, 'Type to search region...', 'regionId')}
-          </div>
-          <div class="form-group">
-            <label class="form-label">Process / Spec</label>
-            ${renderSS('process', processes.map(p=>({...p,_label:p.name})), f.processId, 'Type to search process...', 'processId')}
+            <label class="form-label">Grading Spec</label>
+            ${renderSS('gradingSpec', gradingSpecs.map(g=>({...g,_label:g.name})), f.gradingSpecId, 'Type to search grading spec...', 'gradingSpecId')}
           </div>
           <div class="form-group">
             <label class="form-label">Sale Name</label>
             <input type="text" id="genSaleName" placeholder="e.g. Ethiopia Ardent Sidama Natural G1, Rori" value="${escHtml(f.saleName||'')}" oninput="updateGenForm('saleName',this.value)">
           </div>
+          <div style="margin-top:8px;padding:12px;background:var(--bg-primary);border-radius:var(--radius-sm);border:1px dashed var(--border)">
+          <div style="font-size:11px;color:var(--text-muted);margin-bottom:8px">Pricing is optional — prices can be set later via Contract upload</div>
           <div style="display:grid;grid-template-columns:1fr 1fr 100px;gap:12px">
-            <div class="form-group">
-              <label class="form-label">Cost Price</label>
+            <div class="form-group" style="margin-bottom:0">
+              <label class="form-label">Cost Price <span style="color:var(--text-muted);font-weight:400;text-transform:none">(optional)</span></label>
               <input type="number" id="genCostPrice" placeholder="0.00" step="0.01" min="0" value="${f.costPrice||''}" oninput="updateGenForm('costPrice',this.value)">
             </div>
-            <div class="form-group">
-              <label class="form-label">Selling Price</label>
-              <input type="number" id="genSellingPrice" placeholder="0.00" step="0.01" min="0" value="${f.sellingPrice||''}" oninput="updateGenForm('sellingPrice',this.value)">
+            <div class="form-group" style="margin-bottom:0">
+              <label class="form-label">Selling Price (TH) <span style="color:var(--text-muted);font-weight:400;text-transform:none">(optional)</span></label>
+              <input type="number" id="genSellingPrice" placeholder="0.00" step="0.01" min="0" value="${f.sellingPrice||''}" oninput="updateGenForm('sellingPrice',this.value);document.getElementById('genMP_TH')&&(document.getElementById('genMP_TH').value=this.value)">
             </div>
             <div class="form-group">
               <label class="form-label">Currency</label>
@@ -769,6 +914,28 @@ function renderGenerator() {
                 ${['THB','USD','EUR','MYR','IDR','PHP','SGD','JPY','KRW','CNY','GBP'].map(c=>`<option value="${c}" ${f.currency===c?'selected':''}>${c}</option>`).join('')}
               </select>
             </div>
+          </div>
+          <div class="market-prices-toggle" onclick="this.nextElementSibling.style.display=this.nextElementSibling.style.display==='none'?'grid':'none';this.querySelector('.mp-chevron').textContent=this.nextElementSibling.style.display==='none'?'\u25B6':'\u25BC'">
+            <span class="mp-chevron">\u25B6</span> Market Selling Prices
+          </div>
+          <div class="market-prices-grid" style="display:none">
+            <div class="form-group" style="margin-bottom:0">
+              <label class="form-label">\u{1F1F9}\u{1F1ED} TH (THB)</label>
+              <input type="number" id="genMP_TH" placeholder="0.00" step="0.01" min="0" value="${f.sellingPrice||''}" oninput="updateGenForm('sellingPrice',this.value);document.getElementById('genSellingPrice')&&(document.getElementById('genSellingPrice').value=this.value);updateGenForm('mp_TH',this.value)">
+            </div>
+            <div class="form-group" style="margin-bottom:0">
+              <label class="form-label">\u{1F1F2}\u{1F1FE} MY (MYR)</label>
+              <input type="number" id="genMP_MY" placeholder="0.00" step="0.01" min="0" value="${f.mp_MY||''}" oninput="updateGenForm('mp_MY',this.value)">
+            </div>
+            <div class="form-group" style="margin-bottom:0">
+              <label class="form-label">\u{1F1EE}\u{1F1E9} ID (IDR)</label>
+              <input type="number" id="genMP_ID" placeholder="0.00" step="0.01" min="0" value="${f.mp_ID||''}" oninput="updateGenForm('mp_ID',this.value)">
+            </div>
+            <div class="form-group" style="margin-bottom:0">
+              <label class="form-label">\u{1F1F5}\u{1F1ED} PH (PHP)</label>
+              <input type="number" id="genMP_PH" placeholder="0.00" step="0.01" min="0" value="${f.mp_PH||''}" oninput="updateGenForm('mp_PH',this.value)">
+            </div>
+          </div>
           </div>
           <div class="form-group">
             <label class="form-label">Notes</label>
@@ -810,8 +977,53 @@ function renderGenerator() {
 function updateGenForm(key, val) {
   state.genForm[key] = val;
   // Skip full re-render for text/number inputs to prevent focus loss
-  if (['saleName','notes','costPrice','sellingPrice'].includes(key)) return;
+  if (['saleName','notes','costPrice','sellingPrice','mp_TH','mp_MY','mp_ID','mp_PH'].includes(key)) return;
+  // BUG-002 fix: try partial preview update first to avoid DOM re-render
+  // which can cause other searchable selects to lose their visual state
+  if (updateGenPreview()) return;
   renderGenerator();
+}
+
+// BUG-002: Partial preview update — avoids full re-render when only a select changed
+function updateGenPreview() {
+  const previewCard = document.querySelector('.sku-preview-card');
+  if (!previewCard) return false;
+  const f = state.genForm;
+  const country = findById(KEYS.countries, f.countryId);
+  const grade = findById(KEYS.grades, f.gradeId);
+  const pack = findById(KEYS.packSizes, f.packSizeId);
+  const supplier = findById(KEYS.suppliers, f.supplierId);
+  const region = findById(KEYS.regions, f.regionId);
+  const brandFarm = findById(KEYS.brandFarms, f.brandFarmId);
+  const process = findById(KEYS.processes, f.processId);
+  const process2 = findById(KEYS.processes, f.process2Id);
+  const gradingSpec = findById(KEYS.gradingSpecs, f.gradingSpecId);
+  const cc = country ? country.code : '??';
+  const gc = grade ? grade.code : '?';
+  const pc = pack ? pack.code : '?';
+  const sc = supplier ? supplier.code : '??';
+  const running = supplier ? getNextRunning(sc) : 0;
+  const rn = running ? pad2(running) : '??';
+  const lotNum = getNextLot();
+  const lotStr = buildLot(lotNum);
+  const desc = buildDescription(country?.name, region?.name, brandFarm?.name, process?.name, process2?.name, gradingSpec?.name, supplier?.name, grade?.name, pack?.name);
+  const isComplete = f.countryId && f.gradeId && f.packSizeId && f.supplierId;
+  // Update preview segments
+  const segs = previewCard.querySelectorAll('.sku-seg');
+  if (segs.length >= 5) {
+    segs[0].childNodes[0].textContent = cc;
+    segs[1].childNodes[0].textContent = gc;
+    segs[2].childNodes[0].textContent = pc;
+    segs[3].childNodes[0].textContent = sc;
+    segs[4].childNodes[0].textContent = rn;
+  }
+  const lotEl = previewCard.querySelector('.lot-display');
+  if (lotEl) lotEl.textContent = 'LOT: ' + lotStr;
+  const descEl = previewCard.querySelector('.desc-display');
+  if (descEl) descEl.innerHTML = desc || '<span style="color:rgba(255,255,255,0.35)">Description will appear here...</span>';
+  const regBtn = previewCard.querySelector('button[onclick="registerSku()"]');
+  if (regBtn) regBtn.disabled = !isComplete;
+  return true;
 }
 
 // ============================================================
@@ -841,8 +1053,44 @@ function ssClear(id, formKey, e) {
   if (e) e.preventDefault();
   updateGenForm(formKey, '');
 }
-function renderSS(ssId, items, selectedId, placeholder, formKey) {
+// BUG-001: Add new supplier inline from searchable select
+function ssAddNewSupplier(ssId, formKey) {
+  const inp = document.querySelector('#ss_' + ssId + ' input');
+  const typed = inp ? inp.value.trim() : '';
+  const html = `
+    <h3>Add New Supplier</h3>
+    <div class="form-group">
+      <label class="form-label">Supplier Name</label>
+      <input type="text" id="newSupplierName" value="${escHtml(typed)}" placeholder="e.g. FINCA MILAN">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Supplier Code (2 digits)</label>
+      <input type="text" id="newSupplierCode" maxlength="2" placeholder="e.g. 77" style="width:100px">
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="ssConfirmNewSupplier('${ssId}','${formKey}')">Add & Select</button>
+    </div>`;
+  showModal(html);
+  setTimeout(() => document.getElementById('newSupplierCode')?.focus(), 100);
+}
+function ssConfirmNewSupplier(ssId, formKey) {
+  const name = document.getElementById('newSupplierName').value.trim();
+  const code = document.getElementById('newSupplierCode').value.trim().padStart(2,'0');
+  if (!name) { showToast('Please enter a supplier name','error'); return; }
+  if (!code || code.length !== 2) { showToast('Code must be exactly 2 characters','error'); return; }
+  const existing = getAll(KEYS.suppliers);
+  if (existing.some(s => s.code === code)) { showToast('Code "'+code+'" already exists!','error'); return; }
+  const newItem = { id:DB.genId(), name, code, active:true, sortOrder:existing.length };
+  existing.push(newItem);
+  DB.set(KEYS.suppliers, existing);
+  closeModal();
+  showToast('Supplier "'+name+'" ('+code+') added');
+  updateGenForm(formKey, newItem.id);
+}
+function renderSS(ssId, items, selectedId, placeholder, formKey, allowAddNew) {
   const selected = items.find(i => i.id === selectedId);
+  const addNewHtml = allowAddNew ? `<div class="search-select-option" style="color:var(--accent);font-weight:600;border-top:1px solid var(--border)" onmousedown="ssAddNewSupplier('${ssId}','${formKey}')">+ Add new supplier...</div>` : '';
   return `
     <div class="search-select" id="ss_${ssId}">
       <input type="text" value="${escHtml(selected ? selected._label : '')}" placeholder="${placeholder}"
@@ -851,6 +1099,7 @@ function renderSS(ssId, items, selectedId, placeholder, formKey) {
       ${selectedId ? `<span style="position:absolute;right:32px;top:50%;transform:translateY(-50%);cursor:pointer;color:var(--text-muted);font-size:16px;z-index:2" onmousedown="ssClear('${ssId}','${formKey}',event)">&times;</span>` : ''}
       <div class="search-select-dropdown" id="ssd_${ssId}">
         ${items.map(i => `<div class="search-select-option${i.id===selectedId?' selected':''}" onmousedown="ssSelect('${ssId}','${i.id}','${formKey}')">${escHtml(i._label)}</div>`).join('')}
+        ${addNewHtml}
       </div>
     </div>`;
 }
@@ -864,7 +1113,10 @@ async function registerSku() {
   const pack = findById(KEYS.packSizes, f.packSizeId);
   const supplier = findById(KEYS.suppliers, f.supplierId);
   const region = findById(KEYS.regions, f.regionId);
+  const brandFarm = findById(KEYS.brandFarms, f.brandFarmId);
   const process = findById(KEYS.processes, f.processId);
+  const process2 = findById(KEYS.processes, f.process2Id);
+  const gradingSpec = findById(KEYS.gradingSpecs, f.gradingSpecId);
 
   const running = getNextRunning(supplier.code);
   if (running > 99) { showToast('Supplier has reached max 99 SKUs!','error'); return; }
@@ -872,7 +1124,7 @@ async function registerSku() {
   const skuCode = buildSku(country.code, grade.code, pack.code, supplier.code, running);
   const settings = DB.get(KEYS.settings);
   const lotNumber = buildLot(settings.nextLotNumber);
-  const description = buildDescription(country.name, region?.name, process?.name, supplier.name, grade.name, pack.name);
+  const description = buildDescription(country.name, region?.name, brandFarm?.name, process?.name, process2?.name, gradingSpec?.name, supplier.name, grade.name, pack.name);
   const createdAt = new Date().toISOString();
 
   // Save to Notion first (if enabled)
@@ -884,9 +1136,16 @@ async function registerSku() {
     notionId: notionResult?.notionId || '',
     skuCode, lotNumber,
     countryId:f.countryId, gradeId:f.gradeId, packSizeId:f.packSizeId,
-    supplierId:f.supplierId, regionId:f.regionId||'', processId:f.processId||'',
+    supplierId:f.supplierId, regionId:f.regionId||'', brandFarmId:f.brandFarmId||'',
+    processId:f.processId||'', process2Id:f.process2Id||'', gradingSpecId:f.gradingSpecId||'',
     description, saleName:f.saleName||'', notes:f.notes||'',
     costPrice:f.costPrice?parseFloat(f.costPrice):null, sellingPrice:f.sellingPrice?parseFloat(f.sellingPrice):null, currency:f.currency||'THB',
+    marketPrices: {
+      TH:{ sellingPrice:parseFloat(f.sellingPrice)||null, currency:'THB' },
+      MY:{ sellingPrice:parseFloat(f.mp_MY)||null, currency:'MYR' },
+      ID:{ sellingPrice:parseFloat(f.mp_ID)||null, currency:'IDR' },
+      PH:{ sellingPrice:parseFloat(f.mp_PH)||null, currency:'PHP' },
+    },
     createdAt
   };
 
@@ -897,7 +1156,7 @@ async function registerSku() {
   DB.set(KEYS.settings, settings);
 
   showToast(`Registered: ${skuCode} | LOT: ${lotNumber}`);
-  state.genForm = { countryId:'', gradeId:'', packSizeId:'', supplierId:'', regionId:'', processId:'', saleName:'', notes:'', costPrice:'', sellingPrice:'', currency:'THB' };
+  state.genForm = { countryId:'', gradeId:'', packSizeId:'', supplierId:'', regionId:'', brandFarmId:'', processId:'', process2Id:'', gradingSpecId:'', saleName:'', notes:'', costPrice:'', sellingPrice:'', currency:'THB', mp_TH:'', mp_MY:'', mp_ID:'', mp_PH:'' };
   renderGenerator();
   if (SYNC.enabled) SYNC.updateUI('ok', `Cloud (${skus.length} SKUs)`);
 }
@@ -995,7 +1254,10 @@ function renderRegistry() {
             <th>Grade</th>
             <th>Pack</th>
             <th>Supplier</th>
-            <th>Description</th>
+            <th>Region</th>
+            <th>Brand/Farm</th>
+            <th>Process</th>
+            <th>Grading</th>
             <th>Sale Name</th>
             <th style="text-align:right">Cost</th>
             <th style="text-align:right">Sell</th>
@@ -1008,6 +1270,12 @@ function renderRegistry() {
               const grade = findById(KEYS.grades, s.gradeId);
               const pack = findById(KEYS.packSizes, s.packSizeId);
               const supplier = findById(KEYS.suppliers, s.supplierId);
+              const region = findById(KEYS.regions, s.regionId);
+              const brandFarm = findById(KEYS.brandFarms, s.brandFarmId);
+              const proc1 = findById(KEYS.processes, s.processId);
+              const proc2 = findById(KEYS.processes, s.process2Id);
+              const gSpec = findById(KEYS.gradingSpecs, s.gradingSpecId);
+              const procDisplay = [proc1?.name, proc2?.name].filter(Boolean).join(' / ');
               const cur = s.currency||'';
               return `<tr>
                 <td class="sku-code-cell">${escHtml(s.skuCode)}</td>
@@ -1016,14 +1284,17 @@ function renderRegistry() {
                 <td><span class="badge ${gradeBadgeClass(grade?.name)}">${escHtml(grade?.name||'')}</span></td>
                 <td>${escHtml(pack?.name||'')}</td>
                 <td>${escHtml(supplier?.name||'')}</td>
-                <td style="max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${escHtml(s.description||'')}">${escHtml(s.description||'')}</td>
-                <td style="max-width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${escHtml(s.saleName||'')}">${escHtml(s.saleName||'')}</td>
+                <td>${escHtml(region?.name||'')}</td>
+                <td>${escHtml(brandFarm?.name||'')}</td>
+                <td style="white-space:nowrap">${escHtml(procDisplay)}</td>
+                <td>${escHtml(gSpec?.name||'')}</td>
+                <td style="max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${escHtml(s.saleName||s.description||'')}">${s.saleName ? escHtml(s.saleName) : `<span style="color:var(--text-muted);font-style:italic;font-size:11px">${escHtml(s.description||'—')}</span>`}</td>
                 <td style="text-align:right;font-family:'JetBrains Mono',monospace;font-size:12px;white-space:nowrap">${s.costPrice!=null?s.costPrice.toLocaleString()+' <span style="color:var(--text-muted);font-size:10px">'+cur+'</span>':'—'}</td>
                 <td style="text-align:right;font-family:'JetBrains Mono',monospace;font-size:12px;white-space:nowrap">${s.sellingPrice!=null?s.sellingPrice.toLocaleString()+' <span style="color:var(--text-muted);font-size:10px">'+cur+'</span>':'—'}</td>
                 <td style="white-space:nowrap;font-size:12px;color:var(--text-muted)">${new Date(s.createdAt).toLocaleDateString()}</td>
                 ${state.adminMode ? `<td><button class="btn btn-danger btn-sm" onclick="deleteSku('${s.id}')">Del</button></td>` : ''}
               </tr>`;
-            }).join('') : `<tr><td colspan="${state.adminMode?12:11}" class="empty-state">No SKUs found</td></tr>`}
+            }).join('') : `<tr><td colspan="${state.adminMode?15:14}" class="empty-state">No SKUs found</td></tr>`}
           </tbody>
         </table>
       </div>
@@ -1071,13 +1342,18 @@ async function deleteSku(id) {
 
 function exportCSV() {
   const skus = getAll(KEYS.skus);
-  const header = ['SKU Code','LOT No.','Country','Grade','Pack Size','Supplier','Description','Sale Name','Cost Price','Selling Price','Currency','Date'];
+  const header = ['SKU Code','LOT No.','Country','Grade','Pack Size','Supplier','Region','Brand/Farm','Process 1','Process 2','Grading Spec','Sale Name','Cost Price','Selling Price','Currency','Date'];
   const rows = skus.map(s => {
     const country = findById(KEYS.countries, s.countryId);
     const grade = findById(KEYS.grades, s.gradeId);
     const pack = findById(KEYS.packSizes, s.packSizeId);
     const supplier = findById(KEYS.suppliers, s.supplierId);
-    return [s.skuCode, s.lotNumber||'', country?.name||'', grade?.name||'', pack?.name||'', supplier?.name||'', s.description||'', s.saleName||'', s.costPrice!=null?s.costPrice:'', s.sellingPrice!=null?s.sellingPrice:'', s.currency||'', new Date(s.createdAt).toLocaleDateString()];
+    const region = findById(KEYS.regions, s.regionId);
+    const brandFarm = findById(KEYS.brandFarms, s.brandFarmId);
+    const proc1 = findById(KEYS.processes, s.processId);
+    const proc2 = findById(KEYS.processes, s.process2Id);
+    const gSpec = findById(KEYS.gradingSpecs, s.gradingSpecId);
+    return [s.skuCode, s.lotNumber||'', country?.name||'', grade?.name||'', pack?.name||'', supplier?.name||'', region?.name||'', brandFarm?.name||'', proc1?.name||'', proc2?.name||'', gSpec?.name||'', s.saleName||'', s.costPrice!=null?s.costPrice:'', s.sellingPrice!=null?s.sellingPrice:'', s.currency||'', new Date(s.createdAt).toLocaleDateString()];
   });
   const csv = '\uFEFF' + [header, ...rows].map(r => r.map(c => '"'+String(c).replace(/"/g,'""')+'"').join(',')).join('\n');
   const blob = new Blob([csv], {type:'text/csv;charset=utf-8'});
@@ -1097,10 +1373,10 @@ function downloadCsvTemplate() {
   const packs = getAll(KEYS.packSizes).filter(p=>p.active);
   const suppliers = getAll(KEYS.suppliers).filter(s=>s.active).sort((a,b)=>a.code.localeCompare(b.code));
 
-  const header = ['Country Code','Grade Code','Pack Size Code','Supplier Code','Region/Brand','Process/Spec','Sale Name','Notes'];
-  const example1 = ['ET','C','A','65','Guji','Natural G1','Ethiopia Ardent Guji Natural G1',''];
-  const example2 = ['CO','D','H','76','April Culturing','Washed','Colombia FINCA MILAN April Culturing',''];
-  const example3 = ['CR','R','I','01','San Ramon','Yeast Washed','Costa Rica Hummingbird Yeast Washed',''];
+  const header = ['Country Code','Grade Code','Pack Size Code','Supplier Code','Region','Brand/Farm','Process 1','Process 2','Grading Spec','Sale Name','Notes'];
+  const example1 = ['ET','C','A','65','Guji','','Natural','Dark Room Dry','G1','Ethiopia Ardent Guji Natural G1',''];
+  const example2 = ['CO','D','H','76','','April Culturing','Washed','','','Colombia FINCA MILAN April Culturing',''];
+  const example3 = ['CR','R','I','01','San Ramon','','Yeast Washed','','SHB','Costa Rica Hummingbird Yeast Washed',''];
 
   const refHeader = ['','','CODE REFERENCE'];
   const refCountries = ['','','Countries: ' + countries.map(c=>c.code+'='+c.name).join(', ')];
@@ -1124,7 +1400,7 @@ function showImportModal() {
     <p style="font-size:13px;color:var(--text-secondary);margin-bottom:16px">
       Upload a CSV file to auto-generate SKUs in bulk.<br>
       <strong>Required:</strong> Country Code, Grade Code, Pack Size Code, Supplier Code<br>
-      <strong>Optional:</strong> Region/Brand, Process/Spec, Sale Name, Notes<br>
+      <strong>Optional:</strong> Region, Brand/Farm, Process 1, Process 2, Grading Spec, Sale Name, Notes<br>
       <span style="color:var(--accent)">* SKU Code and LOT Number are generated automatically</span>
     </p>
     <div style="border:2px dashed var(--border-light);border-radius:var(--radius);padding:32px;text-align:center;cursor:pointer;transition:all 0.2s"
@@ -1159,11 +1435,14 @@ function handleImportFile(file) {
     const headerRow = lines[0].map(h => h.trim().toLowerCase());
     const colMap = {
       country: headerRow.findIndex(h => h.includes('country')),
-      grade: headerRow.findIndex(h => h.includes('grade') && !h.includes('process') && !h.includes('spec')),
+      grade: headerRow.findIndex(h => h.includes('grade') && !h.includes('grading') && !h.includes('spec')),
       pack: headerRow.findIndex(h => h.includes('pack')),
       supplier: headerRow.findIndex(h => h.includes('supplier')),
-      region: headerRow.findIndex(h => h.includes('region') || h.includes('brand')),
-      process: headerRow.findIndex(h => h.includes('process') || h.includes('spec')),
+      region: headerRow.findIndex(h => h === 'region' || (h.includes('region') && !h.includes('brand'))),
+      brandFarm: headerRow.findIndex(h => h.includes('brand') || h.includes('farm')),
+      process1: headerRow.findIndex(h => h.includes('process 1') || h === 'process'),
+      process2: headerRow.findIndex(h => h.includes('process 2')),
+      gradingSpec: headerRow.findIndex(h => h.includes('grading') || h.includes('spec')),
       saleName: headerRow.findIndex(h => h.includes('sale')),
       notes: headerRow.findIndex(h => h.includes('note'))
     };
@@ -1178,7 +1457,9 @@ function handleImportFile(file) {
     const packs = getAll(KEYS.packSizes);
     const suppliers = getAll(KEYS.suppliers);
     const regions = getAll(KEYS.regions);
+    const brandFarms = getAll(KEYS.brandFarms);
     const processes = getAll(KEYS.processes);
+    const gradingSpecs = getAll(KEYS.gradingSpecs);
 
     const rows = [];
     const errors = [];
@@ -1191,7 +1472,10 @@ function handleImportFile(file) {
       const pc = (r[colMap.pack]||'').trim().toUpperCase();
       const sc = (r[colMap.supplier]||'').trim().padStart(2,'0');
       const regionName = colMap.region>=0 ? (r[colMap.region]||'').trim() : '';
-      const processName = colMap.process>=0 ? (r[colMap.process]||'').trim() : '';
+      const brandFarmName = colMap.brandFarm>=0 ? (r[colMap.brandFarm]||'').trim() : '';
+      const process1Name = colMap.process1>=0 ? (r[colMap.process1]||'').trim() : '';
+      const process2Name = colMap.process2>=0 ? (r[colMap.process2]||'').trim() : '';
+      const gradingSpecName = colMap.gradingSpec>=0 ? (r[colMap.gradingSpec]||'').trim() : '';
       const saleName = colMap.saleName>=0 ? (r[colMap.saleName]||'').trim() : '';
       const notes = colMap.notes>=0 ? (r[colMap.notes]||'').trim() : '';
 
@@ -1200,7 +1484,10 @@ function handleImportFile(file) {
       const pack = packs.find(x=>x.code===pc);
       const supplier = suppliers.find(x=>x.code===sc);
       const region = regions.find(x=>x.name.toLowerCase()===regionName.toLowerCase());
-      const process = processes.find(x=>x.name.toLowerCase()===processName.toLowerCase());
+      const brandFarm = brandFarms.find(x=>x.name.toLowerCase()===brandFarmName.toLowerCase());
+      const process1 = processes.find(x=>x.name.toLowerCase()===process1Name.toLowerCase());
+      const process2 = processes.find(x=>x.name.toLowerCase()===process2Name.toLowerCase());
+      const gradingSpec = gradingSpecs.find(x=>x.name.toLowerCase()===gradingSpecName.toLowerCase());
 
       const rowErrors = [];
       if (!country) rowErrors.push('Country "'+cc+'"');
@@ -1211,7 +1498,7 @@ function handleImportFile(file) {
       if (rowErrors.length) {
         errors.push({row:i+1, issues:rowErrors});
       } else {
-        rows.push({country,grade,pack,supplier,region,process,regionName,processName,saleName,notes});
+        rows.push({country,grade,pack,supplier,region,brandFarm,process1,process2,gradingSpec,regionName,brandFarmName,process1Name,process2Name,gradingSpecName,saleName,notes});
       }
     }
 
@@ -1231,7 +1518,7 @@ function handleImportFile(file) {
         <div style="font-weight:600;color:var(--success);margin-bottom:8px">✓ ${rows.length} SKU(s) ready to import</div>
         <div style="max-height:200px;overflow-y:auto">
           <table class="admin-table" style="font-size:12px">
-            <thead><tr><th>Country</th><th>Grade</th><th>Pack</th><th>Supplier</th><th>Region</th><th>Process</th></tr></thead>
+            <thead><tr><th>Country</th><th>Grade</th><th>Pack</th><th>Supplier</th><th>Region</th><th>Brand/Farm</th><th>Process</th><th>Grading</th></tr></thead>
             <tbody>
               ${rows.slice(0,20).map(r=>`<tr>
                 <td>${escHtml(r.country.name)} (${r.country.code})</td>
@@ -1239,9 +1526,11 @@ function handleImportFile(file) {
                 <td>${escHtml(r.pack.name)}</td>
                 <td>${escHtml(r.supplier.name)} (${r.supplier.code})</td>
                 <td>${escHtml(r.regionName)}</td>
-                <td>${escHtml(r.processName)}</td>
+                <td>${escHtml(r.brandFarmName)}</td>
+                <td>${escHtml([r.process1Name,r.process2Name].filter(Boolean).join(' / '))}</td>
+                <td>${escHtml(r.gradingSpecName)}</td>
               </tr>`).join('')}
-              ${rows.length>20?`<tr><td colspan="6" style="color:var(--text-muted)">...and ${rows.length-20} more</td></tr>`:''}
+              ${rows.length>20?`<tr><td colspan="8" style="color:var(--text-muted)">...and ${rows.length-20} more</td></tr>`:''}
             </tbody>
           </table>
         </div>
@@ -1299,13 +1588,14 @@ async function executeImport() {
 
     const skuCode = buildSku(r.country.code, r.grade.code, r.pack.code, r.supplier.code, running);
     const lotNumber = buildLot(lotNum);
-    const description = buildDescription(r.country.name, r.regionName, r.processName, r.supplier.name, r.grade.name, r.pack.name);
+    const description = buildDescription(r.country.name, r.regionName, r.brandFarmName, r.process1Name, r.process2Name, r.gradingSpecName, r.supplier.name, r.grade.name, r.pack.name);
     const createdAt = new Date().toISOString();
 
     newSkus.push({
       id: DB.genId(), skuCode, lotNumber,
       countryId:r.country.id, gradeId:r.grade.id, packSizeId:r.pack.id,
-      supplierId:r.supplier.id, regionId:r.region?.id||'', processId:r.process?.id||'',
+      supplierId:r.supplier.id, regionId:r.region?.id||'', brandFarmId:r.brandFarm?.id||'',
+      processId:r.process1?.id||'', process2Id:r.process2?.id||'', gradingSpecId:r.gradingSpec?.id||'',
       description, saleName:r.saleName||'', notes:r.notes||'',
       createdAt
     });
@@ -1316,7 +1606,9 @@ async function executeImport() {
       grade:r.grade.name, gradeCode:r.grade.code,
       packSize:r.pack.name, packCode:r.pack.code,
       supplier:r.supplier.name, supplierCode:r.supplier.code,
-      region:r.regionName||'', process:r.processName||'',
+      region:r.regionName||'', brandFarm:r.brandFarmName||'',
+      process:r.process1Name||'', process2:r.process2Name||'',
+      gradingSpec:r.gradingSpecName||'',
       description, saleName:r.saleName||'', notes:r.notes||'',
       createdAt
     });
@@ -1357,15 +1649,18 @@ function exportExcel() {
   const wb = XLSX.utils.book_new();
 
   // --- Sheet 1: SKU Registry ---
-  const regHeader = ['SKU Code','LOT No.','Country','Country Code','Grade','Grade Code','Pack Size','Pack Code','Supplier','Supplier Code','Region/Brand','Process/Spec','Description','Sale Name','Cost Price','Selling Price','Currency','Notes','Date'];
+  const regHeader = ['SKU Code','LOT No.','Country','Country Code','Grade','Grade Code','Pack Size','Pack Code','Supplier','Supplier Code','Region','Brand/Farm','Process 1','Process 2','Grading Spec','Description','Sale Name','Cost Price','Selling Price','Currency','Notes','Date'];
   const regRows = skus.map(s => {
     const country = findById(KEYS.countries, s.countryId);
     const grade = findById(KEYS.grades, s.gradeId);
     const pack = findById(KEYS.packSizes, s.packSizeId);
     const supplier = findById(KEYS.suppliers, s.supplierId);
     const region = findById(KEYS.regions, s.regionId);
-    const process = findById(KEYS.processes, s.processId);
-    return [s.skuCode, s.lotNumber||'', country?.name||'', country?.code||'', grade?.name||'', grade?.code||'', pack?.name||'', pack?.code||'', supplier?.name||'', supplier?.code||'', region?.name||'', process?.name||'', s.description||'', s.saleName||'', s.costPrice!=null?s.costPrice:'', s.sellingPrice!=null?s.sellingPrice:'', s.currency||'', s.notes||'', new Date(s.createdAt).toLocaleDateString()];
+    const brandFarm = findById(KEYS.brandFarms, s.brandFarmId);
+    const proc1 = findById(KEYS.processes, s.processId);
+    const proc2 = findById(KEYS.processes, s.process2Id);
+    const gSpec = findById(KEYS.gradingSpecs, s.gradingSpecId);
+    return [s.skuCode, s.lotNumber||'', country?.name||'', country?.code||'', grade?.name||'', grade?.code||'', pack?.name||'', pack?.code||'', supplier?.name||'', supplier?.code||'', region?.name||'', brandFarm?.name||'', proc1?.name||'', proc2?.name||'', gSpec?.name||'', s.description||'', s.saleName||'', s.costPrice!=null?s.costPrice:'', s.sellingPrice!=null?s.sellingPrice:'', s.currency||'', s.notes||'', new Date(s.createdAt).toLocaleDateString()];
   });
   const ws1 = XLSX.utils.aoa_to_sheet([regHeader, ...regRows]);
 
@@ -1388,10 +1683,12 @@ function exportExcel() {
   const packs = getAll(KEYS.packSizes).filter(p=>p.active);
   const suppliers = getAll(KEYS.suppliers).filter(s=>s.active).sort((a,b)=>a.code.localeCompare(b.code));
   const regions = getAll(KEYS.regions).filter(r=>r.active).sort((a,b)=>a.name.localeCompare(b.name));
+  const brandFarmsAll = getAll(KEYS.brandFarms).filter(r=>r.active).sort((a,b)=>a.name.localeCompare(b.name));
   const processes = getAll(KEYS.processes).filter(p=>p.active).sort((a,b)=>a.name.localeCompare(b.name));
+  const gradingSpecsAll = getAll(KEYS.gradingSpecs).filter(g=>g.active).sort((a,b)=>a.name.localeCompare(b.name));
 
-  const maxRows = Math.max(countries.length, grades.length, packs.length, suppliers.length, regions.length, processes.length);
-  const indexHeader = ['Country','Code','','Grade','Code','','Pack Size','Code','','Supplier','Code','','Region/Brand','','Process/Spec'];
+  const maxRows = Math.max(countries.length, grades.length, packs.length, suppliers.length, regions.length, brandFarmsAll.length, processes.length, gradingSpecsAll.length);
+  const indexHeader = ['Country','Code','','Grade','Code','','Pack Size','Code','','Supplier','Code','','Region','','Brand/Farm','','Process','','Grading Spec'];
   const indexRows = [];
   for (let i = 0; i < maxRows; i++) {
     indexRows.push([
@@ -1400,12 +1697,14 @@ function exportExcel() {
       packs[i]?.name||'', packs[i]?.code||'', '',
       suppliers[i]?.name||'', suppliers[i]?.code||'', '',
       regions[i]?.name||'', '',
-      processes[i]?.name||''
+      brandFarmsAll[i]?.name||'', '',
+      processes[i]?.name||'', '',
+      gradingSpecsAll[i]?.name||''
     ]);
   }
   const ws2 = XLSX.utils.aoa_to_sheet([indexHeader, ...indexRows]);
   ws2['!cols'] = [
-    {wch:20},{wch:5},{wch:2},{wch:14},{wch:5},{wch:2},{wch:14},{wch:5},{wch:2},{wch:26},{wch:5},{wch:2},{wch:20},{wch:2},{wch:20}
+    {wch:20},{wch:5},{wch:2},{wch:14},{wch:5},{wch:2},{wch:14},{wch:5},{wch:2},{wch:26},{wch:5},{wch:2},{wch:20},{wch:2},{wch:22},{wch:2},{wch:20},{wch:2},{wch:16}
   ];
   indexHeader.forEach((_, i) => {
     const cell = ws2[XLSX.utils.encode_cell({r:0, c:i})];
@@ -1447,8 +1746,10 @@ function renderSettings() {
     { key:KEYS.grades, title:'Grades / Categories', icon:'⭐', fields:['name','code'], labels:['Grade Name','Code (1 letter)'], desc:'Position 3 of SKU Code' },
     { key:KEYS.packSizes, title:'Pack Sizes', icon:'📦', fields:['name','code'], labels:['Pack Size Name','Code (1 letter)'], desc:'Position 4 of SKU Code' },
     { key:KEYS.suppliers, title:'Suppliers', icon:'🤝', fields:['name','code'], labels:['Supplier Name','Code (2 digits)'], desc:'Positions 5-6 of SKU Code' },
-    { key:KEYS.regions, title:'Regions / Brands', icon:'📍', fields:['name'], labels:['Region/Brand Name'], desc:'Included in Description field' },
-    { key:KEYS.processes, title:'Processes / Specs', icon:'☕', fields:['name'], labels:['Process Name'], desc:'Included in Description field' }
+    { key:KEYS.regions, title:'Regions', icon:'📍', fields:['name'], labels:['Region Name'], desc:'Origin region/area' },
+    { key:KEYS.brandFarms, title:'Brands / Farms', icon:'🏡', fields:['name'], labels:['Brand/Farm Name'], desc:'Farm, culturing brand, competition lot' },
+    { key:KEYS.processes, title:'Processes', icon:'☕', fields:['name'], labels:['Process Name'], desc:'Primary & secondary processing method' },
+    { key:KEYS.gradingSpecs, title:'Grading Specs', icon:'📊', fields:['name'], labels:['Grading Spec Name'], desc:'Country-specific grade (G1, SHB, AA...)' }
   ];
 
   document.getElementById('settingsTab').innerHTML = `
@@ -1497,6 +1798,54 @@ function renderSettings() {
         </div>
       </div>`;
     }).join('')}
+
+    <div style="margin-top:32px;margin-bottom:20px">
+      <h2 style="font-size:20px;font-weight:700;color:var(--heritage-blue)">Exporter Profiles</h2>
+      <p style="font-size:13px;color:var(--text-secondary);margin-top:4px">Save exporter defaults for quick Contract uploads. These auto-fill Step 1.</p>
+    </div>
+    <div class="card">
+      <div class="admin-add-row" style="flex-wrap:wrap;gap:8px">
+        <div class="form-group"><label class="form-label">Exporter Name</label><input type="text" id="expNew_name" placeholder="e.g. Uba" style="width:160px"></div>
+        <div class="form-group"><label class="form-label">Country</label>
+          <select id="expNew_country" style="width:160px">
+            <option value="">—</option>
+            ${getAll(KEYS.countries).filter(c=>c.active).sort((a,b)=>a.name.localeCompare(b.name)).map(c=>'<option value="'+c.id+'">'+escHtml(c.name)+'</option>').join('')}
+          </select>
+        </div>
+        <div class="form-group"><label class="form-label">Price Unit</label>
+          <select id="expNew_priceUnit" style="width:110px"><option value="USD/kg">USD/kg</option><option value="USD/lb">USD/lb</option></select>
+        </div>
+        <div class="form-group"><label class="form-label">Shipping (USD/kg)</label><input type="number" id="expNew_shipping" value="5" step="0.01" style="width:90px"></div>
+        <div class="form-group"><label class="form-label">FX Rate</label><input type="number" id="expNew_fx" value="33" step="0.01" style="width:90px"></div>
+        <div class="form-group"><label class="form-label">Linked Supplier</label>
+          <select id="expNew_supplier" style="width:160px">
+            <option value="">— None —</option>
+            ${getAll(KEYS.suppliers).filter(s=>s.active).sort((a,b)=>a.name.localeCompare(b.name)).map(s=>'<option value="'+s.id+'">'+escHtml(s.name)+' ('+s.code+')</option>').join('')}
+          </select>
+        </div>
+        <div class="form-group"><label class="form-label">&nbsp;</label><button class="btn btn-primary btn-sm" onclick="expProfileAdd()">+ Add</button></div>
+      </div>
+      <table class="admin-table" style="margin-top:12px">
+        <thead><tr><th>Exporter</th><th>Country</th><th>Unit</th><th>Shipping</th><th>FX</th><th>Supplier</th><th style="width:100px">Actions</th></tr></thead>
+        <tbody>
+          ${getAll(KEYS.exporterProfiles).map(ep => {
+            const country = findById(KEYS.countries, ep.countryId);
+            const supplier = findById(KEYS.suppliers, ep.supplierId);
+            return '<tr>'
+              +'<td><strong>'+escHtml(ep.name)+'</strong></td>'
+              +'<td>'+escHtml(country?.name||'—')+'</td>'
+              +'<td>'+escHtml(ep.priceUnit||'USD/kg')+'</td>'
+              +'<td>$'+((ep.shippingCost||5).toFixed(2))+'</td>'
+              +'<td>'+(ep.exchangeRate||33)+'</td>'
+              +'<td>'+escHtml(supplier?.name||'—')+'</td>'
+              +'<td class="admin-actions">'
+                +'<button class="btn btn-secondary btn-sm" onclick="expProfileEdit(\''+ep.id+'\')">Edit</button>'
+                +'<button class="btn btn-danger btn-sm" onclick="expProfileDelete(\''+ep.id+'\')">×</button>'
+              +'</td></tr>';
+          }).join('')}
+        </tbody>
+      </table>
+    </div>
   `;
 }
 
@@ -1566,7 +1915,7 @@ function settSaveEdit(key, id, fields) {
 
 function settDelete(key, id) {
   const skus = getAll(KEYS.skus);
-  const refFields = { [KEYS.countries]:'countryId', [KEYS.grades]:'gradeId', [KEYS.packSizes]:'packSizeId', [KEYS.suppliers]:'supplierId', [KEYS.regions]:'regionId', [KEYS.processes]:'processId' };
+  const refFields = { [KEYS.countries]:'countryId', [KEYS.grades]:'gradeId', [KEYS.packSizes]:'packSizeId', [KEYS.suppliers]:'supplierId', [KEYS.regions]:'regionId', [KEYS.brandFarms]:'brandFarmId', [KEYS.processes]:'processId', [KEYS.gradingSpecs]:'gradingSpecId' };
   const field = refFields[key];
   if (field) {
     const used = skus.filter(s => s[field] === id).length;
@@ -1580,6 +1929,81 @@ function settDelete(key, id) {
 }
 
 // ============================================================
+// EXPORTER PROFILES
+// ============================================================
+function expProfileAdd() {
+  const name = document.getElementById('expNew_name').value.trim();
+  if (!name) { showToast('Enter exporter name','error'); return; }
+  const profiles = getAll(KEYS.exporterProfiles);
+  if (profiles.some(p => p.name.toLowerCase() === name.toLowerCase())) { showToast('Exporter already exists','error'); return; }
+  profiles.push({
+    id: DB.genId(), name,
+    countryId: document.getElementById('expNew_country').value,
+    priceUnit: document.getElementById('expNew_priceUnit').value || 'USD/kg',
+    shippingCost: parseFloat(document.getElementById('expNew_shipping').value) || 5,
+    exchangeRate: parseFloat(document.getElementById('expNew_fx').value) || 33,
+    supplierId: document.getElementById('expNew_supplier').value || ''
+  });
+  DB.set(KEYS.exporterProfiles, profiles);
+  showToast('Exporter profile added');
+  renderSettings();
+}
+
+function expProfileEdit(id) {
+  const profiles = getAll(KEYS.exporterProfiles);
+  const ep = profiles.find(x=>x.id===id);
+  if (!ep) return;
+  const countries = getAll(KEYS.countries).filter(c=>c.active).sort((a,b)=>a.name.localeCompare(b.name));
+  const suppliers = getAll(KEYS.suppliers).filter(s=>s.active).sort((a,b)=>a.name.localeCompare(b.name));
+  showModal(`
+    <h3>Edit Exporter: ${escHtml(ep.name)}</h3>
+    <div class="form-group"><label class="form-label">Exporter Name</label><input type="text" id="expEdit_name" value="${escHtml(ep.name)}"></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+      <div class="form-group"><label class="form-label">Country</label>
+        <select id="expEdit_country">${countries.map(c=>'<option value="'+c.id+'"'+(c.id===ep.countryId?' selected':'')+'>'+escHtml(c.name)+'</option>').join('')}</select>
+      </div>
+      <div class="form-group"><label class="form-label">Price Unit</label>
+        <select id="expEdit_priceUnit"><option value="USD/kg"${ep.priceUnit==='USD/kg'?' selected':''}>USD/kg</option><option value="USD/lb"${ep.priceUnit==='USD/lb'?' selected':''}>USD/lb</option></select>
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px">
+      <div class="form-group"><label class="form-label">Shipping (USD/kg)</label><input type="number" id="expEdit_shipping" value="${ep.shippingCost||5}" step="0.01"></div>
+      <div class="form-group"><label class="form-label">FX Rate</label><input type="number" id="expEdit_fx" value="${ep.exchangeRate||33}" step="0.01"></div>
+      <div class="form-group"><label class="form-label">Linked Supplier</label>
+        <select id="expEdit_supplier"><option value="">— None —</option>${suppliers.map(s=>'<option value="'+s.id+'"'+(s.id===ep.supplierId?' selected':'')+'>'+escHtml(s.name)+' ('+s.code+')</option>').join('')}</select>
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="expProfileSave('${id}')">Save</button>
+    </div>
+  `);
+}
+
+function expProfileSave(id) {
+  const profiles = getAll(KEYS.exporterProfiles);
+  const ep = profiles.find(x=>x.id===id);
+  if (!ep) return;
+  ep.name = document.getElementById('expEdit_name').value.trim();
+  ep.countryId = document.getElementById('expEdit_country').value;
+  ep.priceUnit = document.getElementById('expEdit_priceUnit').value;
+  ep.shippingCost = parseFloat(document.getElementById('expEdit_shipping').value) || 5;
+  ep.exchangeRate = parseFloat(document.getElementById('expEdit_fx').value) || 33;
+  ep.supplierId = document.getElementById('expEdit_supplier').value || '';
+  DB.set(KEYS.exporterProfiles, profiles);
+  closeModal();
+  showToast('Updated');
+  renderSettings();
+}
+
+function expProfileDelete(id) {
+  if (!confirm('Delete this exporter profile?')) return;
+  DB.set(KEYS.exporterProfiles, getAll(KEYS.exporterProfiles).filter(x=>x.id!==id));
+  showToast('Deleted','warning');
+  renderSettings();
+}
+
+// ============================================================
 // ADMIN
 // ============================================================
 function renderAdmin() {
@@ -1588,8 +2012,10 @@ function renderAdmin() {
     { key:KEYS.grades, title:'Grades / Categories', fields:['name','code'], labels:['Grade Name','Code (1 letter)'] },
     { key:KEYS.packSizes, title:'Pack Sizes', fields:['name','code'], labels:['Pack Size Name','Code (1 letter)'] },
     { key:KEYS.suppliers, title:'Suppliers', fields:['name','code'], labels:['Supplier Name','Code (2 digits)'] },
-    { key:KEYS.regions, title:'Regions / Brands', fields:['name'], labels:['Region/Brand Name'] },
-    { key:KEYS.processes, title:'Processes / Specs', fields:['name'], labels:['Process Name'] }
+    { key:KEYS.regions, title:'Regions', fields:['name'], labels:['Region Name'] },
+    { key:KEYS.brandFarms, title:'Brands / Farms', fields:['name'], labels:['Brand/Farm Name'] },
+    { key:KEYS.processes, title:'Processes', fields:['name'], labels:['Process Name'] },
+    { key:KEYS.gradingSpecs, title:'Grading Specs', fields:['name'], labels:['Grading Spec Name'] }
   ];
 
   document.getElementById('adminTab').innerHTML = `
@@ -1728,7 +2154,7 @@ function adminSaveEdit(key, id, fields) {
 function adminDelete(key, id) {
   // Check if used by any SKU
   const skus = getAll(KEYS.skus);
-  const refFields = { [KEYS.countries]:'countryId', [KEYS.grades]:'gradeId', [KEYS.packSizes]:'packSizeId', [KEYS.suppliers]:'supplierId', [KEYS.regions]:'regionId', [KEYS.processes]:'processId' };
+  const refFields = { [KEYS.countries]:'countryId', [KEYS.grades]:'gradeId', [KEYS.packSizes]:'packSizeId', [KEYS.suppliers]:'supplierId', [KEYS.regions]:'regionId', [KEYS.brandFarms]:'brandFarmId', [KEYS.processes]:'processId', [KEYS.gradingSpecs]:'gradingSpecId' };
   const field = refFields[key];
   if (field) {
     const used = skus.filter(s => s[field] === id).length;
@@ -1789,6 +2215,1257 @@ function changePassword() {
 }
 
 // ============================================================
+// PRICE INTELLIGENCE
+// ============================================================
+function renderPriceIntel() {
+  const markets = getAll(KEYS.markets);
+  const competitors = getAll(KEYS.competitors);
+  const compPrices = getAll(KEYS.competitorPrices);
+  const skus = getAll(KEYS.skus);
+  const settings = DB.get(KEYS.priceIntelSettings);
+  const m = state.piMarket;
+  const activeMarket = markets.find(mk => mk.id === m);
+
+  if (m === 'CROSS') {
+    document.getElementById('priceIntelTab').innerHTML = `
+      <div class="market-switcher">
+        ${markets.map(mk => `<button class="market-pill" onclick="state.piMarket='${mk.id}';renderPriceIntel()">${mk.flag} ${mk.id}</button>`).join('')}
+        <button class="market-pill active" onclick="state.piMarket='CROSS';renderPriceIntel()">&#x1F310; Cross-Market</button>
+      </div>
+      <div class="card">
+        <div class="card-title">&#x1F310; Cross-Market Overview</div>
+        <div class="empty-state">
+          <div class="empty-state-icon">&#x1F4CA;</div>
+          <p>Upload competitor data in individual markets first, then return here for cross-market analysis.</p>
+          <p style="margin-top:8px;font-size:13px;color:var(--text-muted)">Tip: Start with your home market (TH) and add competitors one at a time.</p>
+        </div>
+      </div>
+    `;
+    return;
+  }
+
+  const marketComps = competitors.filter(c => c.marketId === m);
+  const marketPrices = compPrices.filter(p => {
+    const comp = competitors.find(c => c.id === p.competitorId);
+    return comp && comp.marketId === m;
+  });
+
+  // Apply filters
+  let filteredPrices = [...marketPrices];
+  if (state.piFilters.countryId) filteredPrices = filteredPrices.filter(p => p.countryOrigin === state.piFilters.countryId);
+  if (state.piFilters.gradeId) filteredPrices = filteredPrices.filter(p => p.category === state.piFilters.gradeId);
+  if (state.piFilters.competitorId) filteredPrices = filteredPrices.filter(p => p.competitorId === state.piFilters.competitorId);
+
+  const categoriesTracked = new Set(marketPrices.map(p => (p.countryOrigin||'') + '|' + (p.category||''))).size;
+  const lastUpload = marketComps.length ? marketComps.reduce((latest, c) =>
+    c.lastUploadAt && c.lastUploadAt > latest ? c.lastUploadAt : latest, '') : '';
+
+  document.getElementById('priceIntelTab').innerHTML = `
+    <div class="market-switcher">
+      ${markets.map(mk => `
+        <button class="market-pill ${mk.id===m?'active':''}" onclick="state.piMarket='${mk.id}';renderPriceIntel()">
+          ${mk.flag} ${mk.id}
+        </button>
+      `).join('')}
+      <button class="market-pill ${m==='CROSS'?'active':''}" onclick="state.piMarket='CROSS';renderPriceIntel()">
+        &#x1F310; Cross-Market
+      </button>
+    </div>
+
+    <div class="stats-grid">
+      <div class="stat-card"><div class="stat-value">${categoriesTracked}</div><div class="stat-label">Categories Tracked</div></div>
+      <div class="stat-card"><div class="stat-value">${marketComps.length}</div><div class="stat-label">Competitors</div></div>
+      <div class="stat-card"><div class="stat-value">${marketPrices.length}</div><div class="stat-label">Price Points</div></div>
+      <div class="stat-card"><div class="stat-value">${lastUpload ? new Date(lastUpload).toLocaleDateString() : '\u2014'}</div><div class="stat-label">Last Updated</div></div>
+    </div>
+
+    <div style="display:flex;gap:12px;margin-bottom:20px;flex-wrap:wrap">
+      <button class="btn btn-primary" onclick="showUploadModal()">&#x1F4E4; Upload Price List</button>
+      <button class="btn btn-secondary" onclick="showCompetitorManager()">&#x1F3E2; Manage Competitors</button>
+      <button class="btn btn-secondary" onclick="showExchangeRateModal()">&#x1F4B1; Exchange Rates</button>
+    </div>
+
+    <div class="registry-filters">
+      <div class="form-group">
+        <label class="form-label">Country Origin</label>
+        <select onchange="state.piFilters.countryId=this.value;renderPriceIntel()">
+          <option value="">All Countries</option>
+          ${piGetCountriesWithPrices(marketPrices).map(c =>
+            `<option value="${escHtml(c)}" ${state.piFilters.countryId===c?'selected':''}>${escHtml(c)}</option>`
+          ).join('')}
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Category</label>
+        <select onchange="state.piFilters.gradeId=this.value;renderPriceIntel()">
+          <option value="">All Categories</option>
+          ${piGetCategories(marketPrices).map(g =>
+            `<option value="${escHtml(g)}" ${state.piFilters.gradeId===g?'selected':''}>${escHtml(g)}</option>`
+          ).join('')}
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Competitor</label>
+        <select onchange="state.piFilters.competitorId=this.value;renderPriceIntel()">
+          <option value="">All Competitors</option>
+          ${marketComps.map(c =>
+            `<option value="${c.id}" ${state.piFilters.competitorId===c.id?'selected':''}>${escHtml(c.name)}</option>`
+          ).join('')}
+        </select>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Price Comparison \u2014 ${activeMarket ? activeMarket.flag+' '+activeMarket.name : ''}</div>
+      ${piRenderComparisonTable(filteredPrices, marketComps, m, skus)}
+    </div>
+  `;
+}
+
+function piGetCountriesWithPrices(prices) {
+  return [...new Set(prices.map(p => p.countryOrigin).filter(Boolean))].sort();
+}
+
+function piGetCategories(prices) {
+  return [...new Set(prices.map(p => p.category).filter(Boolean))].sort();
+}
+
+function piCalculateGap(ourPrice, theirPrice) {
+  if (!ourPrice || !theirPrice) return null;
+  return ((ourPrice - theirPrice) / theirPrice * 100);
+}
+
+function piRenderComparisonTable(prices, competitors, marketId, skus) {
+  if (!prices.length) {
+    return `<div class="empty-state">
+      <div class="empty-state-icon">&#x1F4CA;</div>
+      <p>No competitor data yet for this market.</p>
+      <p style="margin-top:8px;font-size:13px;color:var(--text-muted)">Upload a price list to start comparing!</p>
+    </div>`;
+  }
+
+  // Group by countryOrigin + category
+  const groups = {};
+  prices.forEach(p => {
+    const key = (p.countryOrigin||'Unknown') + '|' + (p.category||'Uncategorized');
+    if (!groups[key]) groups[key] = [];
+    groups[key].push(p);
+  });
+
+  // Find our SKU prices for matching
+  const ourPrices = {};
+  skus.forEach(s => {
+    const country = findById(KEYS.countries, s.countryId);
+    const grade = findById(KEYS.grades, s.gradeId);
+    if (country && grade) {
+      const key = country.name + '|' + grade.name;
+      const mp = s.marketPrices && s.marketPrices[marketId];
+      const price = mp ? mp.sellingPrice : (marketId === 'TH' ? s.sellingPrice : null);
+      if (price) {
+        if (!ourPrices[key]) ourPrices[key] = [];
+        ourPrices[key].push(price);
+      }
+    }
+  });
+
+  let html = `<div class="table-wrapper"><table>
+    <thead><tr>
+      <th>Origin</th><th>Category</th><th>80+ Avg</th><th>Comp. Avg</th><th>Gap</th><th>Competitors</th><th style="min-width:160px">Visual</th>
+    </tr></thead><tbody>`;
+
+  const sortedKeys = Object.keys(groups).sort();
+  sortedKeys.forEach(key => {
+    const [countryOrigin, category] = key.split('|');
+    const groupPrices = groups[key];
+
+    // Competitor average
+    const compAvg = groupPrices.reduce((s,p) => s + (parseFloat(p.price)||0), 0) / groupPrices.length;
+
+    // Our average
+    const ourArr = ourPrices[key] || [];
+    const ourAvg = ourArr.length ? ourArr.reduce((s,v) => s+v, 0) / ourArr.length : null;
+
+    const gap = piCalculateGap(ourAvg, compAvg);
+    const gapClass = gap === null ? '' : gap > 2 ? 'gap-negative' : gap < -2 ? 'gap-positive' : 'gap-neutral';
+    const gapStr = gap === null ? '\u2014' : (gap > 0 ? '+' : '') + gap.toFixed(1) + '%';
+
+    // Bar widths
+    const maxVal = Math.max(ourAvg || 0, compAvg || 0, 1);
+    const ourW = ourAvg ? (ourAvg / maxVal * 100) : 0;
+    const compW = compAvg ? (compAvg / maxVal * 100) : 0;
+
+    // Competitor tags
+    const compIds = [...new Set(groupPrices.map(p => p.competitorId))];
+    const tags = compIds.map(cid => {
+      const c = competitors.find(x => x.id === cid);
+      return c ? `<span class="competitor-tag ${c.type||''}">${escHtml(c.name)}</span>` : '';
+    }).join('');
+
+    const market = (getAll(KEYS.markets).find(mk=>mk.id===marketId)||{});
+    const cur = market.currency || 'THB';
+
+    html += `<tr class="comparison-row">
+      <td>${escHtml(countryOrigin)}</td>
+      <td>${escHtml(category)}</td>
+      <td style="font-family:'JetBrains Mono';font-size:13px">${ourAvg ? ourAvg.toFixed(2)+' '+cur : '<span style="color:var(--text-muted)">\u2014</span>'}</td>
+      <td style="font-family:'JetBrains Mono';font-size:13px">${compAvg.toFixed(2)} ${cur}</td>
+      <td class="${gapClass}" style="font-family:'JetBrains Mono';font-size:13px">${gapStr}</td>
+      <td>${tags}</td>
+      <td>
+        <div class="price-bar-wrapper" style="flex-direction:column;align-items:stretch;gap:2px">
+          <div style="display:flex;align-items:center;gap:4px"><div class="price-bar-80p" style="width:${ourW}%;height:10px"></div><span style="font-size:10px;color:var(--text-muted)">80+</span></div>
+          <div style="display:flex;align-items:center;gap:4px"><div class="price-bar-comp" style="width:${compW}%;height:10px"></div><span style="font-size:10px;color:var(--text-muted)">Comp</span></div>
+        </div>
+      </td>
+    </tr>`;
+  });
+
+  html += '</tbody></table></div>';
+  return html;
+}
+
+// --- Competitor Manager ---
+function showCompetitorManager() {
+  const m = state.piMarket;
+  const competitors = getAll(KEYS.competitors).filter(c => c.marketId === m);
+  const market = (getAll(KEYS.markets).find(mk=>mk.id===m)||{});
+
+  let html = `<h3>&#x1F3E2; Competitors \u2014 ${market.flag||''} ${market.name||m}</h3>
+    <div style="display:grid;grid-template-columns:1fr 120px;gap:8px;margin-bottom:16px">
+      <input type="text" id="piNewCompName" placeholder="Competitor name...">
+      <select id="piNewCompType">
+        <option value="roaster">Roaster</option>
+        <option value="importer">Importer</option>
+        <option value="trader">Trader</option>
+      </select>
+    </div>
+    <button class="btn btn-primary btn-sm" onclick="piAddCompetitor()" style="margin-bottom:16px">+ Add Competitor</button>
+    <div id="piCompList">
+      ${competitors.length ? competitors.map(c => `
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--border)">
+          <div>
+            <strong>${escHtml(c.name)}</strong>
+            <span class="competitor-tag ${c.type||''}">${c.type||'roaster'}</span>
+            ${c.lastUploadAt ? `<span style="font-size:11px;color:var(--text-muted);margin-left:8px">Last upload: ${new Date(c.lastUploadAt).toLocaleDateString()}</span>` : ''}
+          </div>
+          <div class="admin-actions">
+            <button class="btn btn-danger btn-sm" onclick="piDeleteCompetitor('${c.id}')">Delete</button>
+          </div>
+        </div>
+      `).join('') : '<div class="empty-state" style="padding:20px">No competitors added yet for this market.</div>'}
+    </div>
+    <div class="modal-actions"><button class="btn btn-secondary" onclick="closeModal()">Close</button></div>`;
+  showModal(html);
+}
+
+function piAddCompetitor() {
+  const nameEl = document.getElementById('piNewCompName');
+  const typeEl = document.getElementById('piNewCompType');
+  const name = (nameEl.value||'').trim();
+  if (!name) { showToast('Enter a competitor name','error'); return; }
+  const competitors = getAll(KEYS.competitors);
+  competitors.push({
+    id: DB.genId(),
+    name: name,
+    marketId: state.piMarket,
+    type: typeEl.value || 'roaster',
+    notes: '',
+    createdAt: new Date().toISOString(),
+    lastUploadAt: null
+  });
+  DB.set(KEYS.competitors, competitors);
+  showToast('Competitor added');
+  showCompetitorManager(); // re-render modal
+}
+
+function piDeleteCompetitor(id) {
+  if (!confirm('Delete this competitor and all their price data?')) return;
+  let competitors = getAll(KEYS.competitors).filter(c => c.id !== id);
+  let prices = getAll(KEYS.competitorPrices).filter(p => p.competitorId !== id);
+  DB.set(KEYS.competitors, competitors);
+  DB.set(KEYS.competitorPrices, prices);
+  showToast('Competitor deleted');
+  showCompetitorManager();
+}
+
+// --- Exchange Rate Modal ---
+function showExchangeRateModal() {
+  const settings = DB.get(KEYS.priceIntelSettings);
+  const rates = settings.exchangeRates.rates;
+  let html = `<h3>&#x1F4B1; Exchange Rates (per 1 USD)</h3>
+    <p style="font-size:12px;color:var(--text-muted);margin-bottom:16px">Last updated: ${settings.exchangeRates.updatedAt ? new Date(settings.exchangeRates.updatedAt).toLocaleDateString() : 'Never'}</p>
+    <div style="display:grid;grid-template-columns:80px 1fr;gap:10px;align-items:center">
+      <label class="form-label" style="margin:0">\u{1F1F9}\u{1F1ED} THB</label>
+      <input type="number" id="piRate_THB" step="0.01" value="${rates.THB||''}" style="padding:8px">
+      <label class="form-label" style="margin:0">\u{1F1F2}\u{1F1FE} MYR</label>
+      <input type="number" id="piRate_MYR" step="0.01" value="${rates.MYR||''}" style="padding:8px">
+      <label class="form-label" style="margin:0">\u{1F1EE}\u{1F1E9} IDR</label>
+      <input type="number" id="piRate_IDR" step="1" value="${rates.IDR||''}" style="padding:8px">
+      <label class="form-label" style="margin:0">\u{1F1F5}\u{1F1ED} PHP</label>
+      <input type="number" id="piRate_PHP" step="0.01" value="${rates.PHP||''}" style="padding:8px">
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="piSaveExchangeRates()">Save Rates</button>
+    </div>`;
+  showModal(html);
+}
+
+function piSaveExchangeRates() {
+  const settings = DB.get(KEYS.priceIntelSettings);
+  settings.exchangeRates.rates.THB = parseFloat(document.getElementById('piRate_THB').value) || 34.5;
+  settings.exchangeRates.rates.MYR = parseFloat(document.getElementById('piRate_MYR').value) || 4.45;
+  settings.exchangeRates.rates.IDR = parseFloat(document.getElementById('piRate_IDR').value) || 15800;
+  settings.exchangeRates.rates.PHP = parseFloat(document.getElementById('piRate_PHP').value) || 56.2;
+  settings.exchangeRates.updatedAt = new Date().toISOString();
+  DB.set(KEYS.priceIntelSettings, settings);
+  showToast('Exchange rates saved');
+  closeModal();
+  renderPriceIntel();
+}
+
+// --- Upload Modal (multi-step) ---
+let _piUploadState = { step:1, file:null, headers:[], rows:[], mapping:{}, competitorId:'', parsedRecords:[] };
+
+function showUploadModal() {
+  const m = state.piMarket;
+  const marketComps = getAll(KEYS.competitors).filter(c => c.marketId === m);
+  _piUploadState = { step:1, file:null, headers:[], rows:[], mapping:{}, competitorId:'', parsedRecords:[] };
+
+  if (!marketComps.length) {
+    showModal(`<h3>&#x1F4E4; Upload Price List</h3>
+      <div class="empty-state" style="padding:20px">
+        <p>No competitors defined for this market yet.</p>
+        <p style="margin-top:8px">Add a competitor first, then upload their price list.</p>
+      </div>
+      <div class="modal-actions">
+        <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+        <button class="btn btn-primary" onclick="closeModal();showCompetitorManager()">Add Competitor</button>
+      </div>`);
+    return;
+  }
+
+  _piRenderUploadStep();
+}
+
+function _piRenderUploadStep() {
+  const m = state.piMarket;
+  const market = (getAll(KEYS.markets).find(mk=>mk.id===m)||{});
+  const marketComps = getAll(KEYS.competitors).filter(c => c.marketId === m);
+  const us = _piUploadState;
+
+  if (us.step === 1) {
+    showModal(`<h3>&#x1F4E4; Upload Price List \u2014 ${market.flag||''} ${market.name||m}</h3>
+      <div class="form-group">
+        <label class="form-label">Competitor</label>
+        <select id="piUploadComp" onchange="_piUploadState.competitorId=this.value">
+          <option value="">Select competitor...</option>
+          ${marketComps.map(c => `<option value="${c.id}" ${us.competitorId===c.id?'selected':''}>${escHtml(c.name)}</option>`).join('')}
+        </select>
+      </div>
+      <div class="upload-zone" id="piDropZone" onclick="document.getElementById('piFileInput').click()"
+           ondragover="event.preventDefault();this.classList.add('dragover')"
+           ondragleave="this.classList.remove('dragover')"
+           ondrop="event.preventDefault();this.classList.remove('dragover');_piHandleFile(event.dataTransfer.files[0])">
+        <div class="upload-zone-icon">&#x1F4C1;</div>
+        <div class="upload-zone-text">${us.file ? escHtml(us.file.name) : 'Drop .xlsx or .csv file here'}</div>
+        <div class="upload-zone-hint">${us.file ? us.rows.length+' rows detected' : 'or click to browse'}</div>
+      </div>
+      <input type="file" id="piFileInput" accept=".xlsx,.xls,.csv" style="display:none" onchange="_piHandleFile(this.files[0])">
+      <div class="modal-actions">
+        <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+        <button class="btn btn-primary" onclick="_piUploadNext()" ${!us.file||!us.competitorId?'disabled':''}>Next: Map Columns</button>
+      </div>`);
+  } else if (us.step === 2) {
+    const colOpts = ['Skip','Product Name','Country Origin','Region','Process','Grade/Category','Price','Currency','Unit','Notes'];
+    showModal(`<h3>&#x1F5C2; Map Columns</h3>
+      <p style="font-size:12px;color:var(--text-muted);margin-bottom:12px">Assign each column from the file to a field. We detected ${us.headers.length} columns.</p>
+      <div class="mapping-grid">
+        ${us.headers.map((h, i) => `
+          <div style="font-size:13px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${escHtml(h)}">${escHtml(h)}</div>
+          <div class="col-arrow">\u2192</div>
+          <select id="piMap_${i}" onchange="_piUploadState.mapping[${i}]=this.value" style="padding:6px 8px;font-size:12px">
+            ${colOpts.map(o => `<option value="${o}" ${us.mapping[i]===o?'selected':''}>${o}</option>`).join('')}
+          </select>
+        `).join('')}
+      </div>
+      <div class="modal-actions">
+        <button class="btn btn-secondary" onclick="_piUploadState.step=1;_piRenderUploadStep()">Back</button>
+        <button class="btn btn-primary" onclick="_piUploadNext()">Next: Preview</button>
+      </div>`);
+    // Auto-guess mappings
+    _piAutoGuessMapping();
+  } else if (us.step === 3) {
+    const recs = us.parsedRecords;
+    const shown = recs.slice(0, 20);
+    showModal(`<h3>&#x1F50D; Preview (${recs.length} records)</h3>
+      <div class="table-wrapper" style="max-height:350px;overflow-y:auto">
+        <table style="font-size:12px">
+          <thead><tr><th>Product</th><th>Country</th><th>Category</th><th>Price</th><th>Currency</th></tr></thead>
+          <tbody>
+            ${shown.map(r => `<tr>
+              <td>${escHtml(r.productName||'')}</td>
+              <td>${escHtml(r.countryOrigin||'')}</td>
+              <td>${escHtml(r.category||'')}</td>
+              <td style="font-family:'JetBrains Mono'">${r.price||'\u2014'}</td>
+              <td>${escHtml(r.currency||'')}</td>
+            </tr>`).join('')}
+          </tbody>
+        </table>
+      </div>
+      ${recs.length > 20 ? `<p style="font-size:12px;color:var(--text-muted);margin-top:8px">Showing 20 of ${recs.length} records</p>` : ''}
+      <div class="modal-actions">
+        <button class="btn btn-secondary" onclick="_piUploadState.step=2;_piRenderUploadStep()">Back</button>
+        <button class="btn btn-primary" onclick="_piConfirmUpload()">Confirm &amp; Import ${recs.length} Records</button>
+      </div>`);
+  }
+}
+
+function _piHandleFile(file) {
+  if (!file) return;
+  _piUploadState.file = file;
+  const reader = new FileReader();
+  reader.onload = e => {
+    try {
+      const wb = XLSX.read(e.target.result, { type:'array' });
+      const ws = wb.Sheets[wb.SheetNames[0]];
+      const data = XLSX.utils.sheet_to_json(ws, { header:1, defval:'' });
+      if (data.length < 2) { showToast('File appears empty or has only headers','error'); return; }
+      _piUploadState.headers = data[0].map(h => String(h).trim());
+      _piUploadState.rows = data.slice(1).filter(r => r.some(c => c !== ''));
+      _piUploadState.mapping = {};
+      _piRenderUploadStep(); // re-render step 1 with file info
+    } catch (err) { showToast('Failed to parse file: ' + err.message, 'error'); }
+  };
+  reader.readAsArrayBuffer(file);
+}
+
+function _piAutoGuessMapping() {
+  const headers = _piUploadState.headers;
+  const guesses = {
+    'product':'Product Name', 'item':'Product Name', 'name':'Product Name', 'coffee':'Product Name', 'description':'Product Name',
+    'country':'Country Origin', 'origin':'Country Origin',
+    'region':'Region', 'area':'Region', 'farm':'Region',
+    'process':'Process', 'method':'Process',
+    'grade':'Grade/Category', 'category':'Grade/Category', 'type':'Grade/Category', 'tier':'Grade/Category',
+    'price':'Price', 'cost':'Price', 'amount':'Price', 'sell':'Price', 'rate':'Price',
+    'currency':'Currency', 'cur':'Currency',
+    'unit':'Unit', 'uom':'Unit', 'weight':'Unit', 'size':'Unit', 'kg':'Unit',
+    'note':'Notes', 'remark':'Notes', 'comment':'Notes'
+  };
+  headers.forEach((h, i) => {
+    const lower = h.toLowerCase();
+    for (const [keyword, field] of Object.entries(guesses)) {
+      if (lower.includes(keyword)) {
+        // Only set if not already mapped to this field
+        const alreadyMapped = Object.values(_piUploadState.mapping).includes(field);
+        if (!alreadyMapped) {
+          _piUploadState.mapping[i] = field;
+          const el = document.getElementById('piMap_' + i);
+          if (el) el.value = field;
+          break;
+        }
+      }
+    }
+    if (!_piUploadState.mapping[i]) _piUploadState.mapping[i] = 'Skip';
+  });
+}
+
+function _piUploadNext() {
+  const us = _piUploadState;
+  if (us.step === 1) {
+    if (!us.competitorId) { showToast('Select a competitor','error'); return; }
+    us.competitorId = document.getElementById('piUploadComp').value;
+    if (!us.file || !us.rows.length) { showToast('Upload a file first','error'); return; }
+    us.step = 2;
+    _piRenderUploadStep();
+  } else if (us.step === 2) {
+    // Read mapping from selects
+    us.headers.forEach((h, i) => {
+      const el = document.getElementById('piMap_' + i);
+      if (el) us.mapping[i] = el.value;
+    });
+    // Check that at least Price is mapped
+    const mappedFields = Object.values(us.mapping);
+    if (!mappedFields.includes('Price')) { showToast('Map at least the Price column','error'); return; }
+    // Build records
+    us.parsedRecords = _piBuildRecords(us.headers, us.rows, us.mapping);
+    if (!us.parsedRecords.length) { showToast('No valid records found','error'); return; }
+    us.step = 3;
+    _piRenderUploadStep();
+  }
+}
+
+function _piBuildRecords(headers, rows, mapping) {
+  const fieldMap = {};
+  Object.entries(mapping).forEach(([idx, field]) => {
+    if (field !== 'Skip') fieldMap[field] = parseInt(idx);
+  });
+
+  return rows.map(row => {
+    const price = parseFloat(row[fieldMap['Price']]);
+    if (isNaN(price) || price <= 0) return null;
+    return {
+      productName: fieldMap['Product Name'] != null ? String(row[fieldMap['Product Name']]||'').trim() : '',
+      countryOrigin: fieldMap['Country Origin'] != null ? String(row[fieldMap['Country Origin']]||'').trim() : '',
+      region: fieldMap['Region'] != null ? String(row[fieldMap['Region']]||'').trim() : '',
+      process: fieldMap['Process'] != null ? String(row[fieldMap['Process']]||'').trim() : '',
+      category: fieldMap['Grade/Category'] != null ? String(row[fieldMap['Grade/Category']]||'').trim() : '',
+      price: price,
+      currency: fieldMap['Currency'] != null ? String(row[fieldMap['Currency']]||'').trim() : (getAll(KEYS.markets).find(mk=>mk.id===state.piMarket)||{}).currency || '',
+      unit: fieldMap['Unit'] != null ? String(row[fieldMap['Unit']]||'').trim() : '',
+      notes: fieldMap['Notes'] != null ? String(row[fieldMap['Notes']]||'').trim() : '',
+    };
+  }).filter(Boolean);
+}
+
+function _piConfirmUpload() {
+  const us = _piUploadState;
+  const existing = getAll(KEYS.competitorPrices);
+  const now = new Date().toISOString();
+  const newRecords = us.parsedRecords.map(r => ({
+    id: DB.genId(),
+    competitorId: us.competitorId,
+    productName: r.productName,
+    countryOrigin: r.countryOrigin,
+    region: r.region,
+    process: r.process,
+    category: r.category,
+    price: r.price,
+    currency: r.currency,
+    unit: r.unit,
+    notes: r.notes,
+    uploadedAt: now,
+  }));
+
+  DB.set(KEYS.competitorPrices, existing.concat(newRecords));
+
+  // Update competitor's lastUploadAt
+  const competitors = getAll(KEYS.competitors);
+  const comp = competitors.find(c => c.id === us.competitorId);
+  if (comp) { comp.lastUploadAt = now; DB.set(KEYS.competitors, competitors); }
+
+  showToast(`Imported ${newRecords.length} price records`);
+  closeModal();
+  renderPriceIntel();
+}
+
+// ============================================================
+// CONTRACT-TO-SKU PIPELINE
+// ============================================================
+function renderContract() {
+  const contracts = getAll(KEYS.contracts);
+  const step = state.contractStep;
+  const cd = state.contractData;
+
+  const stepLabels = ['Upload','Review & Name','Pricing','SKU'];
+  const stepsHtml = stepLabels.map((l,i) => {
+    const n = i+1;
+    const cls = n === step ? 'active' : (cd && n < step ? 'done' : '');
+    return `<div class="contract-step ${cls}"><span class="contract-step-num">${n}</span>${l}</div>`;
+  }).join('');
+
+  let bodyHtml = '';
+
+  if (step === 1) {
+    // STEP 1: Upload
+    bodyHtml = `
+      <div class="card">
+        <div class="card-title">Upload Exporter Contract</div>
+        <p style="font-size:13px;color:var(--text-secondary);margin-bottom:16px">Upload an Excel or CSV order list from your exporter. The system will extract items and calculate pricing.</p>
+        ${getAll(KEYS.exporterProfiles).length ? `<div class="form-group" style="margin-bottom:16px">
+          <label class="form-label">Quick Fill from Saved Profile</label>
+          <select id="contractProfileSelect" onchange="contractFillFromProfile(this.value)" style="max-width:300px">
+            <option value="">— Select exporter profile —</option>
+            ${getAll(KEYS.exporterProfiles).map(ep=>'<option value="'+ep.id+'">'+escHtml(ep.name)+'</option>').join('')}
+          </select>
+        </div>` : ''}
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px">
+          <div class="form-group">
+            <label class="form-label">Exporter Name <span style="font-size:11px;color:var(--text-muted)">(auto-detected from file)</span></label>
+            <input type="text" id="contractExporter" placeholder="Auto-detected from file, or enter manually" value="${cd?.exporters?cd.exporters.join(', '):''}">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Country *</label>
+            <select id="contractCountry">
+              <option value="">— Select —</option>
+              ${getAll(KEYS.countries).filter(c=>c.active).sort((a,b)=>a.name.localeCompare(b.name)).map(c=>`<option value="${c.id}" ${cd?.countryId===c.id?'selected':''}>${escHtml(c.name)}</option>`).join('')}
+            </select>
+          </div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:16px">
+          <div class="form-group">
+            <label class="form-label">Price Unit *</label>
+            <select id="contractPriceUnit">
+              <option value="USD/kg" ${cd?.priceUnit==='USD/kg'?'selected':''}>USD / kg</option>
+              <option value="USD/lb" ${cd?.priceUnit==='USD/lb'?'selected':''}>USD / lb</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Shipping Cost (USD/kg)</label>
+            <input type="number" id="contractShipping" placeholder="5.00" step="0.01" value="${cd?.shippingCost||5}">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Exchange Rate (USD→THB)</label>
+            <input type="number" id="contractFx" placeholder="33" step="0.01" value="${cd?.exchangeRate||33}">
+          </div>
+        </div>
+        <div class="upload-zone" id="contractDropZone"
+          onclick="document.getElementById('contractFileInput')?.click()"
+          ondragover="event.preventDefault();this.classList.add('dragover')"
+          ondragleave="this.classList.remove('dragover')"
+          ondrop="event.preventDefault();this.classList.remove('dragover');contractHandleDrop(event.dataTransfer.files[0])">
+          <div class="upload-zone-icon">📄</div>
+          <div class="upload-zone-text">Drop file here or click to browse</div>
+          <div class="upload-zone-hint">.xlsx, .csv, .pdf, .jpg, .png supported</div>
+          <input type="file" accept=".xlsx,.csv,.pdf,.jpg,.jpeg,.png,.webp" style="display:none" id="contractFileInput" onchange="contractHandleDrop(this.files[0])">
+        </div>
+        <div id="contractParsingStatus" style="display:none;margin-top:12px;padding:12px;border-radius:8px;background:var(--heritage-blue);color:white;font-size:13px;text-align:center">
+          <span class="spinner" style="display:inline-block;width:14px;height:14px;border:2px solid rgba(255,255,255,0.3);border-top-color:white;border-radius:50%;animation:spin 0.8s linear infinite;margin-right:8px;vertical-align:middle"></span>
+          <span id="contractParsingText">Analyzing document with AI...</span>
+        </div>
+      </div>
+      ${contracts.length ? `
+      <div class="card" style="margin-top:16px">
+        <div class="card-title">Recent Contracts</div>
+        <table class="contract-items-table">
+          <thead><tr><th>Date</th><th>Exporter</th><th>Country</th><th>Items</th><th>Status</th><th>Actions</th></tr></thead>
+          <tbody>
+            ${contracts.slice(-10).reverse().map(c => {
+              const country = findById(KEYS.countries, c.countryId);
+              const itemCount = c.items?.length || 0;
+              const skuCount = c.items?.filter(i=>i.status==='sku_created').length || 0;
+              return `<tr>
+                <td style="white-space:nowrap;font-size:12px">${new Date(c.createdAt).toLocaleDateString()}</td>
+                <td><span class="exporter-badge">${escHtml(c.exporters?c.exporters.join(', '):c.exporter||'')}</span></td>
+                <td>${escHtml(country?.name||'')}</td>
+                <td>${itemCount} items (${skuCount} SKUs)</td>
+                <td><span class="status-dot ${c.status}"></span>${c.status}</td>
+                <td><button class="btn btn-secondary btn-sm" onclick="contractLoad('${c.id}')">Open</button></td>
+              </tr>`;
+            }).join('')}
+          </tbody>
+        </table>
+      </div>` : ''}
+    `;
+  } else if (step === 2 && cd) {
+    // STEP 2: Review items & auto-name — grouped by exporter
+    const exporterNames = [...new Set(cd.items.map(i=>i.exporter))];
+    const exporterGroupsHtml = exporterNames.map(expName => {
+      const expItems = cd.items.filter(i=>i.exporter===expName);
+      const firstIdx = cd.items.indexOf(expItems[0]);
+      return `
+        <div style="margin-bottom:20px">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+            <span class="exporter-badge" style="font-size:14px">${escHtml(expName)}</span>
+            <span style="font-size:12px;color:var(--text-muted)">${expItems.length} items</span>
+            <button class="btn btn-secondary btn-sm" style="font-size:10px;padding:2px 6px" onclick="contractRenameExporter('${escHtml(expName)}')">Rename</button>
+          </div>
+          <table class="contract-items-table">
+            <thead><tr>
+              <th style="width:30px">#</th>
+              <th>Raw Product Name</th>
+              <th>Auto Name</th>
+              <th>Sale Name (editable)</th>
+              <th style="width:60px">Qty</th>
+              <th style="width:80px">FOB</th>
+              <th style="width:50px">Sea</th>
+              <th style="width:50px">Air</th>
+            </tr></thead>
+            <tbody>
+              ${expItems.map(item => {
+                const idx = cd.items.indexOf(item);
+                return `<tr>
+                <td style="color:var(--text-muted);font-size:11px">${idx+1}</td>
+                <td style="font-size:12px;color:var(--text-muted)">${escHtml(item.rawProductName)}</td>
+                <td style="font-size:12px">${escHtml(item.autoName)}</td>
+                <td>
+                  <input type="text" value="${escHtml(item.saleName||'')}" placeholder="${escHtml(item.autoName)}"
+                    class="${item.saleNameLocked?'name-locked':''}"
+                    onchange="contractUpdateItem(${idx},'saleName',this.value);contractUpdateItem(${idx},'saleNameLocked',!!this.value)"
+                    style="font-size:12px">
+                </td>
+                <td class="price-cell">${item.totalQty?.toLocaleString()||'—'}</td>
+                <td class="price-cell">${item.fobPrice!=null?item.fobPrice.toFixed(2):''} <span style="color:var(--text-muted);font-size:10px">${cd.priceUnit==='USD/lb'?'/lb':'/kg'}</span></td>
+                <td class="price-cell">${item.seaQty!=null?item.seaQty.toLocaleString():''}</td>
+                <td class="price-cell">${item.airQty!=null?item.airQty.toLocaleString():''}</td>
+              </tr>`;}).join('')}
+            </tbody>
+          </table>
+        </div>`;
+    }).join('');
+
+    bodyHtml = `
+      <div class="card">
+        <div class="flex-between mb-16">
+          <div class="card-title" style="margin-bottom:0">Review Items — ${exporterNames.length} Exporter(s) (${cd.items.length} items)</div>
+          <div style="display:flex;gap:8px">
+            <button class="btn btn-secondary btn-sm" onclick="contractGoStep(1)">← Back</button>
+            <button class="btn btn-primary btn-sm" onclick="contractGoStep(3)">Next: Pricing →</button>
+          </div>
+        </div>
+        ${exporterGroupsHtml}
+      </div>
+    `;
+  } else if (step === 3 && cd) {
+    // STEP 3: Pricing calculation
+    const fx = cd.exchangeRate || 33;
+    const ship = cd.shippingCost || 5;
+    const customs = 25; // THB
+    const isLb = cd.priceUnit === 'USD/lb';
+    const LB_TO_KG = 2.2046;
+
+    bodyHtml = `
+      <div class="card">
+        <div class="flex-between mb-16">
+          <div class="card-title" style="margin-bottom:0">Pricing — ${escHtml((cd.exporters||[]).join(', ')||'Contract')}</div>
+          <div style="display:flex;gap:8px">
+            <button class="btn btn-secondary btn-sm" onclick="contractGoStep(2)">← Back</button>
+            <button class="btn btn-primary btn-sm" onclick="contractGoStep(4)">Next: Generate SKUs →</button>
+          </div>
+        </div>
+        <div style="display:flex;gap:16px;margin-bottom:16px;flex-wrap:wrap">
+          <div style="font-size:12px;color:var(--text-secondary)">FX: <strong>1 USD = ${fx} THB</strong></div>
+          <div style="font-size:12px;color:var(--text-secondary)">Shipping: <strong>$${ship}/kg</strong></div>
+          <div style="font-size:12px;color:var(--text-secondary)">Customs: <strong>${customs} THB/kg</strong></div>
+          <div style="font-size:12px;color:var(--text-secondary)">Unit: <strong>${cd.priceUnit}</strong></div>
+        </div>
+        <div class="table-wrapper" style="max-height:500px;overflow-y:auto">
+          <table class="contract-items-table">
+            <thead><tr>
+              <th>#</th>
+              <th>Product</th>
+              <th style="text-align:right">FOB</th>
+              <th style="text-align:right">FOB/kg</th>
+              <th style="text-align:right">Cost (THB)</th>
+              <th style="text-align:right">Sell TH (THB)</th>
+              <th style="text-align:right">Margin</th>
+              <th style="text-align:right">Total FOB (USD)</th>
+            </tr></thead>
+            <tbody>
+              ${cd.items.map((item, idx) => {
+                const fob = item.fobPrice || 0;
+                const fobKg = isLb ? fob * LB_TO_KG : fob;
+                const costThb = ((fobKg + ship) * fx) + customs;
+                const margin = item.margin || 1.25;
+                const sellThb = costThb * margin;
+                const totalFob = fob * (item.totalQty || 0);
+                // Store calculated prices
+                item.fobPerKg = fobKg;
+                item.costPriceTHB = Math.round(costThb);
+                item.sellPriceTHB = Math.round(sellThb);
+                item.totalFobUSD = Math.round(totalFob);
+                return `<tr>
+                  <td style="color:var(--text-muted);font-size:11px">${idx+1}</td>
+                  <td style="font-size:12px">${escHtml(item.saleName || item.autoName)}</td>
+                  <td class="price-cell">${fob.toFixed(2)}</td>
+                  <td class="price-cell">${fobKg.toFixed(2)}</td>
+                  <td class="price-cell" style="font-weight:700;color:var(--heritage-blue)">${Math.round(costThb).toLocaleString()}</td>
+                  <td class="price-cell" style="font-weight:700;color:var(--success)">${Math.round(sellThb).toLocaleString()}</td>
+                  <td class="price-cell">
+                    <select style="font-size:11px;padding:2px 4px;width:65px" onchange="contractUpdateItem(${idx},'margin',parseFloat(this.value));renderContract()">
+                      <option value="1.20" ${margin===1.20?'selected':''}>20%</option>
+                      <option value="1.25" ${margin===1.25?'selected':''}>25%</option>
+                      <option value="1.30" ${margin===1.30?'selected':''}>30%</option>
+                      <option value="1.35" ${margin===1.35?'selected':''}>35%</option>
+                      <option value="1.40" ${margin===1.40?'selected':''}>40%</option>
+                      <option value="1.50" ${margin===1.50?'selected':''}>50%</option>
+                    </select>
+                  </td>
+                  <td class="price-cell">${Math.round(totalFob).toLocaleString()}</td>
+                </tr>`;
+              }).join('')}
+            </tbody>
+            <tfoot>
+              <tr style="font-weight:700;border-top:2px solid var(--heritage-blue)">
+                <td colspan="7" style="text-align:right">Total FOB (USD)</td>
+                <td class="price-cell">${cd.items.reduce((s,i)=>s+(i.totalFobUSD||0),0).toLocaleString()}</td>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+      </div>
+    `;
+  } else if (step === 4 && cd) {
+    // STEP 4: Generate SKUs
+    const skus = getAll(KEYS.skus);
+    bodyHtml = `
+      <div class="card">
+        <div class="flex-between mb-16">
+          <div class="card-title" style="margin-bottom:0">Generate SKUs — ${escHtml((cd.exporters||[]).join(', ')||'Contract')} (${cd.items.length} items)</div>
+          <div style="display:flex;gap:8px">
+            <button class="btn btn-secondary btn-sm" onclick="contractGoStep(3)">← Back</button>
+            <button class="btn btn-primary" onclick="contractCreateAllSkus()">Create All SKUs</button>
+          </div>
+        </div>
+        <p style="font-size:13px;color:var(--text-secondary);margin-bottom:16px">Review the SKU assignments below. Existing SKUs will be reused. New SKUs will be generated.</p>
+        <div class="table-wrapper" style="max-height:500px;overflow-y:auto">
+          <table class="contract-items-table">
+            <thead><tr>
+              <th>#</th>
+              <th>Product</th>
+              <th>Grade</th>
+              <th>Pack</th>
+              <th>Supplier</th>
+              <th style="text-align:right">Cost</th>
+              <th style="text-align:right">Sell</th>
+              <th>Status</th>
+              <th>SKU Code</th>
+            </tr></thead>
+            <tbody>
+              ${cd.items.map((item, idx) => {
+                const existingSku = item.skuId ? skus.find(s=>s.id===item.skuId) : null;
+                const statusCls = item.status === 'sku_created' ? 'created' : (item.status === 'skipped' ? 'skipped' : 'pending');
+                return `<tr>
+                  <td style="color:var(--text-muted);font-size:11px">${idx+1}</td>
+                  <td style="font-size:12px">${escHtml(item.saleName || item.autoName)}</td>
+                  <td>
+                    <select style="font-size:11px;padding:2px;width:100%" onchange="contractUpdateItem(${idx},'gradeId',this.value)">
+                      <option value="">—</option>
+                      ${getAll(KEYS.grades).filter(g=>g.active).map(g=>`<option value="${g.id}" ${item.gradeId===g.id?'selected':''}>${escHtml(g.name)}</option>`).join('')}
+                    </select>
+                  </td>
+                  <td>
+                    <select style="font-size:11px;padding:2px;width:100%" onchange="contractUpdateItem(${idx},'packSizeId',this.value)">
+                      <option value="">—</option>
+                      ${getAll(KEYS.packSizes).filter(p=>p.active).map(p=>`<option value="${p.id}" ${item.packSizeId===p.id?'selected':''}>${escHtml(p.name)}</option>`).join('')}
+                    </select>
+                  </td>
+                  <td>
+                    <select style="font-size:11px;padding:2px;width:100%" onchange="contractUpdateItem(${idx},'supplierId',this.value)">
+                      <option value="">—</option>
+                      ${getAll(KEYS.suppliers).filter(s=>s.active).sort((a,b)=>a.name.localeCompare(b.name)).map(s=>`<option value="${s.id}" ${item.supplierId===s.id?'selected':''}>${escHtml(s.name)} (${s.code})</option>`).join('')}
+                    </select>
+                  </td>
+                  <td class="price-cell">${item.costPriceTHB?item.costPriceTHB.toLocaleString():'—'}</td>
+                  <td class="price-cell">${item.sellPriceTHB?item.sellPriceTHB.toLocaleString():'—'}</td>
+                  <td><span class="status-dot ${statusCls}"></span>${item.status||'pending'}</td>
+                  <td style="font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;color:var(--heritage-blue)">${existingSku ? existingSku.skuCode : '—'}</td>
+                </tr>`;
+              }).join('')}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    `;
+  }
+
+  document.getElementById('contractTab').innerHTML = `
+    <div style="margin-bottom:20px">
+      <h2 style="font-size:20px;font-weight:700;color:var(--heritage-blue)">Contract to SKU</h2>
+      <p style="font-size:13px;color:var(--text-secondary);margin-top:4px">Upload exporter contracts → auto-extract items → calculate pricing → generate SKUs</p>
+    </div>
+    <div class="contract-steps">${stepsHtml}</div>
+    ${bodyHtml}
+  `;
+}
+
+function contractGoStep(n) { state.contractStep = n; renderContract(); }
+
+function contractRenameExporter(oldName) {
+  const newName = prompt(`Rename exporter "${oldName}" to:`, oldName);
+  if (!newName || newName.trim() === oldName) return;
+  const cd = state.contractData;
+  if (!cd) return;
+  const trimmed = newName.trim();
+  // Update all items with this exporter
+  const country = findById(KEYS.countries, cd.countryId);
+  cd.items.forEach(item => {
+    if (item.exporter === oldName) {
+      item.exporter = trimmed;
+      // Rebuild auto name if sale name not locked
+      if (!item.saleNameLocked) {
+        item.autoName = [country?.name, trimmed, item.rawProductName].filter(Boolean).join(' ');
+      }
+    }
+  });
+  // Update exporters list
+  if (cd.exporters) {
+    const idx = cd.exporters.indexOf(oldName);
+    if (idx >= 0) cd.exporters[idx] = trimmed;
+  }
+  renderContract();
+}
+
+function contractFillFromProfile(profileId) {
+  if (!profileId) return;
+  const ep = getAll(KEYS.exporterProfiles).find(p=>p.id===profileId);
+  if (!ep) return;
+  const el = (id) => document.getElementById(id);
+  if (el('contractExporter')) el('contractExporter').value = ep.name;
+  if (el('contractCountry')) el('contractCountry').value = ep.countryId || '';
+  if (el('contractPriceUnit')) el('contractPriceUnit').value = ep.priceUnit || 'USD/kg';
+  if (el('contractShipping')) el('contractShipping').value = ep.shippingCost || 5;
+  if (el('contractFx')) el('contractFx').value = ep.exchangeRate || 33;
+}
+
+function contractUpdateItem(idx, key, val) {
+  if (state.contractData && state.contractData.items[idx]) {
+    state.contractData.items[idx][key] = val;
+  }
+}
+
+function contractHandleDrop(file) {
+  if (!file) return;
+  const countryId = document.getElementById('contractCountry')?.value;
+  const priceUnit = document.getElementById('contractPriceUnit')?.value || 'USD/kg';
+  const shippingCost = parseFloat(document.getElementById('contractShipping')?.value) || 5;
+  const exchangeRate = parseFloat(document.getElementById('contractFx')?.value) || 33;
+  const manualExporter = document.getElementById('contractExporter')?.value.trim();
+
+  if (!countryId) { showToast('Please select country','error'); return; }
+
+  // Route PDF/image files to AI parser
+  const ext = file.name.split('.').pop().toLowerCase();
+  const isAiFile = ['pdf','jpg','jpeg','png','webp'].includes(ext);
+  if (isAiFile) {
+    contractHandleAiParse(file, countryId, priceUnit, shippingCost, exchangeRate, manualExporter);
+    return;
+  }
+
+  const country = findById(KEYS.countries, countryId);
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    try {
+      const wb = XLSX.read(e.target.result, { type:'array' });
+      const ws = wb.Sheets[wb.SheetNames[0]];
+      const rows = XLSX.utils.sheet_to_json(ws, { header:1, defval:'' });
+
+      // Auto-detect: find first row with numeric data (skip headers)
+      let dataStart = 0;
+      for (let i = 0; i < Math.min(rows.length, 10); i++) {
+        if (rows[i].some(cell => typeof cell === 'number' && cell > 0)) { dataStart = i; break; }
+      }
+
+      const items = [];
+      let currentExporter = manualExporter || '';
+      const detectedExporters = new Set();
+      for (let i = dataStart; i < rows.length; i++) {
+        const r = rows[i];
+        if (!r || r.length < 3) continue;
+
+        // Skip total/air/sea label rows
+        const colA = (r[0] || '').toString().trim();
+        if (/^(total|air|sea|grand total)$/i.test(colA)) continue;
+
+        // Check if this looks like a data row (has a product name and some numeric value)
+        const productName = (r[2] || r[1] || '').toString().trim();
+        const hasPrice = r.some((cell, ci) => ci >= 3 && typeof cell === 'number' && cell > 0);
+        if (!productName || !hasPrice) continue;
+
+        // Track exporter from Column A (each row may have its own exporter)
+        if (colA && colA.toLowerCase() !== 'exporter') {
+          currentExporter = colA;
+          detectedExporters.add(colA);
+        }
+
+        const productNo = (r[1] || '').toString().trim();
+        const fobPrice = typeof r[4] === 'number' ? r[4] : (typeof r[3] === 'number' ? r[3] : 0);
+        const totalQty = typeof r[3] === 'number' ? r[3] : (typeof r[5] === 'number' ? r[5] : 0);
+        const seaQty = typeof r[11] === 'number' ? r[11] : null;
+        const airQty = typeof r[12] === 'number' ? r[12] : null;
+        const flavorNotes = (r[15] || '').toString().trim();
+
+        // Auto name: Country + Exporter + Product Name
+        const autoName = [country.name, currentExporter, productName].filter(Boolean).join(' ');
+
+        items.push({
+          id: DB.genId(),
+          exporter: currentExporter,
+          productNo,
+          rawProductName: productName,
+          autoName,
+          saleName: '',
+          saleNameLocked: false,
+          fobPrice,
+          totalQty,
+          seaQty,
+          airQty,
+          flavorNotes,
+          margin: 1.25,
+          gradeId: '',
+          packSizeId: '',
+          supplierId: '',
+          regionId: '',
+          brandFarmId: '',
+          processId: '',
+          gradingSpecId: '',
+          costPriceTHB: null,
+          sellPriceTHB: null,
+          skuId: null,
+          status: 'pending'
+        });
+      }
+
+      if (!items.length) { showToast('No data rows found in file','error'); return; }
+
+      // Auto-match suppliers per exporter (from profiles or name match)
+      const suppliers = getAll(KEYS.suppliers);
+      const profiles = getAll(KEYS.exporterProfiles);
+      for (const expName of detectedExporters) {
+        const profile = profiles.find(p => p.name.toLowerCase() === expName.toLowerCase());
+        const supplier = profile?.supplierId ? suppliers.find(s=>s.id===profile.supplierId) : suppliers.find(s => s.name.toLowerCase() === expName.toLowerCase());
+        if (supplier) {
+          items.filter(i => i.exporter === expName).forEach(i => { i.supplierId = supplier.id; });
+        }
+      }
+
+      const exporterList = [...detectedExporters];
+      state.contractData = {
+        id: DB.genId(),
+        exporters: exporterList,
+        countryId,
+        priceUnit,
+        shippingCost,
+        exchangeRate,
+        originalFileName: file.name,
+        items,
+        status: 'draft',
+        createdAt: new Date().toISOString()
+      };
+
+      state.contractStep = 2;
+      showToast(`Extracted ${items.length} items from ${exporterList.length} exporter(s): ${exporterList.join(', ')}`);
+      renderContract();
+    } catch (err) {
+      console.error('Contract parse error:', err);
+      showToast('Failed to parse file: ' + err.message, 'error');
+    }
+  };
+  reader.readAsArrayBuffer(file);
+}
+
+async function contractHandleAiParse(file, countryId, priceUnit, shippingCost, exchangeRate, manualExporter) {
+  const statusEl = document.getElementById('contractParsingStatus');
+  const textEl = document.getElementById('contractParsingText');
+  if (statusEl) statusEl.style.display = 'block';
+  if (textEl) textEl.textContent = `Analyzing ${file.name} with AI...`;
+
+  try {
+    // Convert file to base64
+    const buf = await file.arrayBuffer();
+    const base64 = btoa(new Uint8Array(buf).reduce((data, byte) => data + String.fromCharCode(byte), ''));
+
+    const ext = file.name.split('.').pop().toLowerCase();
+    const mimeTypes = { pdf:'application/pdf', jpg:'image/jpeg', jpeg:'image/jpeg', png:'image/png', webp:'image/webp' };
+    const fileType = mimeTypes[ext] || 'application/octet-stream';
+
+    if (textEl) textEl.textContent = 'Sending to Claude Vision API...';
+
+    const resp = await fetch('/.netlify/functions/parse-document', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ fileData: base64, fileType, fileName: file.name }),
+    });
+
+    if (!resp.ok) {
+      const err = await resp.json().catch(() => ({ error: 'Unknown error' }));
+      throw new Error(err.error || `HTTP ${resp.status}`);
+    }
+
+    const result = await resp.json();
+    if (!result.items || !result.items.length) {
+      throw new Error('No items extracted from document');
+    }
+
+    if (textEl) textEl.textContent = `Extracted ${result.items.length} items, building contract...`;
+
+    // Map AI-extracted items to contract format
+    const country = findById(KEYS.countries, countryId);
+    const detectedExporters = new Set();
+    const items = result.items.map(ai => {
+      const expName = ai.exporter || manualExporter || result.document?.exporterName || '';
+      if (expName) detectedExporters.add(expName);
+
+      const autoName = [country?.name, expName, ai.productName].filter(Boolean).join(' ');
+
+      // Detect price unit from AI response
+      let fobPrice = ai.fobPrice || 0;
+      const aiPriceUnit = ai.priceUnit || priceUnit;
+
+      return {
+        id: DB.genId(),
+        exporter: expName,
+        productNo: ai.productNo || '',
+        rawProductName: ai.productName || '',
+        autoName,
+        saleName: '',
+        saleNameLocked: false,
+        fobPrice,
+        totalQty: ai.quantity || 0,
+        seaQty: null,
+        airQty: null,
+        flavorNotes: ai.notes || '',
+        margin: 1.25,
+        gradeId: '',
+        packSizeId: '',
+        supplierId: '',
+        regionId: '',
+        brandFarmId: '',
+        processId: '',
+        gradingSpecId: '',
+        costPriceTHB: null,
+        sellPriceTHB: null,
+        skuId: null,
+        status: 'pending'
+      };
+    });
+
+    // Auto-match suppliers per exporter
+    const suppliers = getAll(KEYS.suppliers);
+    const profiles = getAll(KEYS.exporterProfiles);
+    for (const expName of detectedExporters) {
+      const profile = profiles.find(p => p.name.toLowerCase() === expName.toLowerCase());
+      const supplier = profile?.supplierId ? suppliers.find(s=>s.id===profile.supplierId) : suppliers.find(s => s.name.toLowerCase() === expName.toLowerCase());
+      if (supplier) {
+        items.filter(i => i.exporter === expName).forEach(i => { i.supplierId = supplier.id; });
+      }
+    }
+
+    const exporterList = [...detectedExporters];
+
+    // Use AI-detected price unit if available
+    const detectedPriceUnit = result.items[0]?.priceUnit || priceUnit;
+    // Use AI-detected exchange rate if available
+    const detectedFx = result.document?.exchangeRate || exchangeRate;
+
+    state.contractData = {
+      id: DB.genId(),
+      exporters: exporterList,
+      countryId,
+      priceUnit: detectedPriceUnit.includes('lb') ? 'USD/lb' : 'USD/kg',
+      shippingCost,
+      exchangeRate: detectedFx,
+      originalFileName: file.name,
+      sourceType: 'ai',
+      documentInfo: result.document || {},
+      items,
+      status: 'draft',
+      createdAt: new Date().toISOString()
+    };
+
+    state.contractStep = 2;
+    showToast(`AI extracted ${items.length} items from ${exporterList.length} exporter(s): ${exporterList.join(', ')}`);
+    renderContract();
+
+  } catch (err) {
+    console.error('AI parse error:', err);
+    showToast('AI parsing failed: ' + err.message, 'error');
+  } finally {
+    if (statusEl) statusEl.style.display = 'none';
+  }
+}
+
+function contractLoad(contractId) {
+  const contracts = getAll(KEYS.contracts);
+  const c = contracts.find(x => x.id === contractId);
+  if (c) {
+    state.contractData = JSON.parse(JSON.stringify(c)); // deep clone
+    state.contractStep = 2;
+    renderContract();
+  }
+}
+
+async function contractCreateAllSkus() {
+  const cd = state.contractData;
+  if (!cd) return;
+
+  const pendingItems = cd.items.filter(i => i.status === 'pending');
+  const incomplete = pendingItems.filter(i => !i.gradeId || !i.packSizeId || !i.supplierId);
+  if (incomplete.length) {
+    showToast(`${incomplete.length} items missing Grade, Pack, or Supplier. Please fill all required fields.`, 'error');
+    return;
+  }
+
+  const country = findById(KEYS.countries, cd.countryId);
+  if (!country) { showToast('Country not found', 'error'); return; }
+
+  let skus = getAll(KEYS.skus);
+  let created = 0;
+
+  for (const item of pendingItems) {
+    const grade = findById(KEYS.grades, item.gradeId);
+    const pack = findById(KEYS.packSizes, item.packSizeId);
+    const supplier = findById(KEYS.suppliers, item.supplierId);
+    const region = findById(KEYS.regions, item.regionId);
+    const brandFarm = findById(KEYS.brandFarms, item.brandFarmId);
+    const process = findById(KEYS.processes, item.processId);
+    const process2 = findById(KEYS.processes, item.process2Id);
+    const gradingSpec = findById(KEYS.gradingSpecs, item.gradingSpecId);
+
+    if (!grade || !pack || !supplier) continue;
+
+    const running = getNextRunningFromList(skus, supplier.code);
+    if (running > 99) { showToast(`Supplier ${supplier.name} max 99 reached`, 'warning'); continue; }
+
+    const skuCode = buildSku(country.code, grade.code, pack.code, supplier.code, running);
+    const settings = DB.get(KEYS.settings);
+    const lotNumber = buildLot(settings.nextLotNumber);
+    const description = buildDescription(country.name, region?.name, brandFarm?.name, process?.name, process2?.name, gradingSpec?.name, supplier.name, grade.name, pack.name);
+    const saleName = item.saleName || item.autoName;
+    const createdAt = new Date().toISOString();
+
+    const newSku = {
+      id: DB.genId(),
+      notionId: '',
+      skuCode, lotNumber,
+      countryId: cd.countryId, gradeId: item.gradeId, packSizeId: item.packSizeId,
+      supplierId: item.supplierId, regionId: item.regionId || '', brandFarmId: item.brandFarmId || '',
+      processId: item.processId || '', process2Id: item.process2Id || '', gradingSpecId: item.gradingSpecId || '',
+      description, saleName,
+      notes: item.flavorNotes || '',
+      costPrice: item.costPriceTHB || null,
+      sellingPrice: item.sellPriceTHB || null,
+      currency: 'THB',
+      contractId: cd.id,
+      createdAt
+    };
+
+    skus.push(newSku);
+    settings.nextLotNumber++;
+    DB.set(KEYS.settings, settings);
+
+    item.skuId = newSku.id;
+    item.status = 'sku_created';
+    created++;
+
+    // Sync to Notion
+    const notionPayload = {
+      skuCode, lotNumber,
+      country: country.name, countryCode: country.code,
+      grade: grade.name, gradeCode: grade.code,
+      packSize: pack.name, packCode: pack.code,
+      supplier: supplier.name, supplierCode: supplier.code,
+      region: region?.name || '', brandFarm: brandFarm?.name || '',
+      process: process?.name || '', process2: process2?.name || '',
+      gradingSpec: gradingSpec?.name || '',
+      description, saleName, notes: item.flavorNotes || '',
+      costPrice: item.costPriceTHB, sellingPrice: item.sellPriceTHB,
+      currency: 'THB', createdAt
+    };
+    const result = await SYNC.createSku(notionPayload);
+    if (result?.notionId) {
+      newSku.notionId = result.notionId;
+      newSku.id = result.notionId;
+      item.skuId = result.notionId;
+    }
+  }
+
+  DB.set(KEYS.skus, skus);
+
+  // Save contract
+  cd.status = 'confirmed';
+  const contracts = getAll(KEYS.contracts);
+  const existingIdx = contracts.findIndex(c => c.id === cd.id);
+  if (existingIdx >= 0) contracts[existingIdx] = cd;
+  else contracts.push(cd);
+  DB.set(KEYS.contracts, contracts);
+
+  showToast(`Created ${created} SKUs from contract`);
+  renderContract();
+}
+
+// ============================================================
 // MODAL
 // ============================================================
 function showModal(html) {
@@ -1827,15 +3504,22 @@ async function seedToNotion() {
     const pack = findById(KEYS.packSizes, s.packSizeId);
     const supplier = findById(KEYS.suppliers, s.supplierId);
     const region = findById(KEYS.regions, s.regionId);
+    const brandFarm = findById(KEYS.brandFarms, s.brandFarmId);
     const process = findById(KEYS.processes, s.processId);
+    const process2 = findById(KEYS.processes, s.process2Id);
+    const gradingSpec = findById(KEYS.gradingSpecs, s.gradingSpecId);
     return {
       skuCode:s.skuCode, lotNumber:s.lotNumber,
       country:country?.name||'', countryCode:country?.code||'',
       grade:grade?.name||'', gradeCode:grade?.code||'',
       packSize:pack?.name||'', packCode:pack?.code||'',
       supplier:supplier?.name||'', supplierCode:supplier?.code||'',
-      region:region?.name||'', process:process?.name||'',
+      region:region?.name||'', brandFarm:brandFarm?.name||'',
+      process:process?.name||'', process2:process2?.name||'',
+      gradingSpec:gradingSpec?.name||'',
       description:s.description||'', saleName:s.saleName||'', notes:s.notes||'',
+      costPrice:s.costPrice!=null?s.costPrice:null, sellingPrice:s.sellingPrice!=null?s.sellingPrice:null,
+      currency:s.currency||'THB',
       createdAt:s.createdAt
     };
   });
