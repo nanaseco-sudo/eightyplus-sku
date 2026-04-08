@@ -187,8 +187,8 @@ Set these in Netlify Dashboard → Site → Environment Variables:
 
 | Variable | Value | Notes |
 |----------|-------|-------|
-| `NOTION_TOKEN` | `ntn_U82391607806Q8CYXXhedtqNXius4ONMP5LpoPfepiOgSP` | Notion integration token |
-| `NOTION_DB_ID` | `e959b50638c54fb09ab7c6f7faf30378` | Notion database ID |
+| `NOTION_TOKEN` | `ntn_****` (see Netlify env vars) | Notion integration token — DO NOT commit |
+| `NOTION_DB_ID` | (see Netlify env vars) | Notion database ID — DO NOT commit |
 
 > **Phase 2 will add:** `ANTHROPIC_API_KEY` for AI-powered price list parsing
 
@@ -620,7 +620,7 @@ When deploying to a new environment where users had a previous version cached:
 | Issue | Severity | Workaround |
 |-------|----------|------------|
 | localStorage 5-10MB limit | Low | Competitor data could grow; monitor with dev tools |
-| No authentication system | Medium | Admin password is stored in localStorage (changco2026) |
+| No authentication system | Medium | Admin password is stored in localStorage (change via Settings) |
 | Notion sync is one-directional on load | Low | Manual Sync button available; changes made in Notion UI need manual sync |
 | No conflict resolution | Medium | Last write wins; two users editing simultaneously may overwrite |
 | Market prices not synced to Notion yet | Medium | `marketPrices` is localStorage only; Notion has single sellingPrice |
@@ -824,9 +824,9 @@ When deploying to a new environment where users had a previous version cached:
 
 ```
 Production URL:  https://eightyplus-sku-manager.netlify.app
-Admin Password:  changco2026
-Notion DB ID:    e959b50638c54fb09ab7c6f7faf30378
-Notion Token:    ntn_U82391607806Q8CYXXhedtqNXius4ONMP5LpoPfepiOgSP
+Admin Password:  (stored in localStorage, change via Settings > Admin)
+Notion DB ID:    (see Netlify environment variables)
+Notion Token:    (see Netlify environment variables)
 GitHub Repo:     https://github.com/nanaseco-sudo/eightyplus-sku
 Deploy Command:  npx netlify deploy --prod --dir=.
 File to edit:    index.html (single-file app)
