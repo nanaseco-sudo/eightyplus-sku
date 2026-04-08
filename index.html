@@ -2781,8 +2781,8 @@ function renderContract() {
         </div>` : ''}
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px">
           <div class="form-group">
-            <label class="form-label">Exporter Name *</label>
-            <input type="text" id="contractExporter" placeholder="e.g. Uba, Clearpath, Campo Hermoso" value="${cd?.exporter||''}">
+            <label class="form-label">Exporter Name <span style="font-size:11px;color:var(--text-muted)">(auto-detected from file)</span></label>
+            <input type="text" id="contractExporter" placeholder="Auto-detected from file, or enter manually" value="${cd?.exporters?cd.exporters.join(', '):''}">
           </div>
           <div class="form-group">
             <label class="form-label">Country *</label>
@@ -2832,7 +2832,7 @@ function renderContract() {
               const skuCount = c.items?.filter(i=>i.status==='sku_created').length || 0;
               return `<tr>
                 <td style="white-space:nowrap;font-size:12px">${new Date(c.createdAt).toLocaleDateString()}</td>
-                <td><span class="exporter-badge">${escHtml(c.exporter)}</span></td>
+                <td><span class="exporter-badge">${escHtml(c.exporters?c.exporters.join(', '):c.exporter||'')}</span></td>
                 <td>${escHtml(country?.name||'')}</td>
                 <td>${itemCount} items (${skuCount} SKUs)</td>
                 <td><span class="status-dot ${c.status}"></span>${c.status}</td>
@@ -2844,17 +2844,18 @@ function renderContract() {
       </div>` : ''}
     `;
   } else if (step === 2 && cd) {
-    // STEP 2: Review items & auto-name
-    bodyHtml = `
-      <div class="card">
-        <div class="flex-between mb-16">
-          <div class="card-title" style="margin-bottom:0">Review Items — ${escHtml(cd.exporter)} (${cd.items.length} items)</div>
-          <div style="display:flex;gap:8px">
-            <button class="btn btn-secondary btn-sm" onclick="contractGoStep(1)">← Back</button>
-            <button class="btn btn-primary btn-sm" onclick="contractGoStep(3)">Next: Pricing →</button>
+    // STEP 2: Review items & auto-name — grouped by exporter
+    const exporterNames = [...new Set(cd.items.map(i=>i.exporter))];
+    const exporterGroupsHtml = exporterNames.map(expName => {
+      const expItems = cd.items.filter(i=>i.exporter===expName);
+      const firstIdx = cd.items.indexOf(expItems[0]);
+      return `
+        <div style="margin-bottom:20px">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+            <span class="exporter-badge" style="font-size:14px">${escHtml(expName)}</span>
+            <span style="font-size:12px;color:var(--text-muted)">${expItems.length} items</span>
+            <button class="btn btn-secondary btn-sm" style="font-size:10px;padding:2px 6px" onclick="contractRenameExporter('${escHtml(expName)}')">Rename</button>
           </div>
-        </div>
-        <div class="table-wrapper" style="max-height:500px;overflow-y:auto">
           <table class="contract-items-table">
             <thead><tr>
               <th style="width:30px">#</th>
@@ -2867,7 +2868,9 @@ function renderContract() {
               <th style="width:50px">Air</th>
             </tr></thead>
             <tbody>
-              ${cd.items.map((item, idx) => `<tr>
+              ${expItems.map(item => {
+                const idx = cd.items.indexOf(item);
+                return `<tr>
                 <td style="color:var(--text-muted);font-size:11px">${idx+1}</td>
                 <td style="font-size:12px;color:var(--text-muted)">${escHtml(item.rawProductName)}</td>
                 <td style="font-size:12px">${escHtml(item.autoName)}</td>
@@ -2881,10 +2884,22 @@ function renderContract() {
                 <td class="price-cell">${item.fobPrice!=null?item.fobPrice.toFixed(2):''} <span style="color:var(--text-muted);font-size:10px">${cd.priceUnit==='USD/lb'?'/lb':'/kg'}</span></td>
                 <td class="price-cell">${item.seaQty!=null?item.seaQty.toLocaleString():''}</td>
                 <td class="price-cell">${item.airQty!=null?item.airQty.toLocaleString():''}</td>
-              </tr>`).join('')}
+              </tr>`;}).join('')}
             </tbody>
           </table>
+        </div>`;
+    }).join('');
+
+    bodyHtml = `
+      <div class="card">
+        <div class="flex-between mb-16">
+          <div class="card-title" style="margin-bottom:0">Review Items — ${exporterNames.length} Exporter(s) (${cd.items.length} items)</div>
+          <div style="display:flex;gap:8px">
+            <button class="btn btn-secondary btn-sm" onclick="contractGoStep(1)">← Back</button>
+            <button class="btn btn-primary btn-sm" onclick="contractGoStep(3)">Next: Pricing →</button>
+          </div>
         </div>
+        ${exporterGroupsHtml}
       </div>
     `;
   } else if (step === 3 && cd) {
@@ -2898,7 +2913,7 @@ function renderContract() {
     bodyHtml = `
       <div class="card">
         <div class="flex-between mb-16">
-          <div class="card-title" style="margin-bottom:0">Pricing — ${escHtml(cd.exporter)}</div>
+          <div class="card-title" style="margin-bottom:0">Pricing — ${escHtml((cd.exporters||[]).join(', ')||'Contract')}</div>
           <div style="display:flex;gap:8px">
             <button class="btn btn-secondary btn-sm" onclick="contractGoStep(2)">← Back</button>
             <button class="btn btn-primary btn-sm" onclick="contractGoStep(4)">Next: Generate SKUs →</button>
@@ -2972,7 +2987,7 @@ function renderContract() {
     bodyHtml = `
       <div class="card">
         <div class="flex-between mb-16">
-          <div class="card-title" style="margin-bottom:0">Generate SKUs — ${escHtml(cd.exporter)} (${cd.items.length} items)</div>
+          <div class="card-title" style="margin-bottom:0">Generate SKUs — ${escHtml((cd.exporters||[]).join(', ')||'Contract')} (${cd.items.length} items)</div>
           <div style="display:flex;gap:8px">
             <button class="btn btn-secondary btn-sm" onclick="contractGoStep(3)">← Back</button>
             <button class="btn btn-primary" onclick="contractCreateAllSkus()">Create All SKUs</button>
@@ -3042,6 +3057,31 @@ function renderContract() {
 
 function contractGoStep(n) { state.contractStep = n; renderContract(); }
 
+function contractRenameExporter(oldName) {
+  const newName = prompt(`Rename exporter "${oldName}" to:`, oldName);
+  if (!newName || newName.trim() === oldName) return;
+  const cd = state.contractData;
+  if (!cd) return;
+  const trimmed = newName.trim();
+  // Update all items with this exporter
+  const country = findById(KEYS.countries, cd.countryId);
+  cd.items.forEach(item => {
+    if (item.exporter === oldName) {
+      item.exporter = trimmed;
+      // Rebuild auto name if sale name not locked
+      if (!item.saleNameLocked) {
+        item.autoName = [country?.name, trimmed, item.rawProductName].filter(Boolean).join(' ');
+      }
+    }
+  });
+  // Update exporters list
+  if (cd.exporters) {
+    const idx = cd.exporters.indexOf(oldName);
+    if (idx >= 0) cd.exporters[idx] = trimmed;
+  }
+  renderContract();
+}
+
 function contractFillFromProfile(profileId) {
   if (!profileId) return;
   const ep = getAll(KEYS.exporterProfiles).find(p=>p.id===profileId);
@@ -3062,13 +3102,12 @@ function contractUpdateItem(idx, key, val) {
 
 function contractHandleDrop(file) {
   if (!file) return;
-  const exporter = document.getElementById('contractExporter')?.value.trim();
   const countryId = document.getElementById('contractCountry')?.value;
   const priceUnit = document.getElementById('contractPriceUnit')?.value || 'USD/kg';
   const shippingCost = parseFloat(document.getElementById('contractShipping')?.value) || 5;
   const exchangeRate = parseFloat(document.getElementById('contractFx')?.value) || 33;
+  const manualExporter = document.getElementById('contractExporter')?.value.trim();
 
-  if (!exporter) { showToast('Please enter exporter name','error'); return; }
   if (!countryId) { showToast('Please select country','error'); return; }
 
   const country = findById(KEYS.countries, countryId);
@@ -3086,25 +3125,26 @@ function contractHandleDrop(file) {
       }
 
       const items = [];
-      let currentExporter = exporter;
+      let currentExporter = manualExporter || '';
+      const detectedExporters = new Set();
       for (let i = dataStart; i < rows.length; i++) {
         const r = rows[i];
         if (!r || r.length < 3) continue;
 
-        // Detect exporter name in col A (if text with no numbers in other cols)
-        if (typeof r[0] === 'string' && r[0].trim() && (r[0].trim().toLowerCase() === 'total' || r[0].trim().toLowerCase() === 'air')) continue;
-
-        // Skip pure total rows
-        if (typeof r[0] === 'string' && r[0].trim().toLowerCase() === 'total') continue;
+        // Skip total/air/sea label rows
+        const colA = (r[0] || '').toString().trim();
+        if (/^(total|air|sea|grand total)$/i.test(colA)) continue;
 
         // Check if this looks like a data row (has a product name and some numeric value)
         const productName = (r[2] || r[1] || '').toString().trim();
         const hasPrice = r.some((cell, ci) => ci >= 3 && typeof cell === 'number' && cell > 0);
         if (!productName || !hasPrice) continue;
 
-        // Extract fields
-        const rowExporter = (r[0] || '').toString().trim();
-        if (rowExporter && rowExporter !== 'Total') currentExporter = rowExporter;
+        // Track exporter from Column A (each row may have its own exporter)
+        if (colA && colA.toLowerCase() !== 'exporter') {
+          currentExporter = colA;
+          detectedExporters.add(colA);
+        }
 
         const productNo = (r[1] || '').toString().trim();
         const fobPrice = typeof r[4] === 'number' ? r[4] : (typeof r[3] === 'number' ? r[3] : 0);
@@ -3118,6 +3158,7 @@ function contractHandleDrop(file) {
 
         items.push({
           id: DB.genId(),
+          exporter: currentExporter,
           productNo,
           rawProductName: productName,
           autoName,
@@ -3145,20 +3186,21 @@ function contractHandleDrop(file) {
 
       if (!items.length) { showToast('No data rows found in file','error'); return; }
 
-      // Try to auto-match supplier: first from exporter profile, then by name
+      // Auto-match suppliers per exporter (from profiles or name match)
       const suppliers = getAll(KEYS.suppliers);
-      const profileSelect = document.getElementById('contractProfileSelect');
-      const selectedProfile = profileSelect?.value ? getAll(KEYS.exporterProfiles).find(p=>p.id===profileSelect.value) : null;
-      const linkedSupplierId = selectedProfile?.supplierId;
-      const matchedSupplier = linkedSupplierId ? suppliers.find(s=>s.id===linkedSupplierId) : suppliers.find(s => s.name.toLowerCase() === exporter.toLowerCase());
-
-      if (matchedSupplier) {
-        items.forEach(item => { item.supplierId = matchedSupplier.id; });
+      const profiles = getAll(KEYS.exporterProfiles);
+      for (const expName of detectedExporters) {
+        const profile = profiles.find(p => p.name.toLowerCase() === expName.toLowerCase());
+        const supplier = profile?.supplierId ? suppliers.find(s=>s.id===profile.supplierId) : suppliers.find(s => s.name.toLowerCase() === expName.toLowerCase());
+        if (supplier) {
+          items.filter(i => i.exporter === expName).forEach(i => { i.supplierId = supplier.id; });
+        }
       }
 
+      const exporterList = [...detectedExporters];
       state.contractData = {
         id: DB.genId(),
-        exporter: currentExporter || exporter,
+        exporters: exporterList,
         countryId,
         priceUnit,
         shippingCost,
@@ -3170,7 +3212,7 @@ function contractHandleDrop(file) {
       };
 
       state.contractStep = 2;
-      showToast(`Extracted ${items.length} items from ${file.name}`);
+      showToast(`Extracted ${items.length} items from ${exporterList.length} exporter(s): ${exporterList.join(', ')}`);
       renderContract();
     } catch (err) {
       console.error('Contract parse error:', err);
