@@ -4,8 +4,9 @@
  */
 const { Client } = require('@notionhq/client');
 
-const notion = new Client({ auth: 'ntn_U82391607806Q8CYXXhedtqNXius4ONMP5LpoPfepiOgSP' });
-const DB_ID = 'e959b50638c54fb09ab7c6f7faf30378';
+// IMPORTANT: Set NOTION_TOKEN and NOTION_DB_ID environment variables before running
+const notion = new Client({ auth: process.env.NOTION_TOKEN });
+const DB_ID = process.env.NOTION_DB_ID;
 
 // Brand/Farm names (move from Region to Brand Farm field)
 const BRAND_FARM_NAMES = new Set([
