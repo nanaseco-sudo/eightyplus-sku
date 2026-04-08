@@ -1797,6 +1797,54 @@ function renderSettings() {
         </div>
       </div>`;
     }).join('')}
+
+    <div style="margin-top:32px;margin-bottom:20px">
+      <h2 style="font-size:20px;font-weight:700;color:var(--heritage-blue)">Exporter Profiles</h2>
+      <p style="font-size:13px;color:var(--text-secondary);margin-top:4px">Save exporter defaults for quick Contract uploads. These auto-fill Step 1.</p>
+    </div>
+    <div class="card">
+      <div class="admin-add-row" style="flex-wrap:wrap;gap:8px">
+        <div class="form-group"><label class="form-label">Exporter Name</label><input type="text" id="expNew_name" placeholder="e.g. Uba" style="width:160px"></div>
+        <div class="form-group"><label class="form-label">Country</label>
+          <select id="expNew_country" style="width:160px">
+            <option value="">—</option>
+            ${getAll(KEYS.countries).filter(c=>c.active).sort((a,b)=>a.name.localeCompare(b.name)).map(c=>'<option value="'+c.id+'">'+escHtml(c.name)+'</option>').join('')}
+          </select>
+        </div>
+        <div class="form-group"><label class="form-label">Price Unit</label>
+          <select id="expNew_priceUnit" style="width:110px"><option value="USD/kg">USD/kg</option><option value="USD/lb">USD/lb</option></select>
+        </div>
+        <div class="form-group"><label class="form-label">Shipping (USD/kg)</label><input type="number" id="expNew_shipping" value="5" step="0.01" style="width:90px"></div>
+        <div class="form-group"><label class="form-label">FX Rate</label><input type="number" id="expNew_fx" value="33" step="0.01" style="width:90px"></div>
+        <div class="form-group"><label class="form-label">Linked Supplier</label>
+          <select id="expNew_supplier" style="width:160px">
+            <option value="">— None —</option>
+            ${getAll(KEYS.suppliers).filter(s=>s.active).sort((a,b)=>a.name.localeCompare(b.name)).map(s=>'<option value="'+s.id+'">'+escHtml(s.name)+' ('+s.code+')</option>').join('')}
+          </select>
+        </div>
+        <div class="form-group"><label class="form-label">&nbsp;</label><button class="btn btn-primary btn-sm" onclick="expProfileAdd()">+ Add</button></div>
+      </div>
+      <table class="admin-table" style="margin-top:12px">
+        <thead><tr><th>Exporter</th><th>Country</th><th>Unit</th><th>Shipping</th><th>FX</th><th>Supplier</th><th style="width:100px">Actions</th></tr></thead>
+        <tbody>
+          ${getAll(KEYS.exporterProfiles).map(ep => {
+            const country = findById(KEYS.countries, ep.countryId);
+            const supplier = findById(KEYS.suppliers, ep.supplierId);
+            return '<tr>'
+              +'<td><strong>'+escHtml(ep.name)+'</strong></td>'
+              +'<td>'+escHtml(country?.name||'—')+'</td>'
+              +'<td>'+escHtml(ep.priceUnit||'USD/kg')+'</td>'
+              +'<td>$'+((ep.shippingCost||5).toFixed(2))+'</td>'
+              +'<td>'+(ep.exchangeRate||33)+'</td>'
+              +'<td>'+escHtml(supplier?.name||'—')+'</td>'
+              +'<td class="admin-actions">'
+                +'<button class="btn btn-secondary btn-sm" onclick="expProfileEdit(\''+ep.id+'\')">Edit</button>'
+                +'<button class="btn btn-danger btn-sm" onclick="expProfileDelete(\''+ep.id+'\')">×</button>'
+              +'</td></tr>';
+          }).join('')}
+        </tbody>
+      </table>
+    </div>
   `;
 }
 
@@ -1875,6 +1923,81 @@ function settDelete(key, id) {
   if (!confirm('Delete this item?')) return;
   const items = getAll(key).filter(x=>x.id!==id);
   DB.set(key, items);
+  showToast('Deleted','warning');
+  renderSettings();
+}
+
+// ============================================================
+// EXPORTER PROFILES
+// ============================================================
+function expProfileAdd() {
+  const name = document.getElementById('expNew_name').value.trim();
+  if (!name) { showToast('Enter exporter name','error'); return; }
+  const profiles = getAll(KEYS.exporterProfiles);
+  if (profiles.some(p => p.name.toLowerCase() === name.toLowerCase())) { showToast('Exporter already exists','error'); return; }
+  profiles.push({
+    id: DB.genId(), name,
+    countryId: document.getElementById('expNew_country').value,
+    priceUnit: document.getElementById('expNew_priceUnit').value || 'USD/kg',
+    shippingCost: parseFloat(document.getElementById('expNew_shipping').value) || 5,
+    exchangeRate: parseFloat(document.getElementById('expNew_fx').value) || 33,
+    supplierId: document.getElementById('expNew_supplier').value || ''
+  });
+  DB.set(KEYS.exporterProfiles, profiles);
+  showToast('Exporter profile added');
+  renderSettings();
+}
+
+function expProfileEdit(id) {
+  const profiles = getAll(KEYS.exporterProfiles);
+  const ep = profiles.find(x=>x.id===id);
+  if (!ep) return;
+  const countries = getAll(KEYS.countries).filter(c=>c.active).sort((a,b)=>a.name.localeCompare(b.name));
+  const suppliers = getAll(KEYS.suppliers).filter(s=>s.active).sort((a,b)=>a.name.localeCompare(b.name));
+  showModal(`
+    <h3>Edit Exporter: ${escHtml(ep.name)}</h3>
+    <div class="form-group"><label class="form-label">Exporter Name</label><input type="text" id="expEdit_name" value="${escHtml(ep.name)}"></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+      <div class="form-group"><label class="form-label">Country</label>
+        <select id="expEdit_country">${countries.map(c=>'<option value="'+c.id+'"'+(c.id===ep.countryId?' selected':'')+'>'+escHtml(c.name)+'</option>').join('')}</select>
+      </div>
+      <div class="form-group"><label class="form-label">Price Unit</label>
+        <select id="expEdit_priceUnit"><option value="USD/kg"${ep.priceUnit==='USD/kg'?' selected':''}>USD/kg</option><option value="USD/lb"${ep.priceUnit==='USD/lb'?' selected':''}>USD/lb</option></select>
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px">
+      <div class="form-group"><label class="form-label">Shipping (USD/kg)</label><input type="number" id="expEdit_shipping" value="${ep.shippingCost||5}" step="0.01"></div>
+      <div class="form-group"><label class="form-label">FX Rate</label><input type="number" id="expEdit_fx" value="${ep.exchangeRate||33}" step="0.01"></div>
+      <div class="form-group"><label class="form-label">Linked Supplier</label>
+        <select id="expEdit_supplier"><option value="">— None —</option>${suppliers.map(s=>'<option value="'+s.id+'"'+(s.id===ep.supplierId?' selected':'')+'>'+escHtml(s.name)+' ('+s.code+')</option>').join('')}</select>
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="expProfileSave('${id}')">Save</button>
+    </div>
+  `);
+}
+
+function expProfileSave(id) {
+  const profiles = getAll(KEYS.exporterProfiles);
+  const ep = profiles.find(x=>x.id===id);
+  if (!ep) return;
+  ep.name = document.getElementById('expEdit_name').value.trim();
+  ep.countryId = document.getElementById('expEdit_country').value;
+  ep.priceUnit = document.getElementById('expEdit_priceUnit').value;
+  ep.shippingCost = parseFloat(document.getElementById('expEdit_shipping').value) || 5;
+  ep.exchangeRate = parseFloat(document.getElementById('expEdit_fx').value) || 33;
+  ep.supplierId = document.getElementById('expEdit_supplier').value || '';
+  DB.set(KEYS.exporterProfiles, profiles);
+  closeModal();
+  showToast('Updated');
+  renderSettings();
+}
+
+function expProfileDelete(id) {
+  if (!confirm('Delete this exporter profile?')) return;
+  DB.set(KEYS.exporterProfiles, getAll(KEYS.exporterProfiles).filter(x=>x.id!==id));
   showToast('Deleted','warning');
   renderSettings();
 }
@@ -2649,6 +2772,13 @@ function renderContract() {
       <div class="card">
         <div class="card-title">Upload Exporter Contract</div>
         <p style="font-size:13px;color:var(--text-secondary);margin-bottom:16px">Upload an Excel or CSV order list from your exporter. The system will extract items and calculate pricing.</p>
+        ${getAll(KEYS.exporterProfiles).length ? `<div class="form-group" style="margin-bottom:16px">
+          <label class="form-label">Quick Fill from Saved Profile</label>
+          <select id="contractProfileSelect" onchange="contractFillFromProfile(this.value)" style="max-width:300px">
+            <option value="">— Select exporter profile —</option>
+            ${getAll(KEYS.exporterProfiles).map(ep=>'<option value="'+ep.id+'">'+escHtml(ep.name)+'</option>').join('')}
+          </select>
+        </div>` : ''}
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px">
           <div class="form-group">
             <label class="form-label">Exporter Name *</label>
@@ -2912,6 +3042,18 @@ function renderContract() {
 
 function contractGoStep(n) { state.contractStep = n; renderContract(); }
 
+function contractFillFromProfile(profileId) {
+  if (!profileId) return;
+  const ep = getAll(KEYS.exporterProfiles).find(p=>p.id===profileId);
+  if (!ep) return;
+  const el = (id) => document.getElementById(id);
+  if (el('contractExporter')) el('contractExporter').value = ep.name;
+  if (el('contractCountry')) el('contractCountry').value = ep.countryId || '';
+  if (el('contractPriceUnit')) el('contractPriceUnit').value = ep.priceUnit || 'USD/kg';
+  if (el('contractShipping')) el('contractShipping').value = ep.shippingCost || 5;
+  if (el('contractFx')) el('contractFx').value = ep.exchangeRate || 33;
+}
+
 function contractUpdateItem(idx, key, val) {
   if (state.contractData && state.contractData.items[idx]) {
     state.contractData.items[idx][key] = val;
@@ -3003,9 +3145,12 @@ function contractHandleDrop(file) {
 
       if (!items.length) { showToast('No data rows found in file','error'); return; }
 
-      // Try to auto-match supplier from exporter name
+      // Try to auto-match supplier: first from exporter profile, then by name
       const suppliers = getAll(KEYS.suppliers);
-      const matchedSupplier = suppliers.find(s => s.name.toLowerCase() === exporter.toLowerCase());
+      const profileSelect = document.getElementById('contractProfileSelect');
+      const selectedProfile = profileSelect?.value ? getAll(KEYS.exporterProfiles).find(p=>p.id===profileSelect.value) : null;
+      const linkedSupplierId = selectedProfile?.supplierId;
+      const matchedSupplier = linkedSupplierId ? suppliers.find(s=>s.id===linkedSupplierId) : suppliers.find(s => s.name.toLowerCase() === exporter.toLowerCase());
 
       if (matchedSupplier) {
         items.forEach(item => { item.supplierId = matchedSupplier.id; });
