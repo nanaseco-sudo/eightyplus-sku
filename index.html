@@ -283,6 +283,7 @@ tr:hover td { background:rgba(30,82,198,0.04); }
 .upload-zone-icon { font-size:36px; margin-bottom:8px; }
 .upload-zone-text { font-size:14px; color:var(--text-secondary); }
 .upload-zone-hint { font-size:12px; color:var(--text-muted); margin-top:4px; }
+@keyframes spin { to { transform: rotate(360deg); } }
 .mapping-grid { display:grid; grid-template-columns:1fr auto 1fr; gap:8px; align-items:center; margin:16px 0; }
 .mapping-grid .col-arrow { color:var(--text-muted); font-size:16px; text-align:center; }
 .match-high { border-left:3px solid var(--success); }
@@ -2815,9 +2816,13 @@ function renderContract() {
           ondragleave="this.classList.remove('dragover')"
           ondrop="event.preventDefault();this.classList.remove('dragover');contractHandleDrop(event.dataTransfer.files[0])">
           <div class="upload-zone-icon">📄</div>
-          <div class="upload-zone-text">Drop Excel/CSV file here or click to browse</div>
-          <div class="upload-zone-hint">.xlsx or .csv files supported</div>
-          <input type="file" accept=".xlsx,.csv" style="display:none" id="contractFileInput" onchange="contractHandleDrop(this.files[0])">
+          <div class="upload-zone-text">Drop file here or click to browse</div>
+          <div class="upload-zone-hint">.xlsx, .csv, .pdf, .jpg, .png supported</div>
+          <input type="file" accept=".xlsx,.csv,.pdf,.jpg,.jpeg,.png,.webp" style="display:none" id="contractFileInput" onchange="contractHandleDrop(this.files[0])">
+        </div>
+        <div id="contractParsingStatus" style="display:none;margin-top:12px;padding:12px;border-radius:8px;background:var(--heritage-blue);color:white;font-size:13px;text-align:center">
+          <span class="spinner" style="display:inline-block;width:14px;height:14px;border:2px solid rgba(255,255,255,0.3);border-top-color:white;border-radius:50%;animation:spin 0.8s linear infinite;margin-right:8px;vertical-align:middle"></span>
+          <span id="contractParsingText">Analyzing document with AI...</span>
         </div>
       </div>
       ${contracts.length ? `
@@ -3110,6 +3115,14 @@ function contractHandleDrop(file) {
 
   if (!countryId) { showToast('Please select country','error'); return; }
 
+  // Route PDF/image files to AI parser
+  const ext = file.name.split('.').pop().toLowerCase();
+  const isAiFile = ['pdf','jpg','jpeg','png','webp'].includes(ext);
+  if (isAiFile) {
+    contractHandleAiParse(file, countryId, priceUnit, shippingCost, exchangeRate, manualExporter);
+    return;
+  }
+
   const country = findById(KEYS.countries, countryId);
   const reader = new FileReader();
   reader.onload = function(e) {
@@ -3220,6 +3233,127 @@ function contractHandleDrop(file) {
     }
   };
   reader.readAsArrayBuffer(file);
+}
+
+async function contractHandleAiParse(file, countryId, priceUnit, shippingCost, exchangeRate, manualExporter) {
+  const statusEl = document.getElementById('contractParsingStatus');
+  const textEl = document.getElementById('contractParsingText');
+  if (statusEl) statusEl.style.display = 'block';
+  if (textEl) textEl.textContent = `Analyzing ${file.name} with AI...`;
+
+  try {
+    // Convert file to base64
+    const buf = await file.arrayBuffer();
+    const base64 = btoa(new Uint8Array(buf).reduce((data, byte) => data + String.fromCharCode(byte), ''));
+
+    const ext = file.name.split('.').pop().toLowerCase();
+    const mimeTypes = { pdf:'application/pdf', jpg:'image/jpeg', jpeg:'image/jpeg', png:'image/png', webp:'image/webp' };
+    const fileType = mimeTypes[ext] || 'application/octet-stream';
+
+    if (textEl) textEl.textContent = 'Sending to Claude Vision API...';
+
+    const resp = await fetch('/.netlify/functions/parse-document', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ fileData: base64, fileType, fileName: file.name }),
+    });
+
+    if (!resp.ok) {
+      const err = await resp.json().catch(() => ({ error: 'Unknown error' }));
+      throw new Error(err.error || `HTTP ${resp.status}`);
+    }
+
+    const result = await resp.json();
+    if (!result.items || !result.items.length) {
+      throw new Error('No items extracted from document');
+    }
+
+    if (textEl) textEl.textContent = `Extracted ${result.items.length} items, building contract...`;
+
+    // Map AI-extracted items to contract format
+    const country = findById(KEYS.countries, countryId);
+    const detectedExporters = new Set();
+    const items = result.items.map(ai => {
+      const expName = ai.exporter || manualExporter || result.document?.exporterName || '';
+      if (expName) detectedExporters.add(expName);
+
+      const autoName = [country?.name, expName, ai.productName].filter(Boolean).join(' ');
+
+      // Detect price unit from AI response
+      let fobPrice = ai.fobPrice || 0;
+      const aiPriceUnit = ai.priceUnit || priceUnit;
+
+      return {
+        id: DB.genId(),
+        exporter: expName,
+        productNo: ai.productNo || '',
+        rawProductName: ai.productName || '',
+        autoName,
+        saleName: '',
+        saleNameLocked: false,
+        fobPrice,
+        totalQty: ai.quantity || 0,
+        seaQty: null,
+        airQty: null,
+        flavorNotes: ai.notes || '',
+        margin: 1.25,
+        gradeId: '',
+        packSizeId: '',
+        supplierId: '',
+        regionId: '',
+        brandFarmId: '',
+        processId: '',
+        gradingSpecId: '',
+        costPriceTHB: null,
+        sellPriceTHB: null,
+        skuId: null,
+        status: 'pending'
+      };
+    });
+
+    // Auto-match suppliers per exporter
+    const suppliers = getAll(KEYS.suppliers);
+    const profiles = getAll(KEYS.exporterProfiles);
+    for (const expName of detectedExporters) {
+      const profile = profiles.find(p => p.name.toLowerCase() === expName.toLowerCase());
+      const supplier = profile?.supplierId ? suppliers.find(s=>s.id===profile.supplierId) : suppliers.find(s => s.name.toLowerCase() === expName.toLowerCase());
+      if (supplier) {
+        items.filter(i => i.exporter === expName).forEach(i => { i.supplierId = supplier.id; });
+      }
+    }
+
+    const exporterList = [...detectedExporters];
+
+    // Use AI-detected price unit if available
+    const detectedPriceUnit = result.items[0]?.priceUnit || priceUnit;
+    // Use AI-detected exchange rate if available
+    const detectedFx = result.document?.exchangeRate || exchangeRate;
+
+    state.contractData = {
+      id: DB.genId(),
+      exporters: exporterList,
+      countryId,
+      priceUnit: detectedPriceUnit.includes('lb') ? 'USD/lb' : 'USD/kg',
+      shippingCost,
+      exchangeRate: detectedFx,
+      originalFileName: file.name,
+      sourceType: 'ai',
+      documentInfo: result.document || {},
+      items,
+      status: 'draft',
+      createdAt: new Date().toISOString()
+    };
+
+    state.contractStep = 2;
+    showToast(`AI extracted ${items.length} items from ${exporterList.length} exporter(s): ${exporterList.join(', ')}`);
+    renderContract();
+
+  } catch (err) {
+    console.error('AI parse error:', err);
+    showToast('AI parsing failed: ' + err.message, 'error');
+  } finally {
+    if (statusEl) statusEl.style.display = 'none';
+  }
 }
 
 function contractLoad(contractId) {
