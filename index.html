@@ -1184,10 +1184,27 @@ function ssClose(id) {
 function ssFilter(id, query) {
   const dd = document.getElementById('ssd_' + id);
   if (!dd) return;
+  if (!dd.classList.contains('open')) dd.classList.add('open');
   const q = query.toLowerCase();
+  let hasMatch = false;
   dd.querySelectorAll('.search-select-option').forEach(opt => {
-    opt.style.display = opt.textContent.toLowerCase().includes(q) ? '' : 'none';
+    if (opt.dataset.addNew) return; // handle add-new separately
+    const visible = !q || opt.textContent.toLowerCase().includes(q);
+    opt.style.display = visible ? '' : 'none';
+    if (visible) hasMatch = true;
   });
+  // Always show "+ Add new" option; highlight it when no matches
+  const addNewOpt = dd.querySelector('[data-add-new]');
+  if (addNewOpt) {
+    addNewOpt.style.display = '';
+    if (!hasMatch && q.length > 0) {
+      addNewOpt.style.background = 'rgba(30,82,198,0.08)';
+      addNewOpt.textContent = '+ Add "' + query + '" as new supplier...';
+    } else {
+      addNewOpt.style.background = '';
+      addNewOpt.textContent = '+ Add new supplier...';
+    }
+  }
 }
 function ssSelect(id, value, formKey) {
   ssClose(id);
@@ -1198,9 +1215,19 @@ function ssClear(id, formKey, e) {
   updateGenForm(formKey, '');
 }
 // BUG-001: Add new supplier inline from searchable select
+function ssNextSupplierCode() {
+  const existing = getAll(KEYS.suppliers);
+  const usedCodes = new Set(existing.map(s => s.code));
+  for (let i = 1; i <= 99; i++) {
+    const code = String(i).padStart(2, '0');
+    if (!usedCodes.has(code)) return code;
+  }
+  return '99';
+}
 function ssAddNewSupplier(ssId, formKey) {
   const inp = document.querySelector('#ss_' + ssId + ' input');
   const typed = inp ? inp.value.trim() : '';
+  const autoCode = ssNextSupplierCode();
   const html = `
     <h3>Add New Supplier</h3>
     <div class="form-group">
@@ -1208,15 +1235,15 @@ function ssAddNewSupplier(ssId, formKey) {
       <input type="text" id="newSupplierName" value="${escHtml(typed)}" placeholder="e.g. FINCA MILAN">
     </div>
     <div class="form-group">
-      <label class="form-label">Supplier Code (2 digits)</label>
-      <input type="text" id="newSupplierCode" maxlength="2" placeholder="e.g. 77" style="width:100px">
+      <label class="form-label">Supplier Code (auto-assigned, editable)</label>
+      <input type="text" id="newSupplierCode" maxlength="2" value="${autoCode}" style="width:100px;font-family:'JetBrains Mono';font-weight:700;font-size:18px;text-align:center">
     </div>
     <div class="modal-actions">
       <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
       <button class="btn btn-primary" onclick="ssConfirmNewSupplier('${ssId}','${formKey}')">Add & Select</button>
     </div>`;
   showModal(html);
-  setTimeout(() => document.getElementById('newSupplierCode')?.focus(), 100);
+  setTimeout(() => document.getElementById('newSupplierName')?.focus(), 100);
 }
 function ssConfirmNewSupplier(ssId, formKey) {
   const name = document.getElementById('newSupplierName').value.trim();
@@ -1234,7 +1261,7 @@ function ssConfirmNewSupplier(ssId, formKey) {
 }
 function renderSS(ssId, items, selectedId, placeholder, formKey, allowAddNew) {
   const selected = items.find(i => i.id === selectedId);
-  const addNewHtml = allowAddNew ? `<div class="search-select-option" style="color:var(--accent);font-weight:600;border-top:1px solid var(--border)" onmousedown="ssAddNewSupplier('${ssId}','${formKey}')">+ Add new supplier...</div>` : '';
+  const addNewHtml = allowAddNew ? `<div class="search-select-option" data-add-new="1" style="color:var(--accent);font-weight:600;border-top:1px solid var(--border)" onmousedown="ssAddNewSupplier('${ssId}','${formKey}')">+ Add new supplier...</div>` : '';
   return `
     <div class="search-select" id="ss_${ssId}">
       <input type="text" value="${escHtml(selected ? selected._label : '')}" placeholder="${placeholder}"
@@ -3044,6 +3071,7 @@ function renderContract() {
         <div class="flex-between mb-16">
           <div class="card-title" style="margin-bottom:0">Review Items — ${exporterNames.length} Exporter(s) (${cd.items.length} items)</div>
           <div style="display:flex;gap:8px">
+            <button class="btn btn-success btn-sm" onclick="contractNewReset()">+ New</button>
             <button class="btn btn-secondary btn-sm" onclick="contractGoStep(1)">← Back</button>
             <button class="btn btn-primary btn-sm" onclick="contractGoStep(3)">Next: Pricing →</button>
           </div>
@@ -3064,6 +3092,7 @@ function renderContract() {
         <div class="flex-between mb-16">
           <div class="card-title" style="margin-bottom:0">Pricing — ${escHtml((cd.exporters||[]).join(', ')||'Contract')}</div>
           <div style="display:flex;gap:8px">
+            <button class="btn btn-success btn-sm" onclick="contractNewReset()">+ New</button>
             <button class="btn btn-secondary btn-sm" onclick="contractGoStep(2)">← Back</button>
             <button class="btn btn-primary btn-sm" onclick="contractGoStep(4)">Next: Generate SKUs →</button>
           </div>
@@ -3079,18 +3108,23 @@ function renderContract() {
             <thead><tr>
               <th>#</th>
               <th>Product</th>
-              <th style="text-align:right">FOB</th>
+              <th style="text-align:right">FOB (${cd.priceUnit})</th>
               <th style="text-align:right">FOB/kg</th>
-              <th style="text-align:right">Cost (THB)</th>
-              <th style="text-align:right">Sell TH (THB)</th>
+              <th style="text-align:right;color:var(--legacy-blue)">FOB (THB)</th>
+              <th style="text-align:right;color:var(--sunlit-gold)">Shipping (THB)</th>
+              <th style="text-align:right;color:var(--tangerine-notes)">Customs (THB)</th>
+              <th style="text-align:right;font-weight:700">Cost (THB)</th>
               <th style="text-align:right">Margin</th>
+              <th style="text-align:right;color:var(--success)">Sell TH (THB)</th>
               <th style="text-align:right">Total FOB (USD)</th>
             </tr></thead>
             <tbody>
               ${cd.items.map((item, idx) => {
                 const fob = item.fobPrice || 0;
                 const fobKg = isLb ? fob * LB_TO_KG : fob;
-                const costThb = ((fobKg + ship) * fx) + customs;
+                const fobThb = fobKg * fx;
+                const shipThb = ship * fx;
+                const costThb = fobThb + shipThb + customs;
                 const margin = item.margin || 1.25;
                 const sellThb = costThb * margin;
                 const totalFob = fob * (item.totalQty || 0);
@@ -3104,8 +3138,10 @@ function renderContract() {
                   <td style="font-size:12px">${escHtml(item.saleName || item.autoName)}</td>
                   <td class="price-cell">${fob.toFixed(2)}</td>
                   <td class="price-cell">${fobKg.toFixed(2)}</td>
+                  <td class="price-cell" style="color:var(--legacy-blue)">${Math.round(fobThb).toLocaleString()}</td>
+                  <td class="price-cell" style="color:var(--sunlit-gold)">${Math.round(shipThb).toLocaleString()}</td>
+                  <td class="price-cell" style="color:var(--tangerine-notes)">${customs}</td>
                   <td class="price-cell" style="font-weight:700;color:var(--heritage-blue)">${Math.round(costThb).toLocaleString()}</td>
-                  <td class="price-cell" style="font-weight:700;color:var(--success)">${Math.round(sellThb).toLocaleString()}</td>
                   <td class="price-cell">
                     <select style="font-size:11px;padding:2px 4px;width:65px" onchange="contractUpdateItem(${idx},'margin',parseFloat(this.value));renderContract()">
                       <option value="1.20" ${margin===1.20?'selected':''}>20%</option>
@@ -3116,13 +3152,14 @@ function renderContract() {
                       <option value="1.50" ${margin===1.50?'selected':''}>50%</option>
                     </select>
                   </td>
+                  <td class="price-cell" style="font-weight:700;color:var(--success)">${Math.round(sellThb).toLocaleString()}</td>
                   <td class="price-cell">${Math.round(totalFob).toLocaleString()}</td>
                 </tr>`;
               }).join('')}
             </tbody>
             <tfoot>
               <tr style="font-weight:700;border-top:2px solid var(--heritage-blue)">
-                <td colspan="7" style="text-align:right">Total FOB (USD)</td>
+                <td colspan="10" style="text-align:right">Total FOB (USD)</td>
                 <td class="price-cell">${cd.items.reduce((s,i)=>s+(i.totalFobUSD||0),0).toLocaleString()}</td>
               </tr>
             </tfoot>
@@ -3140,6 +3177,7 @@ function renderContract() {
           <div style="display:flex;gap:8px">
             <button class="btn btn-secondary btn-sm" onclick="contractGoStep(3)">← Back</button>
             <button class="btn btn-primary" onclick="contractCreateAllSkus()">Create All SKUs</button>
+            <button class="btn btn-success btn-sm" onclick="contractNewReset()" title="Start a new contract">+ New Contract</button>
           </div>
         </div>
         <p style="font-size:13px;color:var(--text-secondary);margin-bottom:16px">Review the SKU assignments below. Existing SKUs will be reused. New SKUs will be generated.</p>
@@ -3205,6 +3243,16 @@ function renderContract() {
 }
 
 function contractGoStep(n) { state.contractStep = n; renderContract(); }
+
+function contractNewReset() {
+  if (state.contractData && state.contractData.items?.some(i=>i.status!=='sku_created')) {
+    if (!confirm('Current contract has unfinished items. Start a new one?')) return;
+  }
+  state.contractData = null;
+  state.contractStep = 1;
+  renderContract();
+  showToast('Ready for new contract','success');
+}
 
 function contractRenameExporter(oldName) {
   const newName = prompt(`Rename exporter "${oldName}" to:`, oldName);
