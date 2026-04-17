@@ -690,6 +690,7 @@ let state = {
   regPerPage: 50,
   contractStep: 1, // 1=upload, 2=review, 3=pricing, 4=sku
   contractData: null, // current contract being processed
+  editForm: null, // Registry edit SKU form state
   piMarket: 'TH',
   piFilters: { countryId:'', gradeId:'', competitorId:'' }
 };
@@ -997,45 +998,39 @@ function renderGenerator() {
           </div>
           <div class="form-group">
             <label class="form-label">Grade / Category *</label>
-            <select id="genGrade" onchange="updateGenForm('gradeId',this.value)">
-              <option value="">— Select Grade —</option>
-              ${grades.map(g=>`<option value="${g.id}" ${f.gradeId===g.id?'selected':''}>${escHtml(g.name)} (${g.code})</option>`).join('')}
-            </select>
+            ${renderSS('grade', grades.map(g=>({...g,_label:g.name+' ('+g.code+')'})), f.gradeId, 'Type to search grade...', 'gradeId', true, 'grade')}
           </div>
           <div class="form-group">
             <label class="form-label">Pack Size *</label>
-            <select id="genPack" onchange="updateGenForm('packSizeId',this.value)">
-              <option value="">— Select Pack Size —</option>
-              ${packs.map(p=>`<option value="${p.id}" ${f.packSizeId===p.id?'selected':''}>${escHtml(p.name)} (${p.code})</option>`).join('')}
-            </select>
+            ${renderSS('pack', packs.map(p=>({...p,_label:p.name+' ('+p.code+')'})), f.packSizeId, 'Type to search pack size...', 'packSizeId', true, 'pack')}
           </div>
           <div class="form-group">
             <label class="form-label">Supplier *</label>
-            ${renderSS('supplier', suppliers.map(s=>({...s,_label:s.name+' ('+s.code+')'})), f.supplierId, 'Type to search supplier...', 'supplierId', true)}
+            ${renderSS('supplier', suppliers.map(s=>({...s,_label:s.name+' ('+s.code+')'})), f.supplierId, 'Type to search supplier...', 'supplierId', true, 'supplier')}
           </div>
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
             <div class="form-group">
               <label class="form-label">Region</label>
-              ${renderSS('region', regions.map(r=>({...r,_label:r.name})), f.regionId, 'Type to search region...', 'regionId')}
+              ${renderSS('region', regions.map(r=>({...r,_label:r.name})), f.regionId, 'Type to search region...', 'regionId', true, 'region')}
             </div>
             <div class="form-group">
               <label class="form-label">Brand / Farm</label>
-              ${renderSS('brandFarm', brandFarms.map(r=>({...r,_label:r.name})), f.brandFarmId, 'Type to search brand/farm...', 'brandFarmId')}
+              ${renderSS('brandFarm', brandFarms.map(r=>({...r,_label:r.name})), f.brandFarmId, 'Type to search brand/farm...', 'brandFarmId', true, 'brandFarm')}
             </div>
           </div>
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
             <div class="form-group">
               <label class="form-label">Process 1 (Primary)</label>
-              ${renderSS('process', processes.map(p=>({...p,_label:p.name})), f.processId, 'Type to search process...', 'processId')}
+              ${renderSS('process', processes.map(p=>({...p,_label:p.name})), f.processId, 'Type to search process...', 'processId', true, 'process')}
             </div>
             <div class="form-group">
               <label class="form-label">Process 2 (Secondary)</label>
-              ${renderSS('process2', processes.map(p=>({...p,_label:p.name})), f.process2Id, 'Type to search process...', 'process2Id')}
+              ${renderSS('process2', processes.map(p=>({...p,_label:p.name})), f.process2Id, 'Type to search process...', 'process2Id', true, 'process2')}
             </div>
           </div>
           <div class="form-group">
             <label class="form-label">Grading Spec</label>
-            ${renderSS('gradingSpec', gradingSpecs.map(g=>({...g,_label:g.name})), f.gradingSpecId, 'Type to search grading spec...', 'gradingSpecId')}
+            ${renderSS('gradingSpec', gradingSpecs.map(g=>({...g,_label:g.name})), f.gradingSpecId, 'Type to search grading spec...', 'gradingSpecId', true, 'gradingSpec')}
           </div>
           <div class="form-group">
             <label class="form-label">Sale Name</label>
@@ -1119,6 +1114,13 @@ function renderGenerator() {
 }
 
 function updateGenForm(key, val) {
+  // If Edit SKU modal is open, route to editForm instead
+  if (state.editForm && document.getElementById('modalRoot')?.querySelector('h3')?.textContent?.includes('Edit SKU')) {
+    state.editForm[key] = val;
+    // Re-render the edit modal to update SKU code preview and selected-state
+    renderEditSkuModal();
+    return;
+  }
   state.genForm[key] = val;
   // Skip full re-render for text/number inputs to prevent focus loss
   if (['saleName','notes','costPrice','sellingPrice','mp_TH','mp_MY','mp_ID','mp_PH'].includes(key)) return;
@@ -1181,6 +1183,35 @@ function ssClose(id) {
   const dd = document.getElementById('ssd_' + id);
   if (dd) dd.classList.remove('open');
 }
+// Add-new field config: label, storage key, code generation type
+const SS_ADD_CONFIG = {
+  supplier:  { label:'Supplier',   key:KEYS.suppliers,  codeType:'numeric2', nameHint:'e.g. FINCA MILAN' },
+  grade:     { label:'Grade',      key:KEYS.grades,     codeType:'letter1',  nameHint:'e.g. Specialty, Commercial' },
+  pack:      { label:'Pack Size',  key:KEYS.packSizes,  codeType:'letter1',  nameHint:'e.g. 60kg, 30kg' },
+  region:    { label:'Region',     key:KEYS.regions,    codeType:'none',     nameHint:'e.g. Sidamo, Yirgacheffe' },
+  brandFarm: { label:'Brand/Farm', key:KEYS.brandFarms, codeType:'none',     nameHint:'e.g. Finca Milan' },
+  process:   { label:'Process',    key:KEYS.processes,  codeType:'none',     nameHint:'e.g. Natural, Washed' },
+  process2:  { label:'Process',    key:KEYS.processes,  codeType:'none',     nameHint:'e.g. Dark Room Dry' },
+  gradingSpec:{label:'Grading Spec',key:KEYS.gradingSpecs,codeType:'none',   nameHint:'e.g. G1, SHB' },
+};
+function ssNextCode(storageKey, type) {
+  if (type === 'none') return '';
+  const existing = getAll(storageKey);
+  const usedCodes = new Set(existing.map(i => i.code).filter(Boolean));
+  if (type === 'numeric2') {
+    for (let i = 1; i <= 99; i++) {
+      const c = String(i).padStart(2, '0');
+      if (!usedCodes.has(c)) return c;
+    }
+    return '99';
+  }
+  if (type === 'letter1') {
+    const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    for (const c of letters) if (!usedCodes.has(c)) return c;
+    return 'Z';
+  }
+  return '';
+}
 function ssFilter(id, query) {
   const dd = document.getElementById('ssd_' + id);
   if (!dd) return;
@@ -1188,21 +1219,22 @@ function ssFilter(id, query) {
   const q = query.toLowerCase();
   let hasMatch = false;
   dd.querySelectorAll('.search-select-option').forEach(opt => {
-    if (opt.dataset.addNew) return; // handle add-new separately
+    if (opt.dataset.addNew) return;
     const visible = !q || opt.textContent.toLowerCase().includes(q);
     opt.style.display = visible ? '' : 'none';
     if (visible) hasMatch = true;
   });
-  // Always show "+ Add new" option; highlight it when no matches
   const addNewOpt = dd.querySelector('[data-add-new]');
   if (addNewOpt) {
+    const fieldType = addNewOpt.dataset.fieldType || 'supplier';
+    const cfg = SS_ADD_CONFIG[fieldType] || SS_ADD_CONFIG.supplier;
     addNewOpt.style.display = '';
     if (!hasMatch && q.length > 0) {
       addNewOpt.style.background = 'rgba(30,82,198,0.08)';
-      addNewOpt.textContent = '+ Add "' + query + '" as new supplier...';
+      addNewOpt.textContent = '+ Add "' + query + '" as new ' + cfg.label.toLowerCase() + '...';
     } else {
       addNewOpt.style.background = '';
-      addNewOpt.textContent = '+ Add new supplier...';
+      addNewOpt.textContent = '+ Add new ' + cfg.label.toLowerCase() + '...';
     }
   }
 }
@@ -1214,54 +1246,67 @@ function ssClear(id, formKey, e) {
   if (e) e.preventDefault();
   updateGenForm(formKey, '');
 }
-// BUG-001: Add new supplier inline from searchable select
-function ssNextSupplierCode() {
-  const existing = getAll(KEYS.suppliers);
-  const usedCodes = new Set(existing.map(s => s.code));
-  for (let i = 1; i <= 99; i++) {
-    const code = String(i).padStart(2, '0');
-    if (!usedCodes.has(code)) return code;
-  }
-  return '99';
-}
-function ssAddNewSupplier(ssId, formKey) {
+// Legacy shim for supplier
+function ssNextSupplierCode() { return ssNextCode(KEYS.suppliers, 'numeric2'); }
+// Generic "+ Add new" modal for any field type
+function ssAddNewItem(ssId, formKey, fieldType) {
+  const cfg = SS_ADD_CONFIG[fieldType];
+  if (!cfg) { ssAddNewSupplier(ssId, formKey); return; }
   const inp = document.querySelector('#ss_' + ssId + ' input');
   const typed = inp ? inp.value.trim() : '';
-  const autoCode = ssNextSupplierCode();
+  const autoCode = ssNextCode(cfg.key, cfg.codeType);
+  const showCode = cfg.codeType !== 'none';
+  const codeLen = cfg.codeType === 'numeric2' ? 2 : 1;
   const html = `
-    <h3>Add New Supplier</h3>
+    <h3>Add New ${escHtml(cfg.label)}</h3>
     <div class="form-group">
-      <label class="form-label">Supplier Name</label>
-      <input type="text" id="newSupplierName" value="${escHtml(typed)}" placeholder="e.g. FINCA MILAN">
+      <label class="form-label">${escHtml(cfg.label)} Name</label>
+      <input type="text" id="newItemName" value="${escHtml(typed)}" placeholder="${escHtml(cfg.nameHint)}">
     </div>
+    ${showCode ? `
     <div class="form-group">
-      <label class="form-label">Supplier Code (auto-assigned, editable)</label>
-      <input type="text" id="newSupplierCode" maxlength="2" value="${autoCode}" style="width:100px;font-family:'JetBrains Mono';font-weight:700;font-size:18px;text-align:center">
-    </div>
+      <label class="form-label">${escHtml(cfg.label)} Code (auto-assigned, editable)</label>
+      <input type="text" id="newItemCode" maxlength="${codeLen}" value="${autoCode}" style="width:100px;font-family:'JetBrains Mono';font-weight:700;font-size:18px;text-align:center;text-transform:uppercase">
+    </div>` : ''}
     <div class="modal-actions">
       <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
-      <button class="btn btn-primary" onclick="ssConfirmNewSupplier('${ssId}','${formKey}')">Add & Select</button>
+      <button class="btn btn-primary" onclick="ssConfirmNewItem('${ssId}','${formKey}','${fieldType}')">Add & Select</button>
     </div>`;
   showModal(html);
-  setTimeout(() => document.getElementById('newSupplierName')?.focus(), 100);
+  setTimeout(() => document.getElementById('newItemName')?.focus(), 100);
 }
-function ssConfirmNewSupplier(ssId, formKey) {
-  const name = document.getElementById('newSupplierName').value.trim();
-  const code = document.getElementById('newSupplierCode').value.trim().padStart(2,'0');
-  if (!name) { showToast('Please enter a supplier name','error'); return; }
-  if (!code || code.length !== 2) { showToast('Code must be exactly 2 characters','error'); return; }
-  const existing = getAll(KEYS.suppliers);
-  if (existing.some(s => s.code === code)) { showToast('Code "'+code+'" already exists!','error'); return; }
+function ssConfirmNewItem(ssId, formKey, fieldType) {
+  const cfg = SS_ADD_CONFIG[fieldType];
+  if (!cfg) return;
+  const name = document.getElementById('newItemName').value.trim();
+  if (!name) { showToast('Please enter a name','error'); return; }
+  const existing = getAll(cfg.key);
+  if (existing.some(i => (i.name||'').toLowerCase() === name.toLowerCase())) {
+    showToast(cfg.label + ' "' + name + '" already exists','error'); return;
+  }
+  let code = '';
+  if (cfg.codeType !== 'none') {
+    const codeLen = cfg.codeType === 'numeric2' ? 2 : 1;
+    code = (document.getElementById('newItemCode').value||'').trim().toUpperCase();
+    if (cfg.codeType === 'numeric2') code = code.padStart(2,'0');
+    if (!code || code.length !== codeLen) { showToast('Code must be exactly '+codeLen+' character(s)','error'); return; }
+    if (existing.some(i => i.code === code)) { showToast('Code "'+code+'" already exists!','error'); return; }
+  }
   const newItem = { id:DB.genId(), name, code, active:true, sortOrder:existing.length };
   existing.push(newItem);
-  DB.set(KEYS.suppliers, existing);
+  DB.set(cfg.key, existing);
   closeModal();
-  showToast('Supplier "'+name+'" ('+code+') added');
+  showToast(cfg.label + ' "' + name + '"' + (code?' ('+code+')':'') + ' added');
   updateGenForm(formKey, newItem.id);
 }
-function renderSS(ssId, items, selectedId, placeholder, formKey, allowAddNew) {
+// Legacy supplier-specific (kept for backward compatibility)
+function ssAddNewSupplier(ssId, formKey) { ssAddNewItem(ssId, formKey, 'supplier'); }
+function ssConfirmNewSupplier(ssId, formKey) { ssConfirmNewItem(ssId, formKey, 'supplier'); }
+function renderSS(ssId, items, selectedId, placeholder, formKey, allowAddNew, fieldType) {
   const selected = items.find(i => i.id === selectedId);
-  const addNewHtml = allowAddNew ? `<div class="search-select-option" data-add-new="1" style="color:var(--accent);font-weight:600;border-top:1px solid var(--border)" onmousedown="ssAddNewSupplier('${ssId}','${formKey}')">+ Add new supplier...</div>` : '';
+  const ft = fieldType || 'supplier';
+  const cfg = SS_ADD_CONFIG[ft] || SS_ADD_CONFIG.supplier;
+  const addNewHtml = allowAddNew ? `<div class="search-select-option" data-add-new="1" data-field-type="${ft}" style="color:var(--accent);font-weight:600;border-top:1px solid var(--border)" onmousedown="ssAddNewItem('${ssId}','${formKey}','${ft}')">+ Add new ${escHtml(cfg.label.toLowerCase())}...</div>` : '';
   return `
     <div class="search-select" id="ss_${ssId}">
       <input type="text" value="${escHtml(selected ? selected._label : '')}" placeholder="${placeholder}"
@@ -1433,7 +1478,7 @@ function renderRegistry() {
             <th style="text-align:right">Cost</th>
             <th style="text-align:right">Sell</th>
             <th onclick="toggleRegSort('createdAt')">Date <span class="sort-arrow ${state.regSort.col==='createdAt'?'active':''}">${sortArrow('createdAt')}</span></th>
-            ${state.adminMode ? '<th>Actions</th>' : ''}
+            <th style="white-space:nowrap">Actions</th>
           </tr></thead>
           <tbody>
             ${pageSkus.length ? pageSkus.map(s => {
@@ -1459,13 +1504,17 @@ function renderRegistry() {
                 <td>${escHtml(brandFarm?.name||'')}</td>
                 <td style="white-space:nowrap">${escHtml(procDisplay)}</td>
                 <td>${escHtml(gSpec?.name||'')}</td>
-                <td style="max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${escHtml(s.saleName||s.description||'')}">${s.saleName ? escHtml(s.saleName) : `<span style="color:var(--text-muted);font-style:italic;font-size:11px">${escHtml(s.description||'—')}</span>`}</td>
+                <td style="max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;cursor:pointer" title="${escHtml(s.saleName||s.description||'')}&#10;&#10;Click to view full / copy" onclick="showSaleNameModal('${s.id}')">${s.saleName ? escHtml(s.saleName) : `<span style="color:var(--text-muted);font-style:italic;font-size:11px">${escHtml(s.description||'—')}</span>`}</td>
                 <td style="text-align:right;font-family:'JetBrains Mono',monospace;font-size:12px;white-space:nowrap">${s.costPrice!=null?s.costPrice.toLocaleString()+' <span style="color:var(--text-muted);font-size:10px">'+cur+'</span>':'—'}</td>
                 <td style="text-align:right;font-family:'JetBrains Mono',monospace;font-size:12px;white-space:nowrap">${s.sellingPrice!=null?s.sellingPrice.toLocaleString()+' <span style="color:var(--text-muted);font-size:10px">'+cur+'</span>':'—'}</td>
                 <td style="white-space:nowrap;font-size:12px;color:var(--text-muted)">${new Date(s.createdAt).toLocaleDateString()}</td>
-                ${state.adminMode ? `<td><button class="btn btn-danger btn-sm" onclick="deleteSku('${s.id}')">Del</button></td>` : ''}
+                <td style="white-space:nowrap"><div style="display:flex;gap:4px">
+                  <button class="btn btn-secondary btn-sm" title="Edit SKU" onclick="editSku('${s.id}')" style="padding:4px 8px">✏️</button>
+                  <button class="btn btn-secondary btn-sm" title="Copy Sale Name" onclick="copySaleName('${s.id}')" style="padding:4px 8px">📋</button>
+                  <button class="btn btn-danger btn-sm" title="Delete SKU" onclick="deleteSku('${s.id}')" style="padding:4px 8px">🗑️</button>
+                </div></td>
               </tr>`;
-            }).join('') : `<tr><td colspan="${state.adminMode?15:14}" class="empty-state">No SKUs found</td></tr>`}
+            }).join('') : `<tr><td colspan="15" class="empty-state">No SKUs found</td></tr>`}
           </tbody>
         </table>
       </div>
@@ -1501,14 +1550,268 @@ function goPage(p) { const total=getAll(KEYS.skus).length; const pp=state.regPer
 function changePerPage(n) { state.regPerPage=n; state.regPage=1; renderRegistry(); }
 
 async function deleteSku(id) {
-  if (!confirm('Delete this SKU? This cannot be undone.')) return;
   const sku = getAll(KEYS.skus).find(s => s.id === id);
-  if (sku?.notionId || sku?.id) await SYNC.deleteSku(sku.notionId || sku.id);
+  if (!sku) return;
+  const msg = 'Delete SKU "' + (sku.skuCode||'') + '"?\n\n' +
+              (SYNC.enabled ? 'This will also delete from Notion cloud.\n' : '') +
+              'This cannot be undone.';
+  if (!confirm(msg)) return;
+  if (sku.notionId) await SYNC.deleteSku(sku.notionId);
   const skus = getAll(KEYS.skus).filter(s=>s.id!==id);
   DB.set(KEYS.skus, skus);
   showToast('SKU deleted','warning');
   renderRegistry();
   if (SYNC.enabled) SYNC.updateUI('ok', `Cloud (${skus.length} SKUs)`);
+}
+
+// Sales Name viewer modal — tooltip + full view + copy
+function showSaleNameModal(id) {
+  const sku = getAll(KEYS.skus).find(s => s.id === id);
+  if (!sku) return;
+  const saleName = sku.saleName || '';
+  const desc = sku.description || '';
+  const html = `
+    <h3>Sale Name</h3>
+    <div style="margin-bottom:16px">
+      <div style="font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px">SKU</div>
+      <div style="font-family:'JetBrains Mono',monospace;font-weight:700;font-size:16px;color:var(--heritage-blue)">${escHtml(sku.skuCode||'')}</div>
+    </div>
+    <div style="margin-bottom:16px">
+      <div style="font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px">Sale Name</div>
+      <div style="padding:12px;background:var(--bg-primary);border:1px solid var(--border);border-radius:var(--radius-sm);font-size:14px;line-height:1.5;word-break:break-word">${saleName ? escHtml(saleName) : '<span style="color:var(--text-muted);font-style:italic">No sale name set</span>'}</div>
+    </div>
+    ${desc ? `<div style="margin-bottom:16px">
+      <div style="font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px">Description (auto-built)</div>
+      <div style="padding:12px;background:var(--bg-primary);border:1px dashed var(--border);border-radius:var(--radius-sm);font-size:13px;line-height:1.5;color:var(--text-secondary);word-break:break-word">${escHtml(desc)}</div>
+    </div>` : ''}
+    <div class="modal-actions">
+      <button class="btn btn-secondary" onclick="closeModal()">Close</button>
+      ${saleName ? `<button class="btn btn-primary" onclick="copySaleName('${sku.id}')">📋 Copy Sale Name</button>` : ''}
+      <button class="btn btn-primary" onclick="closeModal();editSku('${sku.id}')">✏️ Edit</button>
+    </div>`;
+  showModal(html);
+}
+
+function copySaleName(id) {
+  const sku = getAll(KEYS.skus).find(s => s.id === id);
+  if (!sku) return;
+  const text = sku.saleName || sku.description || '';
+  if (!text) { showToast('Nothing to copy','warning'); return; }
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(text).then(
+      () => showToast('Copied: ' + (text.length>40 ? text.slice(0,40)+'...' : text)),
+      () => { fallbackCopy(text); }
+    );
+  } else {
+    fallbackCopy(text);
+  }
+}
+function fallbackCopy(text) {
+  const ta = document.createElement('textarea');
+  ta.value = text; ta.style.position='fixed'; ta.style.left='-9999px';
+  document.body.appendChild(ta); ta.select();
+  try { document.execCommand('copy'); showToast('Copied to clipboard'); }
+  catch(e) { showToast('Copy failed — please select text manually','error'); }
+  document.body.removeChild(ta);
+}
+
+// SKU Edit — full edit including SKU code regeneration
+function editSku(id) {
+  const sku = getAll(KEYS.skus).find(s => s.id === id);
+  if (!sku) return;
+  // Seed edit form state
+  state.editForm = {
+    id: sku.id,
+    notionId: sku.notionId || '',
+    originalSkuCode: sku.skuCode,
+    originalLotNumber: sku.lotNumber,
+    originalCreatedAt: sku.createdAt,
+    countryId: sku.countryId||'',
+    gradeId: sku.gradeId||'',
+    packSizeId: sku.packSizeId||'',
+    supplierId: sku.supplierId||'',
+    regionId: sku.regionId||'',
+    brandFarmId: sku.brandFarmId||'',
+    processId: sku.processId||'',
+    process2Id: sku.process2Id||'',
+    gradingSpecId: sku.gradingSpecId||'',
+    saleName: sku.saleName||'',
+    notes: sku.notes||'',
+    costPrice: sku.costPrice!=null ? sku.costPrice : '',
+    sellingPrice: sku.sellingPrice!=null ? sku.sellingPrice : '',
+    currency: sku.currency||'THB',
+    mp_MY: sku.marketPrices?.MY?.sellingPrice || '',
+    mp_ID: sku.marketPrices?.ID?.sellingPrice || '',
+    mp_PH: sku.marketPrices?.PH?.sellingPrice || '',
+  };
+  renderEditSkuModal();
+}
+
+function renderEditSkuModal() {
+  const f = state.editForm;
+  const countries = getAll(KEYS.countries).filter(c=>c.active).sort((a,b)=>a.name.localeCompare(b.name));
+  const grades = getAll(KEYS.grades).filter(g=>g.active);
+  const packs = getAll(KEYS.packSizes).filter(p=>p.active);
+  const suppliers = getAll(KEYS.suppliers).filter(s=>s.active).sort((a,b)=>a.name.localeCompare(b.name));
+  const regions = getAll(KEYS.regions).filter(r=>r.active).sort((a,b)=>a.name.localeCompare(b.name));
+  const brandFarms = getAll(KEYS.brandFarms).filter(r=>r.active).sort((a,b)=>a.name.localeCompare(b.name));
+  const processes = getAll(KEYS.processes).filter(p=>p.active).sort((a,b)=>a.name.localeCompare(b.name));
+  const gradingSpecs = getAll(KEYS.gradingSpecs).filter(g=>g.active).sort((a,b)=>a.name.localeCompare(b.name));
+
+  const country = findById(KEYS.countries, f.countryId);
+  const grade = findById(KEYS.grades, f.gradeId);
+  const pack = findById(KEYS.packSizes, f.packSizeId);
+  const supplier = findById(KEYS.suppliers, f.supplierId);
+  const cc = country?.code || '??';
+  const gc = grade?.code || '?';
+  const pc = pack?.code || '?';
+  const sc = supplier?.code || '??';
+  // Keep the running number from original SKU code (last 2 digits)
+  const runStr = (f.originalSkuCode||'').slice(-2) || '??';
+  const previewCode = cc + gc + pc + sc + runStr;
+
+  const html = `
+    <h3>Edit SKU</h3>
+    <div style="margin-bottom:16px;padding:12px;background:var(--bg-primary);border-radius:var(--radius-sm);border:1px dashed var(--border)">
+      <div style="font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px">SKU Code Preview</div>
+      <div style="font-family:'JetBrains Mono',monospace;font-weight:700;font-size:20px;color:var(--heritage-blue)">${escHtml(previewCode)}</div>
+      <div style="font-size:11px;color:var(--text-muted);margin-top:4px">Original: ${escHtml(f.originalSkuCode)} • LOT ${escHtml(f.originalLotNumber||'')} (LOT preserved)</div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+      <div class="form-group">
+        <label class="form-label">Country *</label>
+        ${renderSS('editCountry', countries.map(c=>({...c,_label:c.name+' ('+c.code+')'})), f.countryId, 'Country...', 'countryId')}
+      </div>
+      <div class="form-group">
+        <label class="form-label">Grade *</label>
+        ${renderSS('editGrade', grades.map(g=>({...g,_label:g.name+' ('+g.code+')'})), f.gradeId, 'Grade...', 'gradeId', true, 'grade')}
+      </div>
+      <div class="form-group">
+        <label class="form-label">Pack Size *</label>
+        ${renderSS('editPack', packs.map(p=>({...p,_label:p.name+' ('+p.code+')'})), f.packSizeId, 'Pack...', 'packSizeId', true, 'pack')}
+      </div>
+      <div class="form-group">
+        <label class="form-label">Supplier *</label>
+        ${renderSS('editSupplier', suppliers.map(s=>({...s,_label:s.name+' ('+s.code+')'})), f.supplierId, 'Supplier...', 'supplierId', true, 'supplier')}
+      </div>
+      <div class="form-group">
+        <label class="form-label">Region</label>
+        ${renderSS('editRegion', regions.map(r=>({...r,_label:r.name})), f.regionId, 'Region...', 'regionId', true, 'region')}
+      </div>
+      <div class="form-group">
+        <label class="form-label">Brand / Farm</label>
+        ${renderSS('editBrandFarm', brandFarms.map(r=>({...r,_label:r.name})), f.brandFarmId, 'Brand/Farm...', 'brandFarmId', true, 'brandFarm')}
+      </div>
+      <div class="form-group">
+        <label class="form-label">Process 1</label>
+        ${renderSS('editProcess', processes.map(p=>({...p,_label:p.name})), f.processId, 'Process...', 'processId', true, 'process')}
+      </div>
+      <div class="form-group">
+        <label class="form-label">Process 2</label>
+        ${renderSS('editProcess2', processes.map(p=>({...p,_label:p.name})), f.process2Id, 'Process 2...', 'process2Id', true, 'process2')}
+      </div>
+      <div class="form-group" style="grid-column:1/-1">
+        <label class="form-label">Grading Spec</label>
+        ${renderSS('editGradingSpec', gradingSpecs.map(g=>({...g,_label:g.name})), f.gradingSpecId, 'Grading spec...', 'gradingSpecId', true, 'gradingSpec')}
+      </div>
+      <div class="form-group" style="grid-column:1/-1">
+        <label class="form-label">Sale Name</label>
+        <input type="text" id="editSaleName" value="${escHtml(f.saleName||'')}" placeholder="Sale name..." oninput="state.editForm.saleName=this.value">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Cost Price</label>
+        <input type="number" step="0.01" min="0" value="${f.costPrice||''}" placeholder="0.00" oninput="state.editForm.costPrice=this.value">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Selling Price</label>
+        <input type="number" step="0.01" min="0" value="${f.sellingPrice||''}" placeholder="0.00" oninput="state.editForm.sellingPrice=this.value">
+      </div>
+      <div class="form-group" style="grid-column:1/-1">
+        <label class="form-label">Notes</label>
+        <textarea rows="2" oninput="state.editForm.notes=this.value">${escHtml(f.notes||'')}</textarea>
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="saveEditedSku()">Save Changes</button>
+    </div>`;
+  showModal(html);
+}
+
+// Override updateGenForm calls when edit modal is open — editForm is the target
+// We accomplish this by hooking into ssSelect via formKey pattern. The simplest approach:
+// edit form uses same formKey names, so we need a shim. Instead, monkey-patch updateGenForm
+// when edit is open. Simpler: just intercept updateGenForm.
+const _origUpdateGenForm = typeof updateGenForm === 'function' ? updateGenForm : null;
+
+async function saveEditedSku() {
+  const f = state.editForm;
+  if (!f.countryId || !f.gradeId || !f.packSizeId || !f.supplierId) {
+    showToast('Country, Grade, Pack, Supplier are required','error'); return;
+  }
+  const country = findById(KEYS.countries, f.countryId);
+  const grade = findById(KEYS.grades, f.gradeId);
+  const pack = findById(KEYS.packSizes, f.packSizeId);
+  const supplier = findById(KEYS.suppliers, f.supplierId);
+  const region = findById(KEYS.regions, f.regionId);
+  const brandFarm = findById(KEYS.brandFarms, f.brandFarmId);
+  const process = findById(KEYS.processes, f.processId);
+  const process2 = findById(KEYS.processes, f.process2Id);
+  const gradingSpec = findById(KEYS.gradingSpecs, f.gradingSpecId);
+
+  // Preserve running number from original SKU
+  const runStr = (f.originalSkuCode||'').slice(-2) || '01';
+  const newSkuCode = country.code + grade.code + pack.code + supplier.code + runStr;
+  const description = buildDescription(country.name, region?.name, brandFarm?.name, process?.name, process2?.name, gradingSpec?.name, supplier.name, grade.name, pack.name);
+
+  // Update local SKU
+  const skus = getAll(KEYS.skus);
+  const idx = skus.findIndex(s => s.id === f.id);
+  if (idx < 0) { showToast('SKU not found','error'); return; }
+  const updated = {
+    ...skus[idx],
+    skuCode: newSkuCode,
+    // keep lotNumber, createdAt unchanged
+    countryId:f.countryId, gradeId:f.gradeId, packSizeId:f.packSizeId,
+    supplierId:f.supplierId, regionId:f.regionId||'', brandFarmId:f.brandFarmId||'',
+    processId:f.processId||'', process2Id:f.process2Id||'', gradingSpecId:f.gradingSpecId||'',
+    description, saleName:f.saleName||'', notes:f.notes||'',
+    costPrice: f.costPrice!=='' ? parseFloat(f.costPrice) : null,
+    sellingPrice: f.sellingPrice!=='' ? parseFloat(f.sellingPrice) : null,
+    currency: f.currency||'THB',
+    marketPrices: {
+      TH:{ sellingPrice: f.sellingPrice!=='' ? parseFloat(f.sellingPrice) : null, currency:'THB' },
+      MY:{ sellingPrice: f.mp_MY!=='' ? parseFloat(f.mp_MY) : null, currency:'MYR' },
+      ID:{ sellingPrice: f.mp_ID!=='' ? parseFloat(f.mp_ID) : null, currency:'IDR' },
+      PH:{ sellingPrice: f.mp_PH!=='' ? parseFloat(f.mp_PH) : null, currency:'PHP' },
+    },
+    updatedAt: new Date().toISOString(),
+  };
+  skus[idx] = updated;
+  DB.set(KEYS.skus, skus);
+
+  // Sync to Notion: delete old + create new (no updateSku endpoint)
+  if (SYNC.enabled) {
+    if (f.notionId) await SYNC.deleteSku(f.notionId);
+    const genForm = {
+      countryId:f.countryId, gradeId:f.gradeId, packSizeId:f.packSizeId, supplierId:f.supplierId,
+      regionId:f.regionId, brandFarmId:f.brandFarmId, processId:f.processId, process2Id:f.process2Id,
+      gradingSpecId:f.gradingSpecId, costPrice:updated.costPrice, sellingPrice:updated.sellingPrice,
+      currency:updated.currency, mp_MY:f.mp_MY, mp_ID:f.mp_ID, mp_PH:f.mp_PH,
+    };
+    const payload = SYNC.buildPayload(newSkuCode, updated.lotNumber, genForm, description, f.saleName, f.notes, updated.createdAt);
+    const result = await SYNC.createSku(payload);
+    if (result?.notionId) {
+      updated.notionId = result.notionId;
+      skus[idx] = updated;
+      DB.set(KEYS.skus, skus);
+    }
+  }
+
+  closeModal();
+  state.editForm = null;
+  showToast('SKU updated: ' + newSkuCode);
+  renderRegistry();
 }
 
 function exportCSV() {
