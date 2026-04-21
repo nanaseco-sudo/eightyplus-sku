@@ -1188,9 +1188,13 @@ function updateGenPreview() {
   ssSync.forEach(({ssId, item, label}) => {
     const inp = document.querySelector('#ss_' + ssId + ' input');
     if (!inp) return;
-    // Only update if value differs — avoid disrupting active typing
     const desired = item ? label(item) : '';
-    if (inp.value !== desired && document.activeElement !== inp) inp.value = desired;
+    // Update if value differs. Skip only when input is focused AND dropdown
+    // is open (user is typing a filter query) — otherwise always sync so the
+    // selection is visibly applied.
+    const dd = document.getElementById('ssd_' + ssId);
+    const isFiltering = document.activeElement === inp && dd?.classList.contains('open');
+    if (inp.value !== desired && !isFiltering) inp.value = desired;
   });
   return true;
 }
@@ -1263,10 +1267,21 @@ function ssFilter(id, query) {
 }
 function ssSelect(id, value, formKey) {
   ssClose(id);
+  // Immediately set the input value from the clicked option's text.
+  // Can't rely on updateGenPreview to do it later: the input is still
+  // focused (onmousedown fires before blur), and its typed filter text
+  // would also block the sync. Setting here is always correct.
+  const dd = document.getElementById('ssd_' + id);
+  const opt = dd ? dd.querySelector('.search-select-option[onmousedown*="\'' + value + '\'"]') : null;
+  const inp = document.querySelector('#ss_' + id + ' input');
+  if (inp && opt) inp.value = opt.textContent.trim();
+  if (inp) inp.blur();
   updateGenForm(formKey, value);
 }
 function ssClear(id, formKey, e) {
   if (e) e.preventDefault();
+  const inp = document.querySelector('#ss_' + id + ' input');
+  if (inp) inp.value = '';
   updateGenForm(formKey, '');
 }
 // Legacy shim for supplier
