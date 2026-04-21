@@ -139,8 +139,10 @@ textarea { resize:vertical; min-height:60px; }
 .registry-filters { display:flex; flex-wrap:wrap; gap:12px; margin-bottom:16px; align-items:flex-end; }
 .registry-filters .form-group { margin-bottom:0; flex:1; min-width:140px; }
 .registry-filters .form-group.search-group { flex:2; }
-.table-wrapper { overflow-x:auto; }
+.table-wrapper { overflow:auto; max-height:min(60vh, 600px); min-height:280px; border:1px solid var(--border); border-radius:var(--radius-sm); }
 table { width:100%; border-collapse:collapse; font-size:13px; }
+/* Sticky header so it stays visible while scrolling vertically */
+.table-wrapper thead th { position:sticky; top:0; z-index:2; }
 th { text-align:left; padding:10px 12px; background:var(--wheat-cream); color:var(--heritage-blue); font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.5px; cursor:pointer; user-select:none; border-bottom:2px solid var(--legacy-blue); white-space:nowrap; }
 th:hover { color:var(--tangerine-notes); }
 th .sort-arrow { margin-left:4px; opacity:0.4; }
@@ -1169,6 +1171,27 @@ function updateGenPreview() {
   if (descEl) descEl.innerHTML = desc || '<span style="color:rgba(255,255,255,0.35)">Description will appear here...</span>';
   const regBtn = previewCard.querySelector('button[onclick="registerSku()"]');
   if (regBtn) regBtn.disabled = !isComplete;
+  // BUG-003 fix: sync each search-select visible input with current selection
+  // (previously the partial-update path skipped refreshing the input text,
+  //  so users saw only the placeholder after selecting an item)
+  const ssSync = [
+    { ssId:'country',    item:country,    label:i => i.name + ' (' + i.code + ')' },
+    { ssId:'grade',      item:grade,      label:i => i.name + ' (' + i.code + ')' },
+    { ssId:'pack',       item:pack,       label:i => i.name + ' (' + i.code + ')' },
+    { ssId:'supplier',   item:supplier,   label:i => i.name + ' (' + i.code + ')' },
+    { ssId:'region',     item:region,     label:i => i.name },
+    { ssId:'brandFarm',  item:brandFarm,  label:i => i.name },
+    { ssId:'process',    item:process,    label:i => i.name },
+    { ssId:'process2',   item:process2,   label:i => i.name },
+    { ssId:'gradingSpec',item:gradingSpec,label:i => i.name },
+  ];
+  ssSync.forEach(({ssId, item, label}) => {
+    const inp = document.querySelector('#ss_' + ssId + ' input');
+    if (!inp) return;
+    // Only update if value differs — avoid disrupting active typing
+    const desired = item ? label(item) : '';
+    if (inp.value !== desired && document.activeElement !== inp) inp.value = desired;
+  });
   return true;
 }
 
